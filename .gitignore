@@ -1,0 +1,38 @@
+# dependencies
+node_modules/
+backend/.venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# build
+dist/
+build/
+out/
+*.egg-info/
+
+# env / secrets
+.env
+.env.local
+.env.*.local
+
+# databases / logs
+*.db
+*.db-journal
+*.log
+
+# tooling caches
+.agents/
+.claude/
+.windsurf/
+skills-lock.json
+.DS_Store
+.idea/
+.vscode/
+
+# electron
+desktop/dist/
+desktop/release/

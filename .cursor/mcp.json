@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "user-hermes": {
+      "command": "hermes",
+      "args": ["mcp", "serve"],
+      "env": {
+        "PATH": "/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin"
+      }
+    }
+  }
+}

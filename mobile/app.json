@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "DoseCerta",
+    "slug": "dosecerta",
+    "version": "0.2.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "dosecerta",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0b2e2a"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.dosecerta.mobile",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsLocalNetworking": true
+        }
+      }
+    },
+    "android": {
+      "package": "app.dosecerta.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#0b2e2a",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "usesCleartextTraffic": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "dosecerta-local"
+      }
+    }
+  }
+}
