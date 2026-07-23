@@ -1,78 +1,65 @@
 # DoseCerta
 
-MVP para lembrar de tomar remédios com avisos no WhatsApp até o fim do tratamento.
+Assistente de tratamento com lembretes no WhatsApp até a data de fim.
 
-Você descreve o tratamento em **linguagem natural** (no site ou no WhatsApp). A IA monta o rascunho; depois de confirmar, o app agenda as doses e dispara lembretes com antecedência.
+Arquitetura híbrida desktop + API + BaaS:
 
-## O que entra no MVP
+| Camada | Tecnologia |
+|---|---|
+| Desktop shell | **Electron** |
+| UI | **React** + **TypeScript** |
+| Backend | **Python 3** + **FastAPI** |
+| Dados / Auth / Storage | **Supabase** (**PostgreSQL**) |
 
-- Entrada no **app web** e no **WhatsApp**
-- Tratamentos com **data de fim** (obrigatória)
-- Parse por IA (`OPENAI_API_KEY`) com **fallback heurístico** em português
-- Preview + confirmação antes de ativar
-- Alertas com antecedência + respostas `TOMEI` / `ADIAR`
-- Provider WhatsApp `mock` (log local) ou `meta` (Cloud API)
+## Fluxo do MVP
 
-## Stack
+1. Descreva o tratamento em linguagem natural (app desktop ou WhatsApp)
+2. A IA (OpenAI ou parser heurístico) monta o rascunho
+3. Você confirma
+4. O backend agenda doses e dispara avisos com antecedência até o fim
 
-- Next.js (App Router) + TypeScript
-- Prisma 7 + SQLite
-- Zod + OpenAI SDK
-- Vitest
+## Estrutura
+
+```
+backend/                 # FastAPI (regras de negócio, intake, scheduler, WhatsApp)
+desktop/                 # Electron + React (Vite)
+supabase/migrations/     # Schema Postgres + RLS
+```
 
 ## Setup
 
 ```bash
 cp .env.example .env
-npm install
-npx prisma migrate dev --name init
+npm run install:all
 npm run dev
 ```
 
-Abra [http://localhost:3000](http://localhost:3000).
+- API: http://127.0.0.1:8000/api/health  
+- UI web (renderer): http://127.0.0.1:5173  
+- Desktop: `npm run dev:desktop` (abre Electron)
 
-### Variáveis
+### Supabase
 
-| Variável | Descrição |
-|---|---|
-| `DATABASE_URL` | SQLite (`file:./prisma/dev.db`) |
-| `DEFAULT_USER_PHONE` | Telefone padrão do app |
-| `DEFAULT_TIMEZONE` | Ex.: `America/Sao_Paulo` |
-| `WHATSAPP_PROVIDER` | `mock` ou `meta` |
-| `OPENAI_API_KEY` | Opcional; sem ela usa parser heurístico |
-| `WHATSAPP_TOKEN` / `WHATSAPP_PHONE_NUMBER_ID` | Cloud API Meta |
-| `WHATSAPP_VERIFY_TOKEN` | Verificação do webhook |
+1. Crie um projeto no Supabase
+2. Rode `supabase/migrations/20260723010000_init.sql` no SQL Editor
+3. Preencha no `.env`:
+   - `SUPABASE_URL`
+   - `SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `USE_MEMORY_STORE=false`
+4. No desktop, espelhe `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` para Auth
 
-## Fluxos
-
-### App
-
-1. Descreva o tratamento na home
-2. Revise o rascunho gerado pela IA
-3. Confirme para gerar doses e ativar alertas
+Sem credenciais, o backend usa **store em memória** (ótimo para demo local).
 
 ### WhatsApp
 
+- `WHATSAPP_PROVIDER=mock` grava mensagens no log (visível no app)
+- `WHATSAPP_PROVIDER=meta` usa Cloud API (`WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`)
 - Webhook: `GET/POST /api/whatsapp/webhook`
-- Simulação local:
 
-```bash
-curl -X POST http://localhost:3000/api/whatsapp/webhook \
-  -H 'content-type: application/json' \
-  -d '{"from":"5511999999999","text":"Amoxicilina 500mg de 8 em 8 horas por 7 dias, às 14h, avisa 15 min antes."}'
-```
+### OpenAI
 
-Respostas úteis: `CONFIRMAR`, `CANCELAR`, `TOMEI`, `ADIAR`.
-
-### Scheduler
-
-A home chama `/api/scheduler/tick` a cada 30s enquanto aberta. Em produção, use cron:
-
-```bash
-npm run reminders:tick
-# ou
-curl -X POST http://localhost:3000/api/scheduler/tick
-```
+Com `OPENAI_API_KEY`, o intake usa LLM. Sem chave, usa parser heurístico em português.
 
 ## Testes
 
@@ -82,4 +69,4 @@ npm test
 
 ## Aviso
 
-DoseCerta é um assistente de lembrete. Não substitui orientação médica.
+DoseCerta é um assistente de lembrete e não substitui orientação médica.
