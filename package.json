@@ -4,13 +4,14 @@
   "version": "0.2.0",
   "description": "DoseCerta — Electron + React + FastAPI + Supabase",
   "scripts": {
-    "dev:api": "cd backend && .venv/bin/uvicorn app.main:app --reload --host 127.0.0.1 --port 8000",
+    "dev:api": "cd backend && .venv/bin/uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
     "dev:web": "npm --prefix desktop run dev",
     "dev:desktop": "npm --prefix desktop run dev:electron",
+    "dev:mobile": "npm --prefix mobile start",
     "dev": "concurrently -k \"npm run dev:api\" \"npm run dev:web\"",
     "test": "cd backend && .venv/bin/pytest -q",
     "build:web": "npm --prefix desktop run build",
-    "install:all": "python3 -m venv backend/.venv && backend/.venv/bin/pip install -r backend/requirements.txt && npm --prefix desktop install"
+    "install:all": "python3 -m venv backend/.venv && backend/.venv/bin/pip install -r backend/requirements.txt && npm --prefix desktop install && npm --prefix mobile install"
   },
   "devDependencies": {
     "concurrently": "^10.0.3"

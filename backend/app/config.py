@@ -12,7 +12,11 @@ class Settings(BaseSettings):
 
     app_name: str = "DoseCerta API"
     api_prefix: str = "/api"
-    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+    cors_origins: str = (
+        "http://localhost:5173,http://127.0.0.1:5173,"
+        "http://localhost:8081,http://127.0.0.1:8081,"
+        "http://localhost:19006,http://127.0.0.1:19006"
+    )
 
     default_user_phone: str = "5511999999999"
     default_timezone: str = "America/Sao_Paulo"
