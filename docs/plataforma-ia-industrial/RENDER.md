@@ -4,7 +4,11 @@ Checklist SPA (Vite/React) como **Static Site** no Render.
 
 ## Live
 
-**https://plataforma-ia-industrial.onrender.com**
+| Serviço | URL |
+|---------|-----|
+| Checklist | https://plataforma-ia-industrial.onrender.com |
+| Nao | https://plataforma-ia-nao.onrender.com |
+
 
 Dashboard: https://dashboard.render.com/static/srv-d9ihjm58nd3s739uqel0
 

@@ -1,0 +1,22 @@
+﻿empresa_id,nome,setor,porte,regiao,uf,funcionarios,faturamento_mi_brl,maturidade_ia,ano_avaliacao
+e01,MuleSoft Agent Fabric,Integração / Control plane,Enterprise,Global,US,8000,12000,líder,2026
+e02,Runflow,SDK / Multi-agent (TypeScript),Média,Global,US,50,40,avançada,2026
+e03,Volland (Agentic Memory / LadybugDB),Memória agentic / Edge,Média,Global,EU,10,5,emergente,2026
+e04,Salesforce Agentforce,CRM / Agent platform,Enterprise,Global,US,70000,180000,líder,2026
+e05,AWS Bedrock AgentCore,Cloud hyperscaler,Enterprise,Global,US,100000,500000,líder,2026
+e06,Google Vertex AI Agent Builder,Cloud hyperscaler,Enterprise,Global,US,100000,400000,líder,2026
+e07,Microsoft Copilot Studio + Azure AI,Cloud / Productivity,Enterprise,Global,US,200000,600000,líder,2026
+e08,IBM watsonx Orchestrate,Enterprise automation,Enterprise,Global,US,250000,350000,líder,2026
+e09,ServiceNow AI Agents,Workflow / ITSM,Enterprise,Global,US,20000,50000,avançada,2026
+e10,UiPath Agentic Automation,RPA / Process automation,Enterprise,Global,US,4000,8000,avançada,2026
+e11,LangGraph (LangChain),Open-source framework,Média,Global,US,200,150,avançada,2026
+e12,CrewAI,Open-source multi-agent,Média,Global,US,80,30,emergente,2026
+e13,Juna Agentic Factory OS,Manufacturing / OT,Média,Europa,DE,80,60,avançada,2026
+e14,Siemens Intelligence Center X,Industrial AI / OT-IT orchestration,Enterprise,Global,DE,300000,400000,líder,2026
+e15,Cognite Data Fusion + Atlas AI,Industrial DataOps / Agents,Enterprise,Global,NO,2000,2500,líder,2026
+e16,AVEVA PI / Connect + AI,Industrial software / OT data,Enterprise,Global,GB,6500,8000,avançada,2026
+e17,Palantir AIP (Foundry),Ontology / Decision platform,Enterprise,Global,US,4000,15000,líder,2026
+e18,AspenTech Industrial AI,Process industries / APC,Enterprise,Global,US,4000,6000,avançada,2026
+e19,Rockwell FactoryTalk + AI,Discrete automation / MES,Enterprise,Global,US,26000,45000,avançada,2026
+e20,GE Vernova Proficy,Manufacturing ops / HMI-MES,Enterprise,Global,US,75000,80000,avançada,2026
+u01,xpto,Indústria,Média,Sudeste,SP,1000,500,emergente,2026

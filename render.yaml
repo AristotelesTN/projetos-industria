@@ -1,10 +1,25 @@
-# Blueprint Render — Plataforma IA Industrial (checklist SPA)
-# https://dashboard.render.com/blueprints
-#
-# Static site: Vite build em web/dist
-# Sync Nao no Render: use download do pack (API local só no Docker).
+# Blueprint Render — checklist SPA + Nao (analytics agent)
 
 services:
+  - type: web
+    name: plataforma-ia-nao
+    runtime: docker
+    plan: free
+    dockerfilePath: ./docker/nao/Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: NAO_CONTEXT_SOURCE
+        value: local
+      - key: NAO_DEFAULT_PROJECT_PATH
+        value: /app/project
+      - key: BETTER_AUTH_URL
+        value: https://plataforma-ia-nao.onrender.com
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: BETTER_AUTH_SECRET
+        sync: false
+
   - type: web
     name: plataforma-ia-industrial
     runtime: static

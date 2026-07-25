@@ -1,0 +1,22 @@
+﻿empresa_id,nome,setor,porte,regiao,maturidade_ia,cobertura_media,itens_tem,itens_parcial,itens_nao_tem,gaps,decisao_comprar,decisao_construir,decisao_hibrido
+e01,MuleSoft Agent Fabric,Integração / Control plane,Enterprise,Global,líder,0.7368421052631579,46,20,10,10,31,8,21
+e02,Runflow,SDK / Multi-agent (TypeScript),Média,Global,avançada,0.5526,25,34,17,17,26,14,27
+e03,Volland (Agentic Memory / LadybugDB),Memória agentic / Edge,Média,Global,emergente,0.3355,12,27,37,37,19,18,19
+e04,Salesforce Agentforce,CRM / Agent platform,Enterprise,Global,líder,0.6382,31,35,10,10,28,10,22
+e05,AWS Bedrock AgentCore,Cloud hyperscaler,Enterprise,Global,líder,0.6382,32,33,11,11,35,9,20
+e06,Google Vertex AI Agent Builder,Cloud hyperscaler,Enterprise,Global,líder,0.6974,39,28,9,9,41,8,23
+e07,Microsoft Copilot Studio + Azure AI,Cloud / Productivity,Enterprise,Global,líder,0.6974,36,34,6,6,29,19,21
+e08,IBM watsonx Orchestrate,Enterprise automation,Enterprise,Global,líder,0.6842,38,28,10,10,29,12,25
+e09,ServiceNow AI Agents,Workflow / ITSM,Enterprise,Global,avançada,0.6316,37,22,17,17,32,10,22
+e10,UiPath Agentic Automation,RPA / Process automation,Enterprise,Global,avançada,0.5395,26,30,20,20,29,19,23
+e11,LangGraph (LangChain),Open-source framework,Média,Global,avançada,0.4737,26,20,30,30,26,18,23
+e12,CrewAI,Open-source multi-agent,Média,Global,emergente,0.4474,15,38,23,23,25,13,22
+e13,Juna Agentic Factory OS,Manufacturing / OT,Média,Europa,avançada,0.6118,31,31,14,14,30,12,28
+e14,Siemens Intelligence Center X,Industrial AI / OT-IT orchestration,Enterprise,Global,líder,0.6842,38,28,10,10,38,0,28
+e15,Cognite Data Fusion + Atlas AI,Industrial DataOps / Agents,Enterprise,Global,líder,0.7039,41,25,10,10,41,0,25
+e16,AVEVA PI / Connect + AI,Industrial software / OT data,Enterprise,Global,avançada,0.4934,20,35,21,21,20,0,35
+e17,Palantir AIP (Foundry),Ontology / Decision platform,Enterprise,Global,líder,0.5855,29,31,16,16,29,0,31
+e18,AspenTech Industrial AI,Process industries / APC,Enterprise,Global,avançada,0.3487,9,35,32,32,9,0,35
+e19,Rockwell FactoryTalk + AI,Discrete automation / MES,Enterprise,Global,avançada,0.3355,8,35,33,33,8,0,35
+e20,GE Vernova Proficy,Manufacturing ops / HMI-MES,Enterprise,Global,avançada,0.3421,9,34,33,33,9,0,34
+u01,xpto,Indústria,Média,Sudeste,emergente,0,0,0,1,1,0,0,0

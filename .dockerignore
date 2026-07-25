@@ -1,0 +1,11 @@
+.git
+**/node_modules
+.agents
+.claude
+.claude-flow
+.cursor
+**/.env
+**/.env.local
+nao/plataforma.duckdb
+*.duckdb
+web/dist

@@ -1,4 +1,4 @@
-/* Fallback when not running behind Docker entrypoint */
+/* Runtime config — NAO_URL público no Render; local Docker sobrescreve via entrypoint */
 window.__APP_CONFIG__ = window.__APP_CONFIG__ || {
-  NAO_URL: "http://localhost:5005",
+  NAO_URL: "https://plataforma-ia-nao.onrender.com",
 };
