@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "llm-council": {
+      "source": "am-will/codex-skills",
+      "sourceType": "github",
+      "skillPath": "skills/llm-council/SKILL.md",
+      "computedHash": "ac408ec68f72afce439aac6dc45d0f35394ef6b17bd08ce5f35843909eadb51c"
+    }
+  }
+}

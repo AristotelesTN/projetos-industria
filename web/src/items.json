@@ -1,0 +1,512 @@
+[
+  {
+    "id": "1.1",
+    "texto": "Conectores pré-construídos para aplicações e sistemas corporativos",
+    "tipo": "Expectativa",
+    "pilar": 1
+  },
+  {
+    "id": "1.2",
+    "texto": "Integração com sistemas de registro (ERP, CRM, MES, CMMS, data platforms)",
+    "tipo": "Expectativa",
+    "pilar": 1
+  },
+  {
+    "id": "1.3",
+    "texto": "Pipelines robustos de ingestão, tratamento e normalização",
+    "tipo": "Expectativa",
+    "pilar": 1
+  },
+  {
+    "id": "1.4",
+    "texto": "Controle de acesso baseado em funções para pessoas e agentes",
+    "tipo": "Expectativa",
+    "pilar": 1
+  },
+  {
+    "id": "1.5",
+    "texto": "Cache de memória e reutilização de contexto entre interações",
+    "tipo": "Expectativa",
+    "pilar": 1
+  },
+  {
+    "id": "1.A1",
+    "texto": "Knowledge graph e mecanismo de contexto corporativo",
+    "tipo": "Avançado",
+    "pilar": 1
+  },
+  {
+    "id": "1.A2",
+    "texto": "Taxonomias e ontologias por indústria/domínio",
+    "tipo": "Avançado",
+    "pilar": 1
+  },
+  {
+    "id": "1.A3",
+    "texto": "Melhoria automática de qualidade, consistência e enriquecimento",
+    "tipo": "Avançado",
+    "pilar": 1
+  },
+  {
+    "id": "1.A4",
+    "texto": "Memória persistente e compartilhamento de contexto entre agentes",
+    "tipo": "Avançado",
+    "pilar": 1
+  },
+  {
+    "id": "1.A5",
+    "texto": "Enriquecimento dos agentes com conhecimento corporativo e domínio",
+    "tipo": "Avançado",
+    "pilar": 1
+  },
+  {
+    "id": "2.1",
+    "texto": "Agent Studio com interface em linguagem natural",
+    "tipo": "Expectativa",
+    "pilar": 2
+  },
+  {
+    "id": "2.2",
+    "texto": "Suporte low-code e code-first",
+    "tipo": "Expectativa",
+    "pilar": 2
+  },
+  {
+    "id": "2.3",
+    "texto": "Modelos reutilizáveis de agentes e fluxos de trabalho",
+    "tipo": "Expectativa",
+    "pilar": 2
+  },
+  {
+    "id": "2.4",
+    "texto": "Engenharia de prompts e configuração de instruções de sistema",
+    "tipo": "Expectativa",
+    "pilar": 2
+  },
+  {
+    "id": "2.5",
+    "texto": "Raciocínio em múltiplas etapas e ciclos de execução",
+    "tipo": "Expectativa",
+    "pilar": 2
+  },
+  {
+    "id": "2.6",
+    "texto": "Independência de modelo via hub de LLMs",
+    "tipo": "Expectativa",
+    "pilar": 2
+  },
+  {
+    "id": "2.A1",
+    "texto": "Combinação de LLMs com regras, algoritmos e componentes determinísticos",
+    "tipo": "Avançado",
+    "pilar": 2
+  },
+  {
+    "id": "2.A2",
+    "texto": "Integração com assistentes de desenvolvimento nativos ou de terceiros",
+    "tipo": "Avançado",
+    "pilar": 2
+  },
+  {
+    "id": "2.A3",
+    "texto": "Lógica de negócio específica por processo/domínio",
+    "tipo": "Avançado",
+    "pilar": 2
+  },
+  {
+    "id": "2.A4",
+    "texto": "Frameworks avançados (consenso, agent-as-a-judge)",
+    "tipo": "Avançado",
+    "pilar": 2
+  },
+  {
+    "id": "2.A5",
+    "texto": "Otimização automática de seleção, execução e desempenho dos modelos",
+    "tipo": "Avançado",
+    "pilar": 2
+  },
+  {
+    "id": "3.1",
+    "texto": "Ambiente sandbox para testes controlados",
+    "tipo": "Expectativa",
+    "pilar": 3
+  },
+  {
+    "id": "3.2",
+    "texto": "Human-in-the-Loop",
+    "tipo": "Expectativa",
+    "pilar": 3
+  },
+  {
+    "id": "3.3",
+    "texto": "KPIs específicos por agente/caso de uso",
+    "tipo": "Expectativa",
+    "pilar": 3
+  },
+  {
+    "id": "3.4",
+    "texto": "Avaliação e pontuação contínua dos resultados",
+    "tipo": "Expectativa",
+    "pilar": 3
+  },
+  {
+    "id": "3.5",
+    "texto": "Monitoramento em produção e refinamento contínuo",
+    "tipo": "Expectativa",
+    "pilar": 3
+  },
+  {
+    "id": "3.A1",
+    "texto": "Testes baseados em personas, casos de uso e intenções",
+    "tipo": "Avançado",
+    "pilar": 3
+  },
+  {
+    "id": "3.A2",
+    "texto": "Simulação de situações reais e testes de estresse",
+    "tipo": "Avançado",
+    "pilar": 3
+  },
+  {
+    "id": "3.A3",
+    "texto": "LLM-as-a-judge",
+    "tipo": "Avançado",
+    "pilar": 3
+  },
+  {
+    "id": "3.A4",
+    "texto": "Comparação champion/challenger",
+    "tipo": "Avançado",
+    "pilar": 3
+  },
+  {
+    "id": "3.A5",
+    "texto": "Implantação gradual (recomendação → copiloto → automação → autonomia)",
+    "tipo": "Avançado",
+    "pilar": 3
+  },
+  {
+    "id": "4.1",
+    "texto": "Implantação cloud, edge, local ou híbrida",
+    "tipo": "Expectativa",
+    "pilar": 4
+  },
+  {
+    "id": "4.2",
+    "texto": "Conectores/padrões para integrar agentes aos sistemas corporativos",
+    "tipo": "Expectativa",
+    "pilar": 4
+  },
+  {
+    "id": "4.3",
+    "texto": "Governança consistente independente do ambiente de execução",
+    "tipo": "Expectativa",
+    "pilar": 4
+  },
+  {
+    "id": "4.4",
+    "texto": "Integração com APIs, sistemas de registro e fluxos existentes",
+    "tipo": "Expectativa",
+    "pilar": 4
+  },
+  {
+    "id": "4.5",
+    "texto": "Gestão de versões, ambientes e configurações",
+    "tipo": "Expectativa",
+    "pilar": 4
+  },
+  {
+    "id": "4.A1",
+    "texto": "Integração nativa com plataformas externas de agentes/dev",
+    "tipo": "Avançado",
+    "pilar": 4
+  },
+  {
+    "id": "4.A2",
+    "texto": "Incorporação direta dos agentes aos processos corporativos",
+    "tipo": "Avançado",
+    "pilar": 4
+  },
+  {
+    "id": "4.A3",
+    "texto": "Monitoramento contínuo das aplicações em produção",
+    "tipo": "Avançado",
+    "pilar": 4
+  },
+  {
+    "id": "4.A4",
+    "texto": "Alertas de degradação e model drift",
+    "tipo": "Avançado",
+    "pilar": 4
+  },
+  {
+    "id": "4.A5",
+    "texto": "Diagnóstico de causa raiz para falhas agentic",
+    "tipo": "Avançado",
+    "pilar": 4
+  },
+  {
+    "id": "5.1",
+    "texto": "Orquestrador baseado em LLM capaz de decompor tarefas",
+    "tipo": "Expectativa",
+    "pilar": 5
+  },
+  {
+    "id": "5.2",
+    "texto": "Distribuição de carga e direcionamento de atividades",
+    "tipo": "Expectativa",
+    "pilar": 5
+  },
+  {
+    "id": "5.3",
+    "texto": "Coordenação entre múltiplos agentes",
+    "tipo": "Expectativa",
+    "pilar": 5
+  },
+  {
+    "id": "5.4",
+    "texto": "Pontos de aprovação e controle humano",
+    "tipo": "Expectativa",
+    "pilar": 5
+  },
+  {
+    "id": "5.5",
+    "texto": "Camada compartilhada de memória e contexto corporativo",
+    "tipo": "Expectativa",
+    "pilar": 5
+  },
+  {
+    "id": "5.6",
+    "texto": "Roteamento e abstração entre diferentes LLMs",
+    "tipo": "Expectativa",
+    "pilar": 5
+  },
+  {
+    "id": "5.A1",
+    "texto": "Orquestração de agentes, subagentes e sistemas de terceiros",
+    "tipo": "Avançado",
+    "pilar": 5
+  },
+  {
+    "id": "5.A2",
+    "texto": "Transferência de tarefas e contexto entre agentes",
+    "tipo": "Avançado",
+    "pilar": 5
+  },
+  {
+    "id": "5.A3",
+    "texto": "Memória persistente entre sessões",
+    "tipo": "Avançado",
+    "pilar": 5
+  },
+  {
+    "id": "5.A4",
+    "texto": "Otimização proativa dos fluxos de trabalho",
+    "tipo": "Avançado",
+    "pilar": 5
+  },
+  {
+    "id": "5.A5",
+    "texto": "Roteamento dinâmico de modelos e gestão de cargas",
+    "tipo": "Avançado",
+    "pilar": 5
+  },
+  {
+    "id": "5.A6",
+    "texto": "Redes dinâmicas de agentes conforme a necessidade",
+    "tipo": "Avançado",
+    "pilar": 5
+  },
+  {
+    "id": "6.1",
+    "texto": "Plano de controle centralizado para agentes e aplicações",
+    "tipo": "Expectativa",
+    "pilar": 6
+  },
+  {
+    "id": "6.2",
+    "texto": "Visibilidade sobre agentes, ferramentas, modelos e acessos",
+    "tipo": "Expectativa",
+    "pilar": 6
+  },
+  {
+    "id": "6.3",
+    "texto": "Logs de auditoria, rastreabilidade e transparência",
+    "tipo": "Expectativa",
+    "pilar": 6
+  },
+  {
+    "id": "6.4",
+    "texto": "RBAC para pessoas e agentes",
+    "tipo": "Expectativa",
+    "pilar": 6
+  },
+  {
+    "id": "6.5",
+    "texto": "Pontuação de confiança para resultados e fluxos agentic",
+    "tipo": "Expectativa",
+    "pilar": 6
+  },
+  {
+    "id": "6.6",
+    "texto": "Controle de custos (roteamento de modelos e gestão de contexto)",
+    "tipo": "Expectativa",
+    "pilar": 6
+  },
+  {
+    "id": "6.A1",
+    "texto": "Acompanhamento de ROI das aplicações de IA",
+    "tipo": "Avançado",
+    "pilar": 6
+  },
+  {
+    "id": "6.A2",
+    "texto": "Regras comuns de governança para agentes internos e de terceiros",
+    "tipo": "Avançado",
+    "pilar": 6
+  },
+  {
+    "id": "6.A3",
+    "texto": "Controle granular por usuário, agente, aplicação e ambiente",
+    "tipo": "Avançado",
+    "pilar": 6
+  },
+  {
+    "id": "6.A4",
+    "texto": "Monitoramento contínuo dos fluxos dos agentes",
+    "tipo": "Avançado",
+    "pilar": 6
+  },
+  {
+    "id": "6.A5",
+    "texto": "Descoberta, identificação, pesquisa e catalogação de agentes",
+    "tipo": "Avançado",
+    "pilar": 6
+  },
+  {
+    "id": "6.A6",
+    "texto": "Registro de endpoints, ferramentas, modelos, dados e permissões",
+    "tipo": "Avançado",
+    "pilar": 6
+  },
+  {
+    "id": "6.A7",
+    "texto": "Gestão centralizada do ciclo de vida e da frota de agentes",
+    "tipo": "Avançado",
+    "pilar": 6
+  },
+  {
+    "id": "7.1",
+    "texto": "Marketplace de agentes e componentes pré-construídos",
+    "tipo": "Expectativa",
+    "pilar": 7
+  },
+  {
+    "id": "7.2",
+    "texto": "Integração nativa de aplicações de terceiros",
+    "tipo": "Expectativa",
+    "pilar": 7
+  },
+  {
+    "id": "7.3",
+    "texto": "Arquitetura para entrega, implantação e sustentação",
+    "tipo": "Expectativa",
+    "pilar": 7
+  },
+  {
+    "id": "7.4",
+    "texto": "Suporte de especialistas, arquitetos e equipes de implantação",
+    "tipo": "Expectativa",
+    "pilar": 7
+  },
+  {
+    "id": "7.5",
+    "texto": "Componentes reutilizáveis para acelerar casos de uso",
+    "tipo": "Expectativa",
+    "pilar": 7
+  },
+  {
+    "id": "7.A1",
+    "texto": "Fluxos específicos por indústria e processo",
+    "tipo": "Avançado",
+    "pilar": 7
+  },
+  {
+    "id": "7.A2",
+    "texto": "Aplicações replicáveis com arquiteturas otimizadas",
+    "tipo": "Avançado",
+    "pilar": 7
+  },
+  {
+    "id": "7.A3",
+    "texto": "Skills pré-construídas incorporáveis aos agentes",
+    "tipo": "Avançado",
+    "pilar": 7
+  },
+  {
+    "id": "7.A4",
+    "texto": "Modelos especializados/ajustados por domínio",
+    "tipo": "Avançado",
+    "pilar": 7
+  },
+  {
+    "id": "7.A5",
+    "texto": "Serviços para manutenção, qualidade, produção, energia, logística, segurança",
+    "tipo": "Avançado",
+    "pilar": 7
+  },
+  {
+    "id": "S.1",
+    "texto": "Quais agentes existem?",
+    "tipo": "Inventario",
+    "pilar": "sintese"
+  },
+  {
+    "id": "S.2",
+    "texto": "Onde estão sendo executados?",
+    "tipo": "Inventario",
+    "pilar": "sintese"
+  },
+  {
+    "id": "S.3",
+    "texto": "Quem é responsável por cada agente?",
+    "tipo": "Inventario",
+    "pilar": "sintese"
+  },
+  {
+    "id": "S.4",
+    "texto": "Quais dados, APIs e ferramentas podem acessar?",
+    "tipo": "Inventario",
+    "pilar": "sintese"
+  },
+  {
+    "id": "S.5",
+    "texto": "Quais modelos utilizam?",
+    "tipo": "Inventario",
+    "pilar": "sintese"
+  },
+  {
+    "id": "S.6",
+    "texto": "Como estão performando?",
+    "tipo": "Inventario",
+    "pilar": "sintese"
+  },
+  {
+    "id": "S.7",
+    "texto": "Quanto estão custando?",
+    "tipo": "Inventario",
+    "pilar": "sintese"
+  },
+  {
+    "id": "S.8",
+    "texto": "Quais riscos apresentam?",
+    "tipo": "Inventario",
+    "pilar": "sintese"
+  },
+  {
+    "id": "S.9",
+    "texto": "Qual valor geram para o negócio?",
+    "tipo": "Inventario",
+    "pilar": "sintese"
+  }
+]

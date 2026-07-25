@@ -1,0 +1,51 @@
+services:
+  nao:
+    image: getnao/nao:latest
+    container_name: plataforma-ia-nao
+    ports:
+      - "5005:5005"
+    env_file:
+      - .env
+    environment:
+      BETTER_AUTH_URL: http://localhost:5005
+      NAO_DEFAULT_PROJECT_PATH: /app/project
+    volumes:
+      - ./nao:/app/project
+    restart: unless-stopped
+    networks:
+      - plataforma
+
+  sync-api:
+    build: ./docker/sync-api
+    container_name: plataforma-ia-sync
+    environment:
+      NAO_PROJECT_PATH: /nao
+      PORT: "8787"
+    volumes:
+      - ./nao:/nao
+    depends_on:
+      - nao
+    restart: unless-stopped
+    networks:
+      - plataforma
+
+  web:
+    build:
+      context: ./web
+      args:
+        VITE_NAO_URL: http://localhost:5005
+    container_name: plataforma-ia-web
+    ports:
+      - "8080:80"
+    environment:
+      NAO_URL: http://localhost:5005
+    depends_on:
+      - sync-api
+      - nao
+    restart: unless-stopped
+    networks:
+      - plataforma
+
+networks:
+  plataforma:
+    driver: bridge

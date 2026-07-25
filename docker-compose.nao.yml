@@ -1,0 +1,14 @@
+services:
+  nao:
+    image: getnao/nao:latest
+    container_name: plataforma-ia-nao
+    ports:
+      - "5005:5005"
+    env_file:
+      - .env
+    environment:
+      BETTER_AUTH_URL: http://localhost:5005
+      NAO_DEFAULT_PROJECT_PATH: /app/project
+    volumes:
+      - ./nao:/app/project
+    restart: unless-stopped

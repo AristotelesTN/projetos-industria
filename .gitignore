@@ -1,0 +1,15 @@
+# Local secrets — never commit
+.env
+.env.local
+**/.env
+**/.env.local
+
+# Nao
+nao/plataforma.duckdb
+
+# OS / IDE
+.DS_Store
+*.local
+
+# Dependencies
+**/node_modules/
