@@ -2,6 +2,12 @@
 
 Checklist SPA (Vite/React) como **Static Site** no Render.
 
+## Live
+
+**https://plataforma-ia-industrial.onrender.com**
+
+Dashboard: https://dashboard.render.com/static/srv-d9ihjm58nd3s739uqel0
+
 ## Pré-requisitos
 
 1. Repo no GitHub com a pasta `web/` (e `render.yaml` na raiz)
@@ -14,30 +20,24 @@ Checklist SPA (Vite/React) como **Static Site** no Render.
 3. Confirme o serviço `plataforma-ia-industrial` do `render.yaml`
 4. **Apply**
 
-URL típica: `https://plataforma-ia-industrial.onrender.com`
+## Opção B — CLI
 
-## Opção B — Manual
-
-1. **New → Static Site**
-2. Root Directory: `web`
-3. Build Command: `npm ci && npm run build`
-4. Publish Directory: `dist`
-5. Redirects/Rewrites: `/*` → `/index.html` (Rewrite)
+```bash
+render login
+render workspace set <workspace-id>
+render services create \
+  --name plataforma-ia-industrial \
+  --type static_site \
+  --repo https://github.com/AristotelesTN/projetos-industria \
+  --branch main \
+  --root-directory web \
+  --build-command "npm ci && npm run build" \
+  --publish-directory dist \
+  --confirm
+```
 
 ## Variáveis
 
-Static site não precisa de secrets. O chat Nao embutido aponta para `NAO_URL` em `web/public/config.js` (default local). Em produção o painel Nao mostra offline até você hospedar o Nao e atualizar `config.js` / rebuild.
+Static site não precisa de secrets. O chat Nao embutido aponta para `NAO_URL` em `web/public/config.js` (default local). Em produção o painel Nao fica offline até hospedar o Nao e atualizar `config.js`.
 
-Sync Nao no Render: o app usa **download do pack** (não há `sync-api` no Render free static).
-
-## CLI
-
-```bash
-# autenticar
-render login
-
-# validar blueprint
-render blueprints validate
-
-# ou criar static site via dashboard após o push
-```
+Sync Nao no Render: o app usa **download do pack** (não há `sync-api` no static site).

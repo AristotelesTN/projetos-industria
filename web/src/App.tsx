@@ -384,11 +384,6 @@ export default function App() {
         </div>
       </header>
 
-      <p className="lead">
-        Pipeline: <strong>Avaliar</strong> → <strong>Empresas</strong> →{" "}
-        <strong>Nao</strong>. Checklist + base viva + agente analítico integrado.
-      </p>
-
       <nav className="tabs" aria-label="Seções">
         {(
           [
