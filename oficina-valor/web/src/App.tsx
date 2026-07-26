@@ -19,15 +19,25 @@ type Tab =
 
 const brlFmt = brl;
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'projetos', label: 'Projetos' },
-  { id: 'diretoria', label: 'Portfólio' },
-  { id: 'financas', label: 'Homologação' },
-  { id: 'gates', label: 'Gates' },
-  { id: 'nao', label: 'Nao' },
-  { id: 'auditoria', label: 'Auditoria' },
-  { id: 'import', label: 'Importações' },
+const TABS: { id: Tab; label: string; icon: string }[] = [
+  { id: 'projetos', label: 'Projetos', icon: '▤' },
+  { id: 'diretoria', label: 'Portfólio', icon: '◫' },
+  { id: 'financas', label: 'Homologação', icon: '☑' },
+  { id: 'gates', label: 'Gates', icon: '⇢' },
+  { id: 'nao', label: 'Analytics', icon: '◎' },
+  { id: 'auditoria', label: 'Auditoria', icon: '☰' },
+  { id: 'import', label: 'Importações', icon: '⇪' },
 ];
+
+const TITLES: Record<Tab, string> = {
+  projetos: 'Projetos',
+  diretoria: 'Visão do portfólio',
+  financas: 'Homologação de valor',
+  gates: 'Gates de decisão',
+  nao: 'Analytics Nao',
+  auditoria: 'Trilha de auditoria',
+  import: 'Importações',
+};
 
 export default function App() {
   const [user, setUser] = useState<User | null>(getUser());
@@ -116,7 +126,7 @@ export default function App() {
       });
       await api.uploadEvidencia(med.id, file);
       await api.submeter(med.id);
-      setMsg('Medição enviada — você pode homologar na aba Homologação');
+      setMsg('Medição enviada — homologue na seção Homologação');
       if (selectedId) await refreshSelected(selectedId);
     } catch (e: any) {
       setError(e.message || String(e));
@@ -125,451 +135,488 @@ export default function App() {
     }
   }
 
+  const initials = (user?.nome || 'GP')
+    .split(' ')
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+
   if (!user) {
     return (
       <div className="login">
         <div className="login-card">
-          <h1>
-            Oficina de <em>Valor</em>
-          </h1>
+          <div className="logo-mark">
+            <span className="mark" aria-hidden />
+            <strong>Oficina de Valor</strong>
+          </div>
+          <h1>Gerencie o portfólio pelo valor</h1>
           <p className="muted">
-            Gestão de portfólio e realização de valor — um único perfil:
-            Gerente de Portfólio.
+            Planeje, meça e homologe benefícios com a clareza de um board ágil —
+            inspirado no Atlassian Design System.
           </p>
           {error && <p className="error">{error}</p>}
-          <div className="stack" style={{ marginTop: 18 }}>
-            <button className="btn" disabled={busy} onClick={entrar}>
-              Entrar como Gerente de Portfólio
-            </button>
-          </div>
+          <button className="btn" disabled={busy} onClick={entrar} style={{ width: '100%' }}>
+            Entrar como Gerente de Portfólio
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div>
-          <h1 className="brand">
-            Oficina de <span>Valor</span>
-          </h1>
-          <p className="sub">
-            {user.nome} — gerencie projetos, medições, gates e ROI do portfólio
-          </p>
+    <div className="app-layout">
+      <aside className="side-nav">
+        <div className="brand">
+          <span className="mark" aria-hidden />
+          <div>
+            <strong>Oficina de Valor</strong>
+            <span>Portfólio · VMO</span>
+          </div>
         </div>
-        <button
-          className="btn secondary"
-          onClick={() => {
-            clearSession();
-            setUser(null);
-          }}
-        >
-          Sair
-        </button>
-      </header>
-
-      <nav className="tabs">
         {TABS.map((t) => (
           <button
             key={t.id}
-            className={`tab ${tab === t.id ? 'active' : ''}`}
+            className={`nav-item ${tab === t.id ? 'active' : ''}`}
             onClick={() => setTab(t.id)}
           >
+            <span className="nav-icon" aria-hidden>
+              {t.icon}
+            </span>
             {t.label}
           </button>
         ))}
-      </nav>
-
-      {error && <p className="error">{error}</p>}
-      {msg && <p className="ok">{msg}</p>}
-
-      {tab === 'diretoria' && (
-        <section className="panel">
-          <h2>Sumário do portfólio</h2>
-          {!portfolio ? (
-            <p className="muted">Carregando…</p>
-          ) : (
-            <>
-              <div className="grid">
-                <div className="metric">
-                  <div className="label">Prometido (baseline)</div>
-                  <div className="value">{brlFmt(portfolio.prometido)}</div>
-                </div>
-                <div className="metric">
-                  <div className="label">Realizado validado</div>
-                  <div className="value">{brlFmt(portfolio.realizado)}</div>
-                </div>
-                <div className="metric">
-                  <div className="label">ROI portfólio</div>
-                  <div className="value">{portfolio.roiLabel}</div>
-                </div>
-                <div className="metric">
-                  <div className="label">Projetos em risco (BRR&lt;70%)</div>
-                  <div className="value">{portfolio.projetosEmRisco}</div>
-                </div>
-              </div>
-              <h3>Curva S consolidada</h3>
-              <CurvaS data={portfolio.curvaS || []} />
-              <div className="actions">
-                <button className="btn secondary" onClick={() => api.exportGanhos()}>
-                  Exportar ganhos (Excel)
-                </button>
-              </div>
-            </>
-          )}
-        </section>
-      )}
-
-      {tab === 'projetos' && (
-        <section className="panel stack">
-          <h2>Projetos</h2>
-          <div className="list">
-            {projetos.map((p) => (
-              <button
-                key={p.id}
-                className="row"
-                onClick={() => setSelectedId(p.id)}
-              >
-                <div>
-                  <strong>{p.nome}</strong>
-                  <div className="muted">
-                    {p.area?.nome} · <span className="badge">{p.status}</span>
-                  </div>
-                </div>
-                <div className="muted">{brlFmt(p.investimentoAprovado)}</div>
-              </button>
-            ))}
-          </div>
-
-          {projeto && analytics && (
-            <>
-              <h3>{projeto.nome}</h3>
-              <div className="grid">
-                <div className="metric">
-                  <div className="label">ROI</div>
-                  <div className="value">{analytics.roiLabel}</div>
-                </div>
-                <div className="metric">
-                  <div className="label">Realizado</div>
-                  <div className="value">{brlFmt(analytics.realizado)}</div>
-                </div>
-                <div className="metric">
-                  <div className="label">Prometido</div>
-                  <div className="value">{brlFmt(analytics.prometido)}</div>
-                </div>
-                <div className="metric">
-                  <div className="label">BRR</div>
-                  <div className="value">
-                    {analytics.brr == null
-                      ? '—'
-                      : `${(analytics.brr * 100).toFixed(0)}%`}
-                  </div>
-                </div>
-              </div>
-              <CurvaS data={analytics.curvaS || []} />
-
-              <div className="stack" style={{ marginTop: 16 }}>
-                <h3>Registrar medição</h3>
-                <p className="muted">Valor + evidência + envio para homologação.</p>
-                <label className="field">
-                  Benefício
-                  <select
-                    value={beneficioId}
-                    onChange={(e) => setBeneficioId(e.target.value)}
-                  >
-                    {(projeto.businessCase?.beneficios || []).map((b: any) => (
-                      <option key={b.id} value={b.id}>
-                        {b.nome} ({b.categoria})
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="field">
-                  Período (AAAA-MM-DD)
-                  <input value={periodo} onChange={(e) => setPeriodo(e.target.value)} />
-                </label>
-                <label className="field">
-                  Valor realizado (R$)
-                  <input
-                    value={valor}
-                    onChange={(e) => setValor(e.target.value)}
-                    type="number"
-                  />
-                </label>
-                <label className="field">
-                  Evidência
-                  <input
-                    type="file"
-                    onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-                  />
-                </label>
-                <button className="btn" disabled={busy} onClick={registrarMedicao}>
-                  Registrar e enviar
-                </button>
-              </div>
-            </>
-          )}
-        </section>
-      )}
-
-      {tab === 'financas' && (
-        <section className="panel stack">
-          <h2>Homologação de medições</h2>
-          <div className="list">
-            {pendentes.map((m) => (
-              <div key={m.id} className="row" style={{ cursor: 'default' }}>
-                <div>
-                  <strong>{m.beneficio?.businessCase?.projeto?.nome}</strong>
-                  <div className="muted">
-                    {m.beneficio?.nome} ·{' '}
-                    {m.periodoReferencia?.slice?.(0, 10) || m.periodoReferencia} ·{' '}
-                    {brlFmt(m.valorRealizado)}
-                  </div>
-                  <div className="muted">
-                    evidências: {m.evidencias?.length ?? 0}
-                  </div>
-                </div>
-                <div className="actions">
-                  <button
-                    className="btn"
-                    disabled={busy}
-                    onClick={async () => {
-                      setBusy(true);
-                      try {
-                        await api.validar(m.id, 'aprovada', 'OK');
-                        setPendentes(await api.pendentes());
-                        setMsg('Medição homologada');
-                      } catch (e: any) {
-                        setError(e.message);
-                      } finally {
-                        setBusy(false);
-                      }
-                    }}
-                  >
-                    Homologar
-                  </button>
-                  <button
-                    className="btn danger"
-                    disabled={busy}
-                    onClick={async () => {
-                      setBusy(true);
-                      try {
-                        await api.validar(m.id, 'rejeitada', 'Revisar evidência');
-                        setPendentes(await api.pendentes());
-                      } catch (e: any) {
-                        setError(e.message);
-                      } finally {
-                        setBusy(false);
-                      }
-                    }}
-                  >
-                    Rejeitar
-                  </button>
-                </div>
-              </div>
-            ))}
-            {!pendentes.length && <p className="muted">Nenhuma medição pendente.</p>}
-          </div>
-
-          {selectedId && (
-            <div className="stack">
-              <h3>Custo realizado</h3>
-              <button
-                className="btn secondary"
-                onClick={async () => {
-                  try {
-                    await api.custo(selectedId, {
-                      periodoReferencia: '2026-04-01',
-                      valor: 5000,
-                    });
-                    setMsg('Custo lançado no projeto selecionado');
-                    await refreshSelected(selectedId);
-                  } catch (e: any) {
-                    setError(e.message);
-                  }
-                }}
-              >
-                Lançar R$ 5.000 no projeto selecionado
-              </button>
+        <div className="spacer" />
+        <div className="user-chip">
+          <div className="avatar">{initials}</div>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontWeight: 600, fontSize: 13 }}>{user.nome}</div>
+            <div className="muted" style={{ fontSize: 11 }}>
+              Gerente de Portfólio
             </div>
-          )}
-        </section>
-      )}
+          </div>
+        </div>
+      </aside>
 
-      {tab === 'gates' && projeto && (
-        <section className="panel stack">
-          <h2>Gates — {projeto.nome}</h2>
-          <p className="muted">
-            Premissas: {projeto.premissasOkFinancas ? 'OK' : 'pendente'}
-          </p>
-          {!projeto.premissasOkFinancas && (
-            <button
-              className="btn"
-              onClick={async () => {
-                await api.premissas(projeto.id, true, 'Premissas OK');
-                await refreshSelected(projeto.id);
-              }}
-            >
-              Marcar premissas OK
-            </button>
+      <div className="main">
+        <header className="top-bar">
+          <div>
+            <div className="breadcrumb">Espaço · Manufatura</div>
+            <h1>{TITLES[tab]}</h1>
+          </div>
+          <button
+            className="btn secondary"
+            onClick={() => {
+              clearSession();
+              setUser(null);
+            }}
+          >
+            Sair
+          </button>
+        </header>
+
+        <div className="content">
+          {error && <p className="error">{error}</p>}
+          {msg && <p className="ok">{msg}</p>}
+
+          {tab === 'diretoria' && (
+            <section className="panel">
+              <h2>Sumário executivo</h2>
+              {!portfolio ? (
+                <p className="muted">Carregando…</p>
+              ) : (
+                <>
+                  <div className="grid">
+                    <div className="metric">
+                      <div className="label">Prometido (baseline)</div>
+                      <div className="value">{brlFmt(portfolio.prometido)}</div>
+                    </div>
+                    <div className="metric">
+                      <div className="label">Realizado validado</div>
+                      <div className="value">{brlFmt(portfolio.realizado)}</div>
+                    </div>
+                    <div className="metric">
+                      <div className="label">ROI portfólio</div>
+                      <div className="value">{portfolio.roiLabel}</div>
+                    </div>
+                    <div className="metric">
+                      <div className="label">Em risco (BRR&lt;70%)</div>
+                      <div className="value">{portfolio.projetosEmRisco}</div>
+                    </div>
+                  </div>
+                  <h3>Curva S consolidada</h3>
+                  <CurvaS data={portfolio.curvaS || []} />
+                  <div className="actions">
+                    <button className="btn secondary" onClick={() => api.exportGanhos()}>
+                      Exportar ganhos (Excel)
+                    </button>
+                  </div>
+                </>
+              )}
+            </section>
           )}
-          <div className="actions">
-            {(['G1', 'G2', 'G3', 'G4', 'G5'] as const).map((g) => (
-              <button
-                key={g}
-                className="btn secondary"
-                onClick={async () => {
-                  try {
-                    await api.gate(projeto.id, {
-                      gate: g,
-                      decisao: 'go',
-                      comentario: `${g} go`,
-                    });
+
+          {tab === 'projetos' && (
+            <section className="panel stack">
+              <h2>Backlog de projetos</h2>
+              <div className="list">
+                {projetos.map((p) => (
+                  <button
+                    key={p.id}
+                    className="row"
+                    onClick={() => setSelectedId(p.id)}
+                    style={
+                      selectedId === p.id
+                        ? { borderColor: '#adcbfb', background: '#e9f2fe' }
+                        : undefined
+                    }
+                  >
+                    <div>
+                      <strong>{p.nome}</strong>
+                      <div className="muted">
+                        {p.area?.nome} · <span className="badge">{p.status}</span>
+                      </div>
+                    </div>
+                    <div className="muted">{brlFmt(p.investimentoAprovado)}</div>
+                  </button>
+                ))}
+              </div>
+
+              {projeto && analytics && (
+                <>
+                  <h3>{projeto.nome}</h3>
+                  <div className="grid">
+                    <div className="metric">
+                      <div className="label">ROI</div>
+                      <div className="value">{analytics.roiLabel}</div>
+                    </div>
+                    <div className="metric">
+                      <div className="label">Realizado</div>
+                      <div className="value">{brlFmt(analytics.realizado)}</div>
+                    </div>
+                    <div className="metric">
+                      <div className="label">Prometido</div>
+                      <div className="value">{brlFmt(analytics.prometido)}</div>
+                    </div>
+                    <div className="metric">
+                      <div className="label">BRR</div>
+                      <div className="value">
+                        {analytics.brr == null
+                          ? '—'
+                          : `${(analytics.brr * 100).toFixed(0)}%`}
+                      </div>
+                    </div>
+                  </div>
+                  <CurvaS data={analytics.curvaS || []} />
+
+                  <div className="stack" style={{ marginTop: 8 }}>
+                    <h3>Registrar medição</h3>
+                    <p className="muted">Valor + evidência + envio para homologação.</p>
+                    <label className="field">
+                      Benefício
+                      <select
+                        value={beneficioId}
+                        onChange={(e) => setBeneficioId(e.target.value)}
+                      >
+                        {(projeto.businessCase?.beneficios || []).map((b: any) => (
+                          <option key={b.id} value={b.id}>
+                            {b.nome} ({b.categoria})
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="field">
+                      Período (AAAA-MM-DD)
+                      <input value={periodo} onChange={(e) => setPeriodo(e.target.value)} />
+                    </label>
+                    <label className="field">
+                      Valor realizado (R$)
+                      <input
+                        value={valor}
+                        onChange={(e) => setValor(e.target.value)}
+                        type="number"
+                      />
+                    </label>
+                    <label className="field">
+                      Evidência
+                      <input
+                        type="file"
+                        onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                      />
+                    </label>
+                    <button className="btn" disabled={busy} onClick={registrarMedicao}>
+                      Registrar e enviar
+                    </button>
+                  </div>
+                </>
+              )}
+            </section>
+          )}
+
+          {tab === 'financas' && (
+            <section className="panel stack">
+              <h2>Fila de homologação</h2>
+              <div className="list">
+                {pendentes.map((m) => (
+                  <div key={m.id} className="row" style={{ cursor: 'default' }}>
+                    <div>
+                      <strong>{m.beneficio?.businessCase?.projeto?.nome}</strong>
+                      <div className="muted">
+                        {m.beneficio?.nome} ·{' '}
+                        {m.periodoReferencia?.slice?.(0, 10) || m.periodoReferencia} ·{' '}
+                        {brlFmt(m.valorRealizado)}
+                      </div>
+                      <div className="muted">
+                        evidências: {m.evidencias?.length ?? 0}
+                      </div>
+                    </div>
+                    <div className="actions">
+                      <button
+                        className="btn"
+                        disabled={busy}
+                        onClick={async () => {
+                          setBusy(true);
+                          try {
+                            await api.validar(m.id, 'aprovada', 'OK');
+                            setPendentes(await api.pendentes());
+                            setMsg('Medição homologada');
+                          } catch (e: any) {
+                            setError(e.message);
+                          } finally {
+                            setBusy(false);
+                          }
+                        }}
+                      >
+                        Homologar
+                      </button>
+                      <button
+                        className="btn danger"
+                        disabled={busy}
+                        onClick={async () => {
+                          setBusy(true);
+                          try {
+                            await api.validar(m.id, 'rejeitada', 'Revisar evidência');
+                            setPendentes(await api.pendentes());
+                          } catch (e: any) {
+                            setError(e.message);
+                          } finally {
+                            setBusy(false);
+                          }
+                        }}
+                      >
+                        Rejeitar
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {!pendentes.length && (
+                  <p className="muted">Nenhuma medição pendente.</p>
+                )}
+              </div>
+
+              {selectedId && (
+                <div className="stack">
+                  <h3>Custo realizado</h3>
+                  <button
+                    className="btn secondary"
+                    onClick={async () => {
+                      try {
+                        await api.custo(selectedId, {
+                          periodoReferencia: '2026-04-01',
+                          valor: 5000,
+                        });
+                        setMsg('Custo lançado no projeto selecionado');
+                        await refreshSelected(selectedId);
+                      } catch (e: any) {
+                        setError(e.message);
+                      }
+                    }}
+                  >
+                    Lançar R$ 5.000 no projeto selecionado
+                  </button>
+                </div>
+              )}
+            </section>
+          )}
+
+          {tab === 'gates' && projeto && (
+            <section className="panel stack">
+              <h2>Gates — {projeto.nome}</h2>
+              <p className="muted">
+                Premissas:{' '}
+                <span className={`badge ${projeto.premissasOkFinancas ? 'success' : 'warning'}`}>
+                  {projeto.premissasOkFinancas ? 'OK' : 'pendente'}
+                </span>
+              </p>
+              {!projeto.premissasOkFinancas && (
+                <button
+                  className="btn"
+                  onClick={async () => {
+                    await api.premissas(projeto.id, true, 'Premissas OK');
                     await refreshSelected(projeto.id);
-                    setMsg(`Gate ${g} registrado`);
-                  } catch (e: any) {
-                    setError(e.message);
-                  }
-                }}
-              >
-                {g} Go
-              </button>
-            ))}
-            <button
-              className="btn danger"
-              onClick={async () => {
-                try {
-                  await api.gate(projeto.id, { gate: 'G3', decisao: 'kill' });
-                  await refreshList();
-                  await refreshSelected(projeto.id);
-                } catch (e: any) {
-                  setError(e.message);
-                }
-              }}
-            >
-              Kill
-            </button>
-            <button
-              className="btn secondary"
-              onClick={async () => {
-                try {
-                  await api.gate(projeto.id, { gate: 'G3', decisao: 'hold' });
-                  await refreshSelected(projeto.id);
-                } catch (e: any) {
-                  setError(e.message);
-                }
-              }}
-            >
-              Hold
-            </button>
-          </div>
-          <div className="list">
-            {(projeto.gates || []).map((g: any) => (
-              <div key={g.id} className="row" style={{ cursor: 'default' }}>
-                <div>
-                  <strong>
-                    {g.gate} · {g.decisao}
-                  </strong>
-                  <div className="muted">
-                    {new Date(g.decididaEm).toLocaleString('pt-BR')}
-                  </div>
-                </div>
+                  }}
+                >
+                  Marcar premissas OK
+                </button>
+              )}
+              <div className="actions">
+                {(['G1', 'G2', 'G3', 'G4', 'G5'] as const).map((g) => (
+                  <button
+                    key={g}
+                    className="btn secondary"
+                    onClick={async () => {
+                      try {
+                        await api.gate(projeto.id, {
+                          gate: g,
+                          decisao: 'go',
+                          comentario: `${g} go`,
+                        });
+                        await refreshSelected(projeto.id);
+                        setMsg(`Gate ${g} registrado`);
+                      } catch (e: any) {
+                        setError(e.message);
+                      }
+                    }}
+                  >
+                    {g} Go
+                  </button>
+                ))}
+                <button
+                  className="btn danger"
+                  onClick={async () => {
+                    try {
+                      await api.gate(projeto.id, { gate: 'G3', decisao: 'kill' });
+                      await refreshList();
+                      await refreshSelected(projeto.id);
+                    } catch (e: any) {
+                      setError(e.message);
+                    }
+                  }}
+                >
+                  Kill
+                </button>
+                <button
+                  className="btn secondary"
+                  onClick={async () => {
+                    try {
+                      await api.gate(projeto.id, { gate: 'G3', decisao: 'hold' });
+                      await refreshSelected(projeto.id);
+                    } catch (e: any) {
+                      setError(e.message);
+                    }
+                  }}
+                >
+                  Hold
+                </button>
               </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {tab === 'nao' && (
-        <section className="panel stack">
-          <h2>Analytics Nao</h2>
-          <div className="actions">
-            <button
-              className="btn"
-              disabled={busy}
-              onClick={async () => {
-                setBusy(true);
-                try {
-                  const res = await api.syncNao();
-                  setMsg(
-                    `Sync Nao: mode=${res.mode} arquivos=${res.manifesto?.files?.length ?? Object.keys(res.files || {}).length}`,
-                  );
-                } catch (e: any) {
-                  setError(e.message);
-                } finally {
-                  setBusy(false);
-                }
-              }}
-            >
-              Sincronizar Nao
-            </button>
-          </div>
-          <iframe className="nao-frame" title="Nao" src={api.naoUrl} />
-        </section>
-      )}
-
-      {tab === 'auditoria' && (
-        <section className="panel">
-          <h2>Trilha de auditoria</h2>
-          <div className="list">
-            {auditoria.slice(0, 50).map((a) => (
-              <div key={a.id} className="row" style={{ cursor: 'default' }}>
-                <div>
-                  <strong>
-                    {a.entidade} · {a.acao}
-                  </strong>
-                  <div className="muted">
-                    {a.usuario?.nome || 'sistema'} ·{' '}
-                    {new Date(a.createdAt).toLocaleString('pt-BR')}
+              <div className="list">
+                {(projeto.gates || []).map((g: any) => (
+                  <div key={g.id} className="row" style={{ cursor: 'default' }}>
+                    <div>
+                      <strong>
+                        {g.gate} · {g.decisao}
+                      </strong>
+                      <div className="muted">
+                        {new Date(g.decididaEm).toLocaleString('pt-BR')}
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </section>
-      )}
+            </section>
+          )}
 
-      {tab === 'import' && (
-        <section className="panel stack">
-          <h2>Importações</h2>
-          <label className="field">
-            Planilha legada (CSV)
-            <input
-              type="file"
-              accept=".csv"
-              onChange={async (e) => {
-                const f = e.target.files?.[0];
-                if (!f) return;
-                try {
-                  const res: any = await api.importLegado(f);
-                  setMsg(`Importados ${res.importados} projetos`);
-                  await refreshList();
-                } catch (err: any) {
-                  setError(err.message);
-                }
-              }}
-            />
-          </label>
-          <label className="field">
-            Custos ERP (CSV)
-            <input
-              type="file"
-              accept=".csv"
-              onChange={async (e) => {
-                const f = e.target.files?.[0];
-                if (!f) return;
-                try {
-                  const res: any = await api.importCustos(f);
-                  setMsg(`Custos importados: ${res.importados}`);
-                } catch (err: any) {
-                  setError(err.message);
-                }
-              }}
-            />
-          </label>
-        </section>
-      )}
+          {tab === 'nao' && (
+            <section className="panel stack">
+              <h2>Analytics conversacional</h2>
+              <div className="actions">
+                <button
+                  className="btn"
+                  disabled={busy}
+                  onClick={async () => {
+                    setBusy(true);
+                    try {
+                      const res = await api.syncNao();
+                      setMsg(
+                        `Sync Nao: mode=${res.mode} arquivos=${res.manifesto?.files?.length ?? Object.keys(res.files || {}).length}`,
+                      );
+                    } catch (e: any) {
+                      setError(e.message);
+                    } finally {
+                      setBusy(false);
+                    }
+                  }}
+                >
+                  Sincronizar Nao
+                </button>
+              </div>
+              <iframe className="nao-frame" title="Nao" src={api.naoUrl} />
+            </section>
+          )}
+
+          {tab === 'auditoria' && (
+            <section className="panel">
+              <h2>Histórico de alterações</h2>
+              <div className="list">
+                {auditoria.slice(0, 50).map((a) => (
+                  <div key={a.id} className="row" style={{ cursor: 'default' }}>
+                    <div>
+                      <strong>
+                        {a.entidade} · {a.acao}
+                      </strong>
+                      <div className="muted">
+                        {a.usuario?.nome || 'sistema'} ·{' '}
+                        {new Date(a.createdAt).toLocaleString('pt-BR')}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {tab === 'import' && (
+            <section className="panel stack">
+              <h2>Importar dados</h2>
+              <label className="field">
+                Planilha legada (CSV)
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={async (e) => {
+                    const f = e.target.files?.[0];
+                    if (!f) return;
+                    try {
+                      const res: any = await api.importLegado(f);
+                      setMsg(`Importados ${res.importados} projetos`);
+                      await refreshList();
+                    } catch (err: any) {
+                      setError(err.message);
+                    }
+                  }}
+                />
+              </label>
+              <label className="field">
+                Custos ERP (CSV)
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={async (e) => {
+                    const f = e.target.files?.[0];
+                    if (!f) return;
+                    try {
+                      const res: any = await api.importCustos(f);
+                      setMsg(`Custos importados: ${res.importados}`);
+                    } catch (err: any) {
+                      setError(err.message);
+                    }
+                  }}
+                />
+              </label>
+            </section>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -604,7 +651,7 @@ function CurvaS({
           </div>
         </div>
       ))}
-      <p className="muted">Verde: planejado · Laranja: realizado</p>
+      <p className="muted">Azul: planejado · Verde: realizado</p>
     </div>
   );
 }
