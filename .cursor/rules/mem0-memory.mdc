@@ -1,0 +1,14 @@
+---
+description: Prefer Mem0 MCP for durable preferences and decisions across sessions
+alwaysApply: true
+---
+
+# Persistent memory (Mem0)
+
+When Mem0 MCP tools are connected:
+
+- Search memories before re-asking about settled preferences or past decisions.
+- Save durable facts (stack choices, conventions, user preferences) with `add_memory`.
+- Keep memories short and actionable; skip ephemeral debugging noise.
+
+If Mem0 is not connected, continue normally and mention that `MEM0_API_KEY` + `.cursor/mcp.json` enable cross-session memory.
