@@ -8,6 +8,12 @@ Plataforma high-code de value tracking e governança de portfólio (Stage-Gate G
 - **Web:** React (Vite) + TypeScript (pt-BR / BRL)
 - **Analytics:** Nao + DuckDB (snapshot CSV)
 
+## Deploy
+
+- **Render (API + Postgres + static web):** blueprint em [`render.yaml`](render.yaml) — no dashboard Render → *New* → *Blueprint* → aponte para este repo / pasta `oficina-valor`.
+- **Vercel (web):** root `oficina-valor/web`, env `VITE_API_URL` = URL da API no Render.
+- Demo via túnel (efêmero, enquanto o agent estiver no ar): ver comentário no PR / mensagem do agent.
+
 ## Subir localmente
 
 ```bash
