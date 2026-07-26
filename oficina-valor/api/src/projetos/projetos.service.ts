@@ -307,4 +307,123 @@ export class ProjetosService {
     });
     return this.get(id, user);
   }
+
+  /** Criação enxuta para o board do Portfólio (gerente). */
+  async createRapido(
+    input: {
+      nome: string;
+      areaNome: string;
+      investimento?: number;
+      prazoMeses?: number;
+      problema?: string;
+      valorMensalEsperado?: number;
+      status?: ProjetoStatus;
+    },
+    user: AuthUser,
+  ) {
+    const investimento = Number(input.investimento ?? 100000);
+    const prazoMeses = Number(input.prazoMeses ?? 12);
+    const valorMensal = Number(input.valorMensalEsperado ?? 5000);
+    return this.create(
+      {
+        nome: input.nome.trim(),
+        areaNome: input.areaNome.trim() || 'Geral',
+        sponsorId: user.id,
+        pmId: user.id,
+        investimento,
+        prazoMeses,
+        problema:
+          input.problema?.trim() ||
+          `Business case inicial — ${input.nome.trim()}`,
+        beneficios: [
+          {
+            nome: `Ganho estimado — ${input.nome.trim()}`,
+            categoria: BeneficioCategoria.soft,
+            valorMensalEsperado: valorMensal,
+            benefitOwnerId: user.id,
+            janelaMeses: prazoMeses,
+          },
+        ],
+      },
+      user,
+    ).then(async (created) => {
+      if (input.status && input.status !== ProjetoStatus.conceito) {
+        return this.updateStatus(created.id, input.status, user);
+      }
+      return created;
+    });
+  }
+
+  async updateStatus(id: string, status: ProjetoStatus, user: AuthUser) {
+    const before = await this.prisma.projeto.findUnique({ where: { id } });
+    if (!before) throw new NotFoundException('Projeto não encontrado');
+    const updated = await this.prisma.projeto.update({
+      where: { id },
+      data: { status },
+    });
+    await this.auditoria.log({
+      entidade: 'Projeto',
+      entidadeId: id,
+      acao: 'status_change',
+      usuarioId: user.id,
+      valorAnterior: { status: before.status },
+      valorNovo: { status },
+    });
+    return this.get(updated.id, user);
+  }
+
+  async remove(id: string, user: AuthUser) {
+    const projeto = await this.prisma.projeto.findUnique({
+      where: { id },
+      include: {
+        businessCase: {
+          include: {
+            beneficios: {
+              include: {
+                baselines: true,
+                medicoes: { include: { evidencias: true, validacao: true } },
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!projeto) throw new NotFoundException('Projeto não encontrado');
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.agentRecommendation.deleteMany({ where: { projetoId: id } });
+      await tx.wizardSessao.deleteMany({ where: { projetoId: id } });
+      await tx.gateDecisao.deleteMany({ where: { projetoId: id } });
+      await tx.custoRealizado.deleteMany({ where: { projetoId: id } });
+      await tx.historicoResponsavel.deleteMany({ where: { projetoId: id } });
+
+      const beneficios = projeto.businessCase?.beneficios ?? [];
+      for (const b of beneficios) {
+        for (const m of b.medicoes) {
+          await tx.evidencia.deleteMany({ where: { medicaoId: m.id } });
+          if (m.validacao) {
+            await tx.validacao.delete({ where: { id: m.validacao.id } });
+          }
+        }
+        await tx.medicao.deleteMany({ where: { beneficioId: b.id } });
+        await tx.baseline.deleteMany({ where: { beneficioId: b.id } });
+        await tx.historicoResponsavel.deleteMany({ where: { beneficioId: b.id } });
+        await tx.beneficio.delete({ where: { id: b.id } });
+      }
+      if (projeto.businessCase) {
+        await tx.businessCase.delete({ where: { id: projeto.businessCase.id } });
+      }
+      await tx.projeto.delete({ where: { id } });
+    });
+
+    await this.auditoria.log({
+      entidade: 'Projeto',
+      entidadeId: id,
+      acao: 'delete',
+      usuarioId: user.id,
+      valorAnterior: { nome: projeto.nome, status: projeto.status },
+    });
+
+    return { ok: true, id, nome: projeto.nome };
+  }
 }

@@ -123,6 +123,28 @@ export const api = {
   projetos: () => request<any[]>('/projetos'),
   projeto: (id: string) => request<any>(`/projetos/${id}`),
   analytics: (id: string) => request<any>(`/projetos/${id}/analytics`),
+  criarProjetoRapido: (body: {
+    nome: string;
+    areaNome: string;
+    investimento?: number;
+    prazoMeses?: number;
+    problema?: string;
+    valorMensalEsperado?: number;
+    status?: string;
+  }) =>
+    request<any>('/projetos/rapido', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  atualizarStatusProjeto: (id: string, status: string) =>
+    request<any>(`/projetos/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    }),
+  removerProjeto: (id: string) =>
+    request<{ ok: boolean; id: string; nome: string }>(`/projetos/${id}`, {
+      method: 'DELETE',
+    }),
   portfolio: () => request<any>('/portfolio/resumo'),
   pendentes: () => request<any[]>('/medicoes/pendentes'),
   criarMedicao: (

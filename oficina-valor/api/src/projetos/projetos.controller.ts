@@ -1,13 +1,14 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { BeneficioCategoria } from '@prisma/client';
+import { BeneficioCategoria, ProjetoStatus } from '@prisma/client';
 import {
   IsArray,
   IsBoolean,
@@ -115,6 +116,42 @@ class ReatribuirDto {
   motivo?: string;
 }
 
+class CreateRapidoDto {
+  @IsString()
+  nome!: string;
+
+  @IsString()
+  areaNome!: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  investimento?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  prazoMeses?: number;
+
+  @IsOptional()
+  @IsString()
+  problema?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  valorMensalEsperado?: number;
+
+  @IsOptional()
+  @IsEnum(ProjetoStatus)
+  status?: ProjetoStatus;
+}
+
+class StatusDto {
+  @IsEnum(ProjetoStatus)
+  status!: ProjetoStatus;
+}
+
 @Controller('projetos')
 @UseGuards(DevAuthGuard, RolesGuard)
 export class ProjetosController {
@@ -123,6 +160,11 @@ export class ProjetosController {
   @Get()
   list(@CurrentUser() user: AuthUser) {
     return this.projetos.list(user);
+  }
+
+  @Post('rapido')
+  createRapido(@Body() dto: CreateRapidoDto, @CurrentUser() user: AuthUser) {
+    return this.projetos.createRapido(dto, user);
   }
 
   @Get(':id')
@@ -161,5 +203,19 @@ export class ProjetosController {
     @CurrentUser() user: AuthUser,
   ) {
     return this.projetos.reatribuirPm(id, dto.novoPmId, user, dto.motivo);
+  }
+
+  @Patch(':id/status')
+  status(
+    @Param('id') id: string,
+    @Body() dto: StatusDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.projetos.updateStatus(id, dto.status, user);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string, @CurrentUser() user: AuthUser) {
+    return this.projetos.remove(id, user);
   }
 }

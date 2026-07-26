@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   api,
   AuthError,
-  brl,
   clearSession,
   getUser,
   onAuthChange,
@@ -13,6 +12,7 @@ import { NaoWorkspace } from './components/NaoWorkspace';
 import { WizardGanhos } from './components/WizardGanhos';
 import { AnalyticsBoard } from './components/AnalyticsBoard';
 import { AgentsWorkspace } from './components/AgentsWorkspace';
+import { PortfolioWorkspace } from './components/PortfolioWorkspace';
 
 type Tab =
   | 'diretoria'
@@ -24,8 +24,6 @@ type Tab =
   | 'import';
 
 type Health = 'green' | 'yellow' | 'red';
-
-const brlFmt = brl;
 
 const NAV: { section: string; items: { id: Tab; label: string; icon: string }[] }[] =
   [
@@ -55,7 +53,7 @@ const NAV: { section: string; items: { id: Tab; label: string; icon: string }[] 
 
 const TITLES: Record<Tab, string> = {
   projetos: 'Analytics',
-  diretoria: 'Transformation status',
+  diretoria: 'Portfólio',
   nao: 'Insights',
   wizard: 'Wizard de ganhos',
   agents: 'Agents',
@@ -381,138 +379,25 @@ export default function App() {
           )}
 
           {tab === 'diretoria' && (
-            <>
-              {!enrichedPortfolio ? (
-                <section className="panel">
-                  <p className="muted">Carregando portfólio…</p>
-                </section>
-              ) : (
-                <>
-                  <div className="metric-row">
-                    <div className="metric-card">
-                      <div className="metric-icon green" aria-hidden>
-                        ✓
-                      </div>
-                      <div>
-                        <div className="value tone-green">
-                          {brlFmt(enrichedPortfolio.realizado)}
-                        </div>
-                        <div className="label">Valor homologado</div>
-                      </div>
-                    </div>
-                    <div className="metric-card">
-                      <div className="metric-icon blue" aria-hidden>
-                        ◆
-                      </div>
-                      <div>
-                        <div className="value tone-blue">
-                          {enrichedPortfolio.roiLabel}
-                        </div>
-                        <div className="label">ROI do portfólio</div>
-                      </div>
-                    </div>
-                    <div className="metric-card">
-                      <div className="metric-icon orange" aria-hidden>
-                        !
-                      </div>
-                      <div>
-                        <div className="value tone-orange">
-                          {enrichedPortfolio.projetosEmRisco}
-                        </div>
-                        <div className="label">Em risco (BRR &lt; 70%)</div>
-                      </div>
-                    </div>
-                    <div className="metric-card">
-                      <div className="metric-icon purple" aria-hidden>
-                        ≡
-                      </div>
-                      <div>
-                        <div className="value tone-purple">
-                          {brlFmt(enrichedPortfolio.prometido)}
-                        </div>
-                        <div className="label">Baseline prometida</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <section className="panel">
-                    <div className="panel-head">
-                      <h2>Health por projeto</h2>
-                      <span className="meta">{enriched.length} programas</span>
-                    </div>
-                    <div className="rag-table-wrap">
-                      <table className="rag-table">
-                        <thead>
-                          <tr>
-                            <th>Programa</th>
-                            <th>Prometido</th>
-                            <th>Realizado</th>
-                            <th>BRR</th>
-                            <th>ROI</th>
-                            <th>Overall</th>
-                            <th>Valor</th>
-                            <th>Custo</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {enriched.map((p) => {
-                            const brrPct =
-                              p.brr == null ? null : Math.round(p.brr * 100);
-                            const custoHealth: Health =
-                              p.analytics?.custoRealizado > p.prometido
-                                ? 'red'
-                                : p.analytics?.custoRealizado > p.prometido * 0.7
-                                  ? 'yellow'
-                                  : 'green';
-                            return (
-                              <tr
-                                key={p.id}
-                                className={selectedId === p.id ? 'is-selected' : ''}
-                                onClick={() => {
-                                  setSelectedId(p.id);
-                                  setTab('wizard');
-                                }}
-                              >
-                                <td>
-                                  <strong>{p.nome}</strong>
-                                  <div className="muted" style={{ fontSize: 12 }}>
-                                    {p.area?.nome}
-                                  </div>
-                                </td>
-                                <td>{brlFmt(p.prometido)}</td>
-                                <td>{brlFmt(p.realizado)}</td>
-                                <td>{brrPct == null ? '—' : `${brrPct}%`}</td>
-                                <td>{p.analytics?.roiLabel ?? '—'}</td>
-                                <td>
-                                  <span className={`rag-dot ${p.health}`} />
-                                </td>
-                                <td>
-                                  <span className={`rag-dot ${p.health}`} />
-                                </td>
-                                <td>
-                                  <span className={`rag-dot ${custoHealth}`} />
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                    <div className="rag-legend">
-                      <span>
-                        <i className="rag-dot green" /> On track
-                      </span>
-                      <span>
-                        <i className="rag-dot yellow" /> At risk
-                      </span>
-                      <span>
-                        <i className="rag-dot red" /> Delayed
-                      </span>
-                    </div>
-                  </section>
-                </>
-              )}
-            </>
+            <PortfolioWorkspace
+              portfolio={enrichedPortfolio}
+              projetos={enriched}
+              selectedId={selectedId}
+              onSelect={setSelectedId}
+              onOpenWizard={(id) => {
+                setSelectedId(id);
+                setTab('wizard');
+              }}
+              onRefresh={async () => {
+                await refreshList();
+                setPortfolio(await api.portfolio());
+              }}
+              onMessage={(m) => {
+                setMsg(m);
+                setError('');
+              }}
+              onError={setError}
+            />
           )}
 
           {tab === 'nao' && (
