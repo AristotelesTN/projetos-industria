@@ -8,6 +8,11 @@ import { RolesGuard } from '../common/roles.guard';
 export class NaoController {
   constructor(private readonly nao: NaoService) {}
 
+  @Get('status')
+  status() {
+    return this.nao.status();
+  }
+
   @Get('snapshot')
   snapshot() {
     return this.nao.buildSnapshot();
@@ -15,6 +20,6 @@ export class NaoController {
 
   @Post('sync')
   sync() {
-    return this.nao.syncRemote();
+    return this.nao.syncLocal();
   }
 }

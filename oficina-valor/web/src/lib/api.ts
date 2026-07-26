@@ -197,6 +197,7 @@ export const api = {
     return request('/integracoes/legado', { method: 'POST', body: fd });
   },
   syncNao: () => request<any>('/nao/sync', { method: 'POST', body: '{}' }),
+  naoStatus: () => request<any>('/nao/status'),
   auditoria: () => request<any[]>('/auditoria'),
   exportGanhos: async () => {
     const blob = (await request<Blob>('/relatorios/ganhos')) as Blob;

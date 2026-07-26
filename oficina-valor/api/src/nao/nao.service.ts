@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { MedicaoStatus } from '@prisma/client';
+import { execFile } from 'child_process';
+import { mkdirSync, writeFileSync, existsSync } from 'fs';
+import { join, resolve } from 'path';
+import { promisify } from 'util';
 import { PrismaService } from '../prisma/prisma.service';
 import { AnalyticsService } from '../analytics/analytics.service';
+
+const execFileAsync = promisify(execFile);
 
 function toCsv(rows: Record<string, unknown>[]): string {
   if (!rows.length) return '';
@@ -25,6 +31,26 @@ export class NaoService {
     private readonly prisma: PrismaService,
     private readonly analytics: AnalyticsService,
   ) {}
+
+  private naoRoot() {
+    return resolve(
+      process.env.NAO_PROJECT_PATH || join(process.cwd(), '..', 'nao'),
+    );
+  }
+
+  status() {
+    const root = this.naoRoot();
+    const data = join(root, 'data');
+    const db = join(root, 'oficina_valor.duckdb');
+    const chatUrl = process.env.NAO_URL || 'http://localhost:5006';
+    return {
+      projectPath: root,
+      dataPath: data,
+      duckdbExists: existsSync(db),
+      chatUrl,
+      configured: existsSync(join(root, 'nao_config.yaml')),
+    };
+  }
 
   async buildSnapshot() {
     const projetos = await this.prisma.projeto.findMany({
@@ -177,31 +203,70 @@ export class NaoService {
     return { files, manifesto };
   }
 
-  async syncRemote() {
+  /** Grava CSVs em nao/data e rebuilda o DuckDB (fonte do chat Nao). */
+  async syncLocal() {
     const snap = await this.buildSnapshot();
+    const root = this.naoRoot();
+    const dataDir = join(root, 'data');
+    mkdirSync(dataDir, { recursive: true });
+    const written: string[] = [];
+    for (const [name, content] of Object.entries(snap.files)) {
+      writeFileSync(join(dataDir, name), content, 'utf8');
+      written.push(name);
+    }
+
+    const buildScript = join(root, 'scripts', 'build_duckdb.py');
+    let buildOk = false;
+    let buildStdout = '';
+    let buildStderr = '';
+    if (existsSync(buildScript)) {
+      try {
+        const { stdout, stderr } = await execFileAsync(
+          'python3',
+          [buildScript],
+          { cwd: root, timeout: 60000 },
+        );
+        buildOk = true;
+        buildStdout = stdout;
+        buildStderr = stderr;
+      } catch (e: any) {
+        buildOk = false;
+        buildStdout = e.stdout?.toString?.() ?? '';
+        buildStderr = e.stderr?.toString?.() ?? String(e);
+      }
+    } else {
+      buildStderr = `Script não encontrado: ${buildScript}`;
+    }
+
     const syncUrl = process.env.NAO_SYNC_URL;
-    if (!syncUrl) {
-      return { mode: 'local-pack', ...snap };
+    let remote: unknown = null;
+    if (syncUrl) {
+      try {
+        const res = await fetch(syncUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            manifesto: snap.manifesto,
+            files: snap.files,
+          }),
+        });
+        remote = { ok: res.ok, body: await res.json().catch(() => ({})) };
+      } catch (e) {
+        remote = { ok: false, error: String(e) };
+      }
     }
-    try {
-      const res = await fetch(syncUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          manifesto: snap.manifesto,
-          files: snap.files,
-        }),
-      });
-      const body = await res.json().catch(() => ({}));
-      return { mode: 'remote', ok: res.ok, manifesto: snap.manifesto, body };
-    } catch (e) {
-      return {
-        mode: 'remote-error',
-        ok: false,
-        manifesto: snap.manifesto,
-        error: String(e),
-        files: snap.files,
-      };
-    }
+
+    return {
+      mode: 'local-duckdb',
+      ok: buildOk,
+      manifesto: snap.manifesto,
+      written,
+      projectPath: root,
+      duckdb: join(root, 'oficina_valor.duckdb'),
+      buildStdout: buildStdout.slice(-2000),
+      buildStderr: buildStderr.slice(-2000),
+      remote,
+      chatUrl: process.env.NAO_URL || 'http://localhost:5006',
+    };
   }
 }

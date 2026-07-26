@@ -9,6 +9,7 @@ import {
   setSession,
   type User,
 } from './lib/api';
+import { NaoWorkspace } from './components/NaoWorkspace';
 
 type Tab =
   | 'diretoria'
@@ -580,30 +581,14 @@ export default function App() {
           )}
 
           {tab === 'nao' && (
-            <section className="panel stack">
-              <h2>Analytics conversacional</h2>
-              <div className="actions">
-                <button
-                  className="btn"
-                  disabled={busy}
-                  onClick={async () => {
-                    setBusy(true);
-                    try {
-                      const res = await api.syncNao();
-                      setMsg(
-                        `Sync Nao: mode=${res.mode} arquivos=${res.manifesto?.files?.length ?? Object.keys(res.files || {}).length}`,
-                      );
-                    } catch (e: any) {
-                      setError(e.message);
-                    } finally {
-                      setBusy(false);
-                    }
-                  }}
-                >
-                  Sincronizar Nao
-                </button>
-              </div>
-              <iframe className="nao-frame" title="Nao" src={api.naoUrl} />
+            <section className="panel nao-panel">
+              <NaoWorkspace
+                onMessage={(m) => {
+                  setMsg(m);
+                  setError('');
+                }}
+                onError={setError}
+              />
             </section>
           )}
 
