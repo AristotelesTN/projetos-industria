@@ -230,6 +230,37 @@ export const api = {
     }),
   listWizards: (projetoId: string) =>
     request<any[]>(`/projetos/${projetoId}/wizards`),
+  agentsOverview: () => request<any>('/agents/overview'),
+  agentsRecommendations: (params?: { agent?: string; status?: string }) => {
+    const q = new URLSearchParams();
+    if (params?.agent) q.set('agent', params.agent);
+    if (params?.status) q.set('status', params.status);
+    const qs = q.toString();
+    return request<any[]>(`/agents/recommendations${qs ? `?${qs}` : ''}`);
+  },
+  agentsActivity: (params?: { agent?: string; status?: string }) => {
+    const q = new URLSearchParams();
+    if (params?.agent) q.set('agent', params.agent);
+    if (params?.status) q.set('status', params.status);
+    const qs = q.toString();
+    return request<any[]>(`/agents/activity${qs ? `?${qs}` : ''}`);
+  },
+  agentsScan: () => request<any>('/agents/scan', { method: 'POST', body: '{}' }),
+  agentsAccept: (id: string) =>
+    request<any>(`/agents/recommendations/${id}/accept`, {
+      method: 'POST',
+      body: '{}',
+    }),
+  agentsReject: (id: string) =>
+    request<any>(`/agents/recommendations/${id}/reject`, {
+      method: 'POST',
+      body: '{}',
+    }),
+  agentsSetMode: (mode: 'assisted' | 'automated') =>
+    request<any>('/agents/mode', {
+      method: 'PATCH',
+      body: JSON.stringify({ mode }),
+    }),
   auditoria: () => request<any[]>('/auditoria'),
   exportGanhos: async () => {
     const blob = (await request<Blob>('/relatorios/ganhos')) as Blob;

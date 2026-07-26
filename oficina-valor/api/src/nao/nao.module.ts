@@ -7,5 +7,6 @@ import { AnalyticsModule } from '../analytics/analytics.module';
   imports: [AnalyticsModule],
   controllers: [NaoController],
   providers: [NaoService],
+  exports: [NaoService],
 })
 export class NaoModule {}

@@ -93,10 +93,14 @@ export function AnalyticsBoard({
   portfolio,
   onOpenWizard,
   onOpenInsights,
+  onOpenAgents,
+  agentsPending = 0,
 }: {
   portfolio: any | null;
   onOpenWizard: () => void;
   onOpenInsights: () => void;
+  onOpenAgents: () => void;
+  agentsPending?: number;
 }) {
   const [view, setView] = useState<'overview' | 'ganhos' | 'risco' | 'areas'>(
     'overview',
@@ -218,6 +222,15 @@ export function AnalyticsBoard({
           </p>
         </div>
         <div className="top-actions">
+          <button
+            className="btn secondary agents-badge-btn"
+            onClick={onOpenAgents}
+          >
+            <span className="orb sm blue" /> Agents
+            {agentsPending > 0 && (
+              <span className="badge-count">{agentsPending}</span>
+            )}
+          </button>
           <button className="btn secondary" onClick={onOpenInsights}>
             Insights
           </button>
@@ -516,19 +529,22 @@ export function AnalyticsBoard({
 
       <section className="panel">
         <div className="panel-head">
-          <h2>Prescrições da Oficina</h2>
-          <span className="meta">Ações recomendadas</span>
+          <h2>Prescrições · Agents</h2>
+          <span className="meta">Supervisor pattern</span>
         </div>
         <div className="prescription-list">
-          {prescriptions.map((p) => (
+          {prescriptions.slice(0, 2).map((p) => (
             <div key={p.title} className={`prescription tone-${p.tone}`}>
               <strong>{p.title}</strong>
               <span>{p.text}</span>
             </div>
           ))}
-          {!prescriptions.length && (
-            <p className="muted">Nenhuma prescrição no momento.</p>
-          )}
+          <div className="actions" style={{ marginTop: 4 }}>
+            <button className="btn" onClick={onOpenAgents}>
+              Ver fila em Agents
+              {agentsPending > 0 ? ` (${agentsPending})` : ''}
+            </button>
+          </div>
         </div>
       </section>
     </div>

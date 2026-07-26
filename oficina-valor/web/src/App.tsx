@@ -12,12 +12,14 @@ import {
 import { NaoWorkspace } from './components/NaoWorkspace';
 import { WizardGanhos } from './components/WizardGanhos';
 import { AnalyticsBoard } from './components/AnalyticsBoard';
+import { AgentsWorkspace } from './components/AgentsWorkspace';
 
 type Tab =
   | 'diretoria'
   | 'projetos'
   | 'nao'
   | 'wizard'
+  | 'agents'
   | 'auditoria'
   | 'import';
 
@@ -37,6 +39,7 @@ const NAV: { section: string; items: { id: Tab; label: string; icon: string }[] 
     {
       section: 'Valor',
       items: [
+        { id: 'agents', label: 'Agents', icon: '◉' },
         { id: 'wizard', label: 'Wizard ganhos', icon: '✦' },
         { id: 'nao', label: 'Insights', icon: '◎' },
       ],
@@ -55,6 +58,7 @@ const TITLES: Record<Tab, string> = {
   diretoria: 'Transformation status',
   nao: 'Insights',
   wizard: 'Wizard de ganhos',
+  agents: 'Agents',
   auditoria: 'Auditoria',
   import: 'Importações',
 };
@@ -77,6 +81,8 @@ export default function App() {
   const [auditoria, setAuditoria] = useState<any[]>([]);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
+  const [agentsPending, setAgentsPending] = useState(0);
+  const [insightsPrompt, setInsightsPrompt] = useState<string | null>(null);
 
   useEffect(() => {
     return onAuthChange(setUser);
@@ -132,6 +138,12 @@ export default function App() {
     }
     if (tab === 'auditoria') {
       api.auditoria().then(setAuditoria).catch(handleApiError);
+    }
+    if (tab === 'projetos' || tab === 'agents') {
+      api
+        .agentsOverview()
+        .then((o) => setAgentsPending(o?.kpis?.awaiting ?? 0))
+        .catch(() => undefined);
     }
   }, [tab, user, bootstrapping]);
 
@@ -274,7 +286,16 @@ export default function App() {
             <h1>{TITLES[tab]}</h1>
           </div>
           <div className="top-actions">
-            {(tab === 'projetos' || tab === 'wizard') && (
+            <button
+              className="btn secondary agents-badge-btn"
+              onClick={() => setTab('agents')}
+            >
+              <span className="orb sm blue" /> Agents
+              {agentsPending > 0 && (
+                <span className="badge-count">{agentsPending}</span>
+              )}
+            </button>
+            {(tab === 'projetos' || tab === 'wizard' || tab === 'agents') && (
               <button
                 className="btn"
                 onClick={() => {
@@ -302,7 +323,8 @@ export default function App() {
             tab === 'projetos' ||
             tab === 'diretoria' ||
             tab === 'wizard' ||
-            tab === 'nao'
+            tab === 'nao' ||
+            tab === 'agents'
               ? 'wide'
               : ''
           }`}
@@ -315,6 +337,31 @@ export default function App() {
               portfolio={enrichedPortfolio}
               onOpenWizard={() => setTab('wizard')}
               onOpenInsights={() => setTab('nao')}
+              onOpenAgents={() => setTab('agents')}
+              agentsPending={agentsPending}
+            />
+          )}
+
+          {tab === 'agents' && (
+            <AgentsWorkspace
+              onMessage={(m) => {
+                setMsg(m);
+                setError('');
+              }}
+              onError={setError}
+              onNavigate={(nav) => {
+                if (nav.projetoId) setSelectedId(String(nav.projetoId));
+                if (nav.message) setMsg(String(nav.message));
+                if (nav.prompt) setInsightsPrompt(String(nav.prompt));
+                if (nav.tab === 'wizard') setTab('wizard');
+                else if (nav.tab === 'nao') setTab('nao');
+                else if (nav.tab === 'diretoria') setTab('diretoria');
+                else setTab('agents');
+                void api
+                  .agentsOverview()
+                  .then((o) => setAgentsPending(o?.kpis?.awaiting ?? 0))
+                  .catch(() => undefined);
+              }}
             />
           )}
 
@@ -473,6 +520,8 @@ export default function App() {
           {tab === 'nao' && (
             <section className="panel nao-panel">
               <NaoWorkspace
+                initialPrompt={insightsPrompt}
+                onInitialPromptConsumed={() => setInsightsPrompt(null)}
                 onMessage={(m) => {
                   setMsg(m);
                   setError('');

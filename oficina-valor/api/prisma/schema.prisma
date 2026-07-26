@@ -89,6 +89,7 @@ model Usuario {
   auditorias          Auditoria[]
   historicosDe        HistoricoResponsavel[] @relation("ResponsavelAnterior")
   historicosPara      HistoricoResponsavel[] @relation("ResponsavelNovo")
+  agentRecommendations AgentRecommendation[] @relation("AgentResolvedBy")
 
   @@map("usuarios")
 }
@@ -173,6 +174,7 @@ model Projeto {
   custos         CustoRealizado[]
   historicosResp HistoricoResponsavel[]
   wizards        WizardSessao[]
+  agentRecs      AgentRecommendation[]
 
   @@map("projetos")
 }
@@ -395,14 +397,76 @@ model PeriodoFechado {
   @@map("periodos_fechados")
 }
 
+enum AgentCodigo {
+  chief
+  captura
+  roi_auditor
+  curva_s
+  risco
+  insights
+}
+
+enum AgentRecoStatus {
+  pending
+  accepted
+  rejected
+  auto
+}
+
+enum AgentMode {
+  assisted
+  automated
+}
+
 model ConfigVmo {
-  id                    String   @id @default(uuid())
-  janelaSavingsPadrao   Int      @default(12) @map("janela_savings_padrao")
-  limiarLeanInvestimento Decimal @default(50000) @map("limiar_lean_investimento") @db.Decimal(18, 2)
-  pesosScoring          Json     @default("{\"alinhamento\":0.25,\"roi\":0.25,\"risco\":0.20,\"urgencia\":0.15,\"capacidade\":0.15}") @map("pesos_scoring")
-  updatedAt             DateTime @updatedAt @map("updated_at")
+  id                     String    @id @default(uuid())
+  janelaSavingsPadrao    Int       @default(12) @map("janela_savings_padrao")
+  limiarLeanInvestimento Decimal   @default(50000) @map("limiar_lean_investimento") @db.Decimal(18, 2)
+  pesosScoring           Json      @default("{\"alinhamento\":0.25,\"roi\":0.25,\"risco\":0.20,\"urgencia\":0.15,\"capacidade\":0.15}") @map("pesos_scoring")
+  agentMode              AgentMode @default(assisted) @map("agent_mode")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
 
   @@map("config_vmo")
+}
+
+model AgentRecommendation {
+  id            String          @id @default(uuid())
+  agent         AgentCodigo
+  codigo        String          @unique
+  titulo        String
+  acaoProposta  String          @map("acao_proposta")
+  projetoId     String?         @map("projeto_id")
+  confidence    Int             @default(80)
+  reasoning     Json            @default("{}")
+  effect        Json            @default("{}")
+  status        AgentRecoStatus @default(pending)
+  mode          AgentMode       @default(assisted)
+  createdAt     DateTime        @default(now()) @map("created_at")
+  resolvedAt    DateTime?       @map("resolved_at")
+  resolvedById  String?         @map("resolved_by_id")
+
+  projeto    Projeto? @relation(fields: [projetoId], references: [id])
+  resolvedBy  Usuario? @relation("AgentResolvedBy", fields: [resolvedById], references: [id])
+
+  @@index([status, agent])
+  @@index([createdAt])
+  @@map("agent_recommendations")
+}
+
+model AgentActivity {
+  id               String      @id @default(uuid())
+  agent            AgentCodigo
+  event            String
+  summary          String
+  recommendationId String?     @map("recommendation_id")
+  projetoId        String?     @map("projeto_id")
+  statusBadge      String?     @map("status_badge")
+  detail           Json        @default("{}")
+  createdAt        DateTime    @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@index([agent])
+  @@map("agent_activities")
 }
 
 model Auditoria {

@@ -19,9 +19,13 @@ type Msg = {
 export function NaoWorkspace({
   onMessage,
   onError,
+  initialPrompt,
+  onInitialPromptConsumed,
 }: {
   onMessage: (m: string) => void;
   onError: (e: string) => void;
+  initialPrompt?: string | null;
+  onInitialPromptConsumed?: () => void;
 }) {
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<any>(null);
@@ -64,7 +68,7 @@ export function NaoWorkspace({
 
   async function ask(question: string) {
     const q = question.trim();
-    if (!q || busy) return;
+    if (!q) return;
     setBusy(true);
     setMsgs((m) => [...m, { role: 'user', text: q }]);
     setInput('');
@@ -84,6 +88,13 @@ export function NaoWorkspace({
       setBusy(false);
     }
   }
+
+  useEffect(() => {
+    if (!initialPrompt) return;
+    void ask(initialPrompt).finally(() => onInitialPromptConsumed?.());
+    // intentionally only when agent navigation injects a prompt
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialPrompt]);
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
