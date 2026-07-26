@@ -36,3 +36,17 @@ Refresh:
 git clone --single-branch --depth 1 https://github.com/VoltAgent/awesome-design-md.git ~/.cursor/awesome-design-md
 # or: cd ~/.cursor/awesome-design-md && git pull
 ```
+
+## last30days
+
+[mvanhorn/last30days-skill](https://github.com/mvanhorn/last30days-skill) — research what people say about a topic in the last 30 days (Reddit, X, YouTube, TikTok, HN, Polymarket, GitHub, web).
+
+- **Global:** `~/.cursor/skills/last30days` (+ `~/.agents/skills/last30days`)
+- **Repo:** thin router at `.agents/skills/last30days` / `.cursor/skills/last30days`
+
+Refresh:
+
+```bash
+npx skills add mvanhorn/last30days-skill -g
+cp -a ~/.agents/skills/last30days ~/.cursor/skills/last30days
+```
