@@ -36,6 +36,7 @@ function agentColor(code: string, meta?: Record<string, { color: string }>) {
 }
 
 function agentLabel(code: string, meta?: Record<string, { label: string }>) {
+  if (code === 'chief') return meta?.[code]?.label || 'Maestro';
   return meta?.[code]?.label || code;
 }
 
@@ -113,7 +114,7 @@ export function AgentsWorkspace({
     setBusy(true);
     try {
       const res = await api.agentsScan();
-      onMessage(`Chief scan · ${res.created} recomendações`);
+      onMessage(`Maestro · ${res.created} recomendações`);
       await load();
       setTab('recommendations');
     } catch (e: any) {
@@ -247,15 +248,15 @@ export function AgentsWorkspace({
         <>
           <div className="kpi-row agents-kpi">
             <article className="kpi-card">
-              <div className="label">Actions</div>
+              <div className="label">Ações</div>
               <div className="value">{overview.kpis.actions}</div>
             </article>
             <article className="kpi-card">
-              <div className="label">Success</div>
+              <div className="label">Sucesso</div>
               <div className="value tone-green">{overview.kpis.successPct}%</div>
             </article>
             <article className="kpi-card">
-              <div className="label">Awaiting</div>
+              <div className="label">Aguardando</div>
               <div className="value tone-orange">{overview.kpis.awaiting}</div>
             </article>
             <article className="kpi-card">
@@ -264,44 +265,79 @@ export function AgentsWorkspace({
             </article>
           </div>
 
-          <section className="panel">
+          <section className="panel hierarchy-panel">
             <div className="panel-head">
-              <h2>Supervisor hierarchy</h2>
+              <h2>Orquestração</h2>
+              <span className="meta">
+                {overview.hierarchy.specialists.reduce(
+                  (n: number, s: any) => n + (s.pending || 0),
+                  0,
+                )}{' '}
+                pendentes
+              </span>
             </div>
             <div className="agent-tree">
-              <div className="chief-node">
-                <span className="orb lg blue" />
-                <div>
-                  <strong>{overview.hierarchy.chief.label}</strong>
-                </div>
+              <div className="maestro-rail">
+                <button
+                  type="button"
+                  className="maestro-node"
+                  onClick={() => {
+                    setAgentFilter('all');
+                    setTab('recommendations');
+                  }}
+                >
+                  <span className="orb lg blue maestro-orb" aria-hidden />
+                  <div className="maestro-copy">
+                    <strong>{overview.hierarchy.chief.label}</strong>
+                    <span className="maestro-mode">
+                      {mode === 'automated' ? 'Automático' : 'Assistido'}
+                    </span>
+                  </div>
+                  <span className="maestro-stat">
+                    <em>{overview.kpis.awaiting}</em>
+                    na fila
+                  </span>
+                </button>
+                <div className="tree-stem" aria-hidden />
+                <div className="tree-rail" aria-hidden />
               </div>
               <div className="agent-branches">
-                {overview.hierarchy.specialists.map((s: any) => (
-                  <button
-                    key={s.codigo}
-                    type="button"
-                    className="agent-node"
-                    onClick={() => {
-                      setAgentFilter(s.codigo);
-                      setTab('recommendations');
-                    }}
-                  >
-                    <span
-                      className="orb md"
-                      style={{ background: s.color }}
-                    />
-                    <strong>{s.label}</strong>
-                    <span className="badge in-progress">{s.pending} pending</span>
-                  </button>
-                ))}
+                {overview.hierarchy.specialists.map((s: any, idx: number) => {
+                  const hot = (s.pending || 0) > 0;
+                  return (
+                    <button
+                      key={s.codigo}
+                      type="button"
+                      className={`agent-node ${hot ? 'has-pending' : ''}`}
+                      style={{ animationDelay: `${idx * 45}ms` }}
+                      onClick={() => {
+                        setAgentFilter(s.codigo);
+                        setTab('recommendations');
+                      }}
+                    >
+                      <span className="agent-node-top">
+                        <span
+                          className="orb md"
+                          style={{ background: s.color }}
+                          aria-hidden
+                        />
+                        <strong>{s.label}</strong>
+                      </span>
+                      <span className={`pending-foot ${hot ? 'hot' : ''}`}>
+                        <em>{s.pending}</em>
+                        {hot ? 'pendentes' : 'em dia'}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </section>
 
           <section className="panel">
             <div className="panel-head">
-              <h2>Live status · projetos</h2>
-              <span className="meta">{overview.liveDots?.length || 0} units</span>
+              <h2>Status ao vivo</h2>
+              <span className="meta">{overview.liveDots?.length || 0} projetos</span>
             </div>
             <div className="live-grid">
               {(overview.liveDots || []).map((d: any) => (
@@ -309,7 +345,7 @@ export function AgentsWorkspace({
                   key={d.projetoId}
                   className="live-cell"
                   style={{ background: d.color }}
-                  title={`${d.nome} · ${d.agent}`}
+                  title={`${d.nome} · ${d.agent === 'chief' ? 'Maestro' : d.agent}`}
                 />
               ))}
             </div>
@@ -317,7 +353,7 @@ export function AgentsWorkspace({
 
           <section className="panel">
             <div className="panel-head">
-              <h2>Recent actions</h2>
+              <h2>Ações recentes</h2>
             </div>
             <div className="recent-list">
               {(overview.recentActions || []).slice(0, 8).map((a: any) => (
@@ -431,7 +467,7 @@ export function AgentsWorkspace({
           {!filteredRecs.length && (
             <div className="empty-state">
               <strong>Nenhuma recomendação</strong>
-              <span>Execute Scan now para o Chief orquestrar os especialistas.</span>
+              <span>Execute Scan now para o Maestro orquestrar os especialistas.</span>
               <button className="btn" onClick={scan} disabled={busy}>
                 Scan now
               </button>

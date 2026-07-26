@@ -379,7 +379,7 @@ export class AgentsService {
     await this.logActivity({
       agent: AgentCodigo.chief,
       event: 'scan',
-      summary: `Chief orquestrou scan · ${created.length} recomendações (${mode})`,
+      summary: `Maestro orquestrou scan · ${created.length} recomendações (${mode})`,
       statusBadge: 'Auto',
       detail: { count: created.length, mode },
     });
@@ -470,9 +470,9 @@ export class AgentsService {
       hierarchy: {
         chief: {
           codigo: 'chief',
-          label: 'Chief AI',
+          label: 'Maestro',
           color: '#0c66e4',
-          role: 'Orquestra especialistas · Agents propose; you approve',
+          role: 'Orquestra os especialistas da Oficina',
         },
         specialists: byAgent,
       },
