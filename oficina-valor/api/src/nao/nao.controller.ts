@@ -27,4 +27,9 @@ export class NaoController {
   ask(@Body() body: { question?: string }) {
     return this.nao.ask(body?.question || '');
   }
+
+  @Post('story')
+  story() {
+    return this.nao.buildStory();
+  }
 }

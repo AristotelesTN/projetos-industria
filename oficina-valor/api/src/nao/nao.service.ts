@@ -42,13 +42,12 @@ export class NaoService {
     const root = this.naoRoot();
     const data = join(root, 'data');
     const db = join(root, 'oficina_valor.duckdb');
-    const chatUrl = process.env.NAO_URL || 'http://localhost:5006';
     return {
       projectPath: root,
       dataPath: data,
       duckdbExists: existsSync(db),
-      chatUrl,
       configured: existsSync(join(root, 'nao_config.yaml')),
+      engine: 'oficina-insights',
     };
   }
 
@@ -266,56 +265,222 @@ export class NaoService {
       buildStdout: buildStdout.slice(-2000),
       buildStderr: buildStderr.slice(-2000),
       remote,
-      chatUrl: process.env.NAO_URL || 'http://localhost:5006',
+      engine: 'oficina-insights',
     };
   }
 
+  private fmtBrl(n: number) {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(n);
+  }
+
   /**
-   * Insights nativo (sem UI/auth do Nao): responde perguntas com dados do portfólio.
+   * Insights nativo da Oficina (substitui o adaptador getnao/nao).
+   * Retorna texto + tabela + chart/story quando aplicável.
    */
   async ask(question: string) {
     const q = (question || '').trim();
     if (!q) {
-      return { answer: 'Faça uma pergunta sobre o portfólio.', rows: [] };
+      return {
+        answer: 'Faça uma pergunta sobre o portfólio.',
+        rows: [],
+        kind: 'empty',
+      };
     }
-    const portfolio = await this.analytics.portfolioResumo();
     const lower = q.toLowerCase();
-    const fmt = (n: number) =>
-      new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-      }).format(n);
+    if (/story|hist[oó]ria|relat[oó]rio|story\s*mode|painel executivo/.test(lower)) {
+      return this.buildStory();
+    }
+    return this.answerIntent(lower);
+  }
 
-    if (/brr|risco|abaixo/.test(lower)) {
-      const rows = portfolio.porProjeto
-        .filter((p) => p.brr != null && p.brr < 0.7)
+  async buildStory() {
+    const portfolio = await this.analytics.portfolioResumo();
+    const fmt = (n: number) => this.fmtBrl(n);
+    const atRisk = portfolio.porProjeto.filter(
+      (p) => p.brr != null && p.brr < 0.7,
+    );
+    const topRoi = [...portfolio.porProjeto]
+      .filter((p) => p.roi != null)
+      .sort((a, b) => Number(b.roi) - Number(a.roi))
+      .slice(0, 5);
+    const curva = (portfolio.curvaS || []).slice(-8);
+
+    const pendentes = await this.prisma.medicao.count({
+      where: { status: MedicaoStatus.pendente_validacao, deletedAt: null },
+    });
+
+    const story = {
+      title: 'Story · Portfólio de Valor',
+      generatedAt: new Date().toISOString(),
+      sections: [
+        {
+          id: 'resumo',
+          heading: 'Resumo executivo',
+          text: `Prometido ${fmt(portfolio.prometido)} · realizado ${fmt(portfolio.realizado)} · ROI ${portfolio.roiLabel} · ${portfolio.projetosEmRisco} projeto(s) em risco · ${pendentes} medição(ões) na fila de homologação.`,
+          chart: {
+            type: 'kpi' as const,
+            title: 'Indicadores',
+            items: [
+              { label: 'Prometido', value: portfolio.prometido, format: 'brl' },
+              { label: 'Realizado', value: portfolio.realizado, format: 'brl' },
+              {
+                label: 'Em risco',
+                value: portfolio.projetosEmRisco,
+                format: 'number',
+              },
+              { label: 'Homologação', value: pendentes, format: 'number' },
+            ],
+          },
+        },
+        {
+          id: 'categorias',
+          heading: 'Hard vs soft',
+          text: `Hard savings validados: ${fmt(portfolio.hard)}. Soft: ${fmt(portfolio.soft)}.`,
+          chart: {
+            type: 'pie' as const,
+            title: 'Ganhos por categoria',
+            series: [
+              { label: 'Hard', value: Number(portfolio.hard) || 0 },
+              { label: 'Soft', value: Number(portfolio.soft) || 0 },
+            ].filter((s) => s.value > 0),
+          },
+          rows: [
+            { categoria: 'hard', valor: fmt(portfolio.hard) },
+            { categoria: 'soft', valor: fmt(portfolio.soft) },
+          ],
+        },
+        {
+          id: 'brr',
+          heading: 'Saúde BRR',
+          text:
+            atRisk.length === 0
+              ? 'Nenhum projeto abaixo de 70% de BRR.'
+              : `${atRisk.length} projeto(s) com BRR abaixo de 70% — priorizar captura ou revisão de baseline.`,
+          chart: {
+            type: 'bar' as const,
+            title: 'BRR por projeto (%)',
+            series: portfolio.porProjeto
+              .filter((p) => p.brr != null)
+              .map((p) => ({
+                label: p.nome,
+                value: Math.round(Number(p.brr) * 100),
+              })),
+          },
+          rows: atRisk.map((p) => ({
+            projeto: p.nome,
+            brr: `${Math.round(Number(p.brr) * 100)}%`,
+            realizado: fmt(p.realizado),
+          })),
+        },
+        {
+          id: 'curva',
+          heading: 'Curva S',
+          text: 'Planejado vs realizado acumulado (últimos períodos).',
+          chart: {
+            type: 'line' as const,
+            title: 'Curva S acumulada',
+            series: curva.map((c) => ({
+              label: c.periodo,
+              planejado: c.planejadoAcumulado,
+              realizado: c.realizadoAcumulado,
+            })),
+          },
+          rows: curva.map((c) => ({
+            periodo: c.periodo,
+            planejado: fmt(c.planejadoAcumulado),
+            realizado: fmt(c.realizadoAcumulado),
+          })),
+        },
+        {
+          id: 'roi',
+          heading: 'Top ROI',
+          text: 'Projetos com melhor retorno sobre investimento realizado.',
+          chart: {
+            type: 'bar' as const,
+            title: 'ROI (múltiplo)',
+            series: topRoi.map((p) => ({
+              label: p.nome,
+              value: Number(p.roi) || 0,
+            })),
+          },
+          rows: topRoi.map((p) => ({
+            projeto: p.nome,
+            roi: p.roiLabel,
+            realizado: fmt(p.realizado),
+          })),
+        },
+      ],
+    };
+
+    return {
+      answer: 'Story do portfólio gerada com KPIs, gráficos e tabelas.',
+      kind: 'story',
+      rows: [],
+      story,
+      source: 'analytics.portfolioResumo + medicoes',
+    };
+  }
+
+  private async answerIntent(lower: string) {
+    const portfolio = await this.analytics.portfolioResumo();
+    const fmt = (n: number) => this.fmtBrl(n);
+
+    if (/brr|risco|abaixo|sa[uú]de/.test(lower)) {
+      const filtered = portfolio.porProjeto.filter(
+        (p) => p.brr != null && p.brr < 0.7,
+      );
+      const rows = filtered
         .map((p) => ({
           projeto: p.nome,
-          brr: p.brr == null ? null : `${(p.brr * 100).toFixed(0)}%`,
+          brr: `${Math.round(Number(p.brr) * 100)}%`,
           realizado: fmt(p.realizado),
           prometido: fmt(p.prometido),
         }))
-        .sort((a, b) => (a.brr || '').localeCompare(b.brr || ''));
+        .sort((a, b) => a.brr.localeCompare(b.brr));
       return {
         answer: `${rows.length} projeto(s) com BRR abaixo de 70%.`,
         rows,
-        kind: 'table',
+        kind: 'chart',
+        chart: {
+          type: 'bar' as const,
+          title: 'BRR por projeto em risco (%)',
+          series: filtered.map((p) => ({
+            label: p.nome,
+            value: Math.round(Number(p.brr) * 100),
+          })),
+        },
+        source: 'roi_projeto / analytics',
       };
     }
 
-    if (/hard|soft|categ/.test(lower)) {
+    if (/hard|soft|categ|ganhos por/.test(lower)) {
+      const hard = Number(portfolio.hard) || 0;
+      const soft = Number(portfolio.soft) || 0;
       return {
-        answer: `Hard savings validados: ${fmt(portfolio.hard)}. Soft: ${fmt(portfolio.soft)}.`,
+        answer: `Hard savings validados: ${fmt(hard)}. Soft: ${fmt(soft)}.`,
         rows: [
-          { categoria: 'hard', valor: fmt(portfolio.hard) },
-          { categoria: 'soft', valor: fmt(portfolio.soft) },
+          { categoria: 'hard', valor: fmt(hard) },
+          { categoria: 'soft', valor: fmt(soft) },
         ],
-        kind: 'table',
+        kind: 'chart',
+        chart: {
+          type: 'pie' as const,
+          title: 'Ganhos por categoria',
+          series: [
+            { label: 'Hard', value: hard },
+            { label: 'Soft', value: soft },
+          ].filter((s) => s.value > 0),
+        },
+        source: 'portfolio_resumo',
       };
     }
 
-    if (/curva\s*s|planejado|realizado/.test(lower)) {
-      const rows = (portfolio.curvaS || []).slice(-6).map((c) => ({
+    if (/curva\s*s|planejado|acumulad/.test(lower)) {
+      const curva = (portfolio.curvaS || []).slice(-8);
+      const rows = curva.map((c) => ({
         periodo: c.periodo,
         planejado: fmt(c.planejadoAcumulado),
         realizado: fmt(c.realizadoAcumulado),
@@ -325,7 +490,17 @@ export class NaoService {
       return {
         answer: 'Curva S consolidada (últimos períodos).',
         rows,
-        kind: 'table',
+        kind: 'chart',
+        chart: {
+          type: 'line' as const,
+          title: 'Curva S · planejado vs realizado',
+          series: curva.map((c) => ({
+            label: c.periodo,
+            planejado: c.planejadoAcumulado,
+            realizado: c.realizadoAcumulado,
+          })),
+        },
+        source: 'curva_s_mensal',
       };
     }
 
@@ -349,24 +524,46 @@ export class NaoService {
         answer: `${rows.length} medição(ões) na fila de homologação.`,
         rows,
         kind: 'table',
+        chart: {
+          type: 'kpi' as const,
+          title: 'Fila',
+          items: [
+            { label: 'Pendentes', value: rows.length, format: 'number' },
+            {
+              label: 'Valor na fila',
+              value: pendentes.reduce((s, m) => s + Number(m.valorRealizado), 0),
+              format: 'brl',
+            },
+          ],
+        },
+        source: 'medicoes.pendente_validacao',
       };
     }
 
-    if (/roi|top/.test(lower)) {
-      const rows = [...portfolio.porProjeto]
+    if (/roi|top|retorno/.test(lower)) {
+      const top = [...portfolio.porProjeto]
         .filter((p) => p.roi != null)
         .sort((a, b) => Number(b.roi) - Number(a.roi))
-        .slice(0, 5)
-        .map((p) => ({
-          projeto: p.nome,
-          roi: p.roiLabel,
-          realizado: fmt(p.realizado),
-          custo: fmt(p.custoRealizado),
-        }));
+        .slice(0, 5);
+      const rows = top.map((p) => ({
+        projeto: p.nome,
+        roi: p.roiLabel,
+        realizado: fmt(p.realizado),
+        custo: fmt(p.custoRealizado),
+      }));
       return {
         answer: 'Top 5 projetos por ROI.',
         rows,
-        kind: 'table',
+        kind: 'chart',
+        chart: {
+          type: 'bar' as const,
+          title: 'Top ROI',
+          series: top.map((p) => ({
+            label: p.nome,
+            value: Number(p.roi) || 0,
+          })),
+        },
+        source: 'roi_projeto',
       };
     }
 
@@ -374,18 +571,33 @@ export class NaoService {
       answer: `Portfólio · prometido ${fmt(portfolio.prometido)}, realizado ${fmt(portfolio.realizado)}, ROI ${portfolio.roiLabel}, ${portfolio.projetosEmRisco} em risco.`,
       rows: portfolio.porProjeto.slice(0, 8).map((p) => ({
         projeto: p.nome,
-        brr: p.brr == null ? '—' : `${(p.brr * 100).toFixed(0)}%`,
+        brr: p.brr == null ? '—' : `${Math.round(Number(p.brr) * 100)}%`,
         roi: p.roiLabel,
         realizado: fmt(p.realizado),
       })),
       kind: 'summary',
+      chart: {
+        type: 'kpi' as const,
+        title: 'Portfólio',
+        items: [
+          { label: 'Prometido', value: portfolio.prometido, format: 'brl' },
+          { label: 'Realizado', value: portfolio.realizado, format: 'brl' },
+          {
+            label: 'Em risco',
+            value: portfolio.projetosEmRisco,
+            format: 'number',
+          },
+        ],
+      },
       hints: [
         'Quais projetos têm BRR abaixo de 70%?',
         'Compare hard vs soft savings validados no portfólio',
         'Mostre a curva S planejado vs realizado',
         'Liste medições pendentes na fila de homologação',
         'Top 5 projetos por ROI',
+        'Gere um Story do portfólio com gráficos',
       ],
+      source: 'portfolio_resumo',
     };
   }
 }

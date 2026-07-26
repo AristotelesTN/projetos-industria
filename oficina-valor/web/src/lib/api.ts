@@ -225,6 +225,7 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ question }),
     }),
+  storyNao: () => request<any>('/nao/story', { method: 'POST', body: '{}' }),
   startWizard: (
     projetoId: string,
     body: {

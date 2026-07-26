@@ -71,22 +71,24 @@ services:
     networks:
       - oficina
 
-  nao:
-    image: getnao/nao:latest
-    container_name: oficina-valor-nao
-    ports:
-      - "5006:5005"
-    env_file:
-      - path: ../.env
-        required: false
-    environment:
-      BETTER_AUTH_URL: http://localhost:5006
-      NAO_DEFAULT_PROJECT_PATH: /app/project
-    volumes:
-      - ./nao:/app/project
-    restart: unless-stopped
-    networks:
-      - oficina
+  # Optional/legacy: getnao/nao UI. Insights do app usa motor nativo (POST /nao/ask|story).
+  # Descomente só se quiser o chat externo em :5006.
+  # nao:
+  #   image: getnao/nao:latest
+  #   container_name: oficina-valor-nao
+  #   ports:
+  #     - "5006:5005"
+  #   env_file:
+  #     - path: ../.env
+  #       required: false
+  #   environment:
+  #     BETTER_AUTH_URL: http://localhost:5006
+  #     NAO_DEFAULT_PROJECT_PATH: /app/project
+  #   volumes:
+  #     - ./nao:/app/project
+  #   restart: unless-stopped
+  #   networks:
+  #     - oficina
 
 volumes:
   oficina_pg:
