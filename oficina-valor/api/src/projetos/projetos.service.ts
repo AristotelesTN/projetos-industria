@@ -461,6 +461,44 @@ export class ProjetosService {
     return this.get(id, user);
   }
 
+  /** Memória de cálculo do ganho + comentários livres do projeto. */
+  async updateAnotacoes(
+    id: string,
+    input: {
+      memoriaCalculoGanho?: string | null;
+      comentarios?: string | null;
+    },
+    user: AuthUser,
+  ) {
+    const before = await this.prisma.projeto.findUnique({ where: { id } });
+    if (!before) throw new NotFoundException('Projeto não encontrado');
+
+    const data = {
+      memoriaCalculoGanho:
+        input.memoriaCalculoGanho === undefined
+          ? before.memoriaCalculoGanho
+          : input.memoriaCalculoGanho?.trim() || null,
+      comentarios:
+        input.comentarios === undefined
+          ? before.comentarios
+          : input.comentarios?.trim() || null,
+    };
+
+    await this.prisma.projeto.update({ where: { id }, data });
+    await this.auditoria.log({
+      entidade: 'Projeto',
+      entidadeId: id,
+      acao: 'anotacoes',
+      usuarioId: user.id,
+      valorAnterior: {
+        memoriaCalculoGanho: before.memoriaCalculoGanho,
+        comentarios: before.comentarios,
+      },
+      valorNovo: data,
+    });
+    return this.get(id, user);
+  }
+
   async remove(id: string, user: AuthUser) {
     const projeto = await this.prisma.projeto.findUnique({
       where: { id },

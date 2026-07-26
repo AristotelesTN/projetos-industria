@@ -29,6 +29,8 @@ type ProjetoRow = {
   naOe5Tech?: boolean;
   papelEstrategico?: PapelFapd | null;
   comentarioFapd?: string | null;
+  memoriaCalculoGanho?: string | null;
+  comentarios?: string | null;
 };
 
 type ViewTab = 'board' | 'lista' | 'saude';
@@ -184,6 +186,10 @@ export function PortfolioWorkspace({
   const [detailOpen, setDetailOpen] = useState(false);
   const [detail, setDetail] = useState<any | null>(null);
   const [fapd, setFapd] = useState<FapdForm>({ ...EMPTY_FAPD });
+  const [anotacoes, setAnotacoes] = useState({
+    memoriaCalculoGanho: '',
+    comentarios: '',
+  });
   const [form, setForm] = useState({
     nome: '',
     areaNome: 'Produção',
@@ -198,7 +204,12 @@ export function PortfolioWorkspace({
   );
 
   useEffect(() => {
-    setFapd(fapdFromProjeto(detail || selected));
+    const src = detail || selected;
+    setFapd(fapdFromProjeto(src));
+    setAnotacoes({
+      memoriaCalculoGanho: src?.memoriaCalculoGanho || '',
+      comentarios: src?.comentarios || '',
+    });
   }, [detail, selected]);
 
   const byStatus = useMemo(() => {
@@ -317,6 +328,28 @@ export function PortfolioWorkspace({
       setFapd(fapdFromProjeto(updated));
       await onRefresh();
       onMessage('Avaliação FAPD salva');
+    } catch (err: any) {
+      onError(err.message || String(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function saveAnotacoes() {
+    if (!selectedId) return;
+    setBusy(true);
+    try {
+      const updated = await api.atualizarAnotacoesProjeto(selectedId, {
+        memoriaCalculoGanho: anotacoes.memoriaCalculoGanho.trim() || null,
+        comentarios: anotacoes.comentarios.trim() || null,
+      });
+      setDetail((prev: any) => ({ ...(prev || {}), ...updated }));
+      setAnotacoes({
+        memoriaCalculoGanho: updated.memoriaCalculoGanho || '',
+        comentarios: updated.comentarios || '',
+      });
+      await onRefresh();
+      onMessage('Memória de cálculo e comentários salvos');
     } catch (err: any) {
       onError(err.message || String(err));
     } finally {
@@ -711,6 +744,7 @@ export function PortfolioWorkspace({
                   <th>Status</th>
                   <th>Nota FAPD</th>
                   <th>Papel</th>
+                  <th>Memória</th>
                   <th>Investimento</th>
                   <th>Realizado</th>
                   <th>BRR</th>
@@ -721,6 +755,9 @@ export function PortfolioWorkspace({
                 {projetos.map((p) => {
                   const brrPct = p.brr == null ? null : Math.round(p.brr * 100);
                   const papel = papelLabel(p.papelEstrategico);
+                  const temMemoria = Boolean(
+                    p.memoriaCalculoGanho?.trim() || p.comentarios?.trim(),
+                  );
                   return (
                     <tr
                       key={p.id}
@@ -749,6 +786,15 @@ export function PortfolioWorkspace({
                             }`}
                           >
                             {papel}
+                          </span>
+                        ) : (
+                          <span className="muted">—</span>
+                        )}
+                      </td>
+                      <td>
+                        {temMemoria ? (
+                          <span className="badge success" title="Com memória/comentários">
+                            Sim
                           </span>
                         ) : (
                           <span className="muted">—</span>
@@ -859,6 +905,52 @@ export function PortfolioWorkspace({
               <div className="detail-kv">
                 <span>PM</span>
                 <strong>{detail?.pm?.nome || selected?.pm?.nome || '—'}</strong>
+              </div>
+
+              <div className="fapd-block">
+                <h3>Ganho · memória de cálculo</h3>
+                <p className="muted fapd-lead">
+                  Descreva como o ganho é calculado (premissas, fórmula, fontes e
+                  unidades) e registre comentários do projeto.
+                </p>
+                <label className="fapd-field">
+                  <span>Memória de cálculo</span>
+                  <textarea
+                    rows={5}
+                    disabled={busy}
+                    value={anotacoes.memoriaCalculoGanho}
+                    onChange={(e) =>
+                      setAnotacoes((a) => ({
+                        ...a,
+                        memoriaCalculoGanho: e.target.value,
+                      }))
+                    }
+                    placeholder="Ex.: Ganho mensal = (horas poupadas × custo/hora) − custo operacional; fonte ERP CC-120…"
+                  />
+                </label>
+                <label className="fapd-field">
+                  <span>Comentários</span>
+                  <textarea
+                    rows={4}
+                    disabled={busy}
+                    value={anotacoes.comentarios}
+                    onChange={(e) =>
+                      setAnotacoes((a) => ({
+                        ...a,
+                        comentarios: e.target.value,
+                      }))
+                    }
+                    placeholder="Acompanhamento, riscos, alinhamentos com o sponsor…"
+                  />
+                </label>
+                <button
+                  type="button"
+                  className="btn secondary"
+                  disabled={busy || !selectedId}
+                  onClick={() => void saveAnotacoes()}
+                >
+                  Salvar memória e comentários
+                </button>
               </div>
 
               <div className="fapd-block">

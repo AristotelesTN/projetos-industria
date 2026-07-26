@@ -218,6 +218,16 @@ class AvaliacaoFapdDto {
   comentarioFapd?: string | null;
 }
 
+class AnotacoesDto {
+  @IsOptional()
+  @IsString()
+  memoriaCalculoGanho?: string | null;
+
+  @IsOptional()
+  @IsString()
+  comentarios?: string | null;
+}
+
 @Controller('projetos')
 @UseGuards(DevAuthGuard, RolesGuard)
 export class ProjetosController {
@@ -287,6 +297,15 @@ export class ProjetosController {
     @CurrentUser() user: AuthUser,
   ) {
     return this.projetos.updateAvaliacaoFapd(id, dto, user);
+  }
+
+  @Patch(':id/anotacoes')
+  anotacoes(
+    @Param('id') id: string,
+    @Body() dto: AnotacoesDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.projetos.updateAnotacoes(id, dto, user);
   }
 
   @Delete(':id')
