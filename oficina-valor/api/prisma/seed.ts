@@ -95,6 +95,7 @@ async function main() {
         inicioPrevisto: inicio,
         fimPrevisto: addMonths(inicio, 12),
         premissasOkFinancas: true,
+        wizardBaselineCompleto: true,
         businessCase: {
           create: {
             problema: `Problema de valor: ${p.nome}`,

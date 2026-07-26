@@ -269,4 +269,123 @@ export class NaoService {
       chatUrl: process.env.NAO_URL || 'http://localhost:5006',
     };
   }
+
+  /**
+   * Insights nativo (sem UI/auth do Nao): responde perguntas com dados do portfólio.
+   */
+  async ask(question: string) {
+    const q = (question || '').trim();
+    if (!q) {
+      return { answer: 'Faça uma pergunta sobre o portfólio.', rows: [] };
+    }
+    const portfolio = await this.analytics.portfolioResumo();
+    const lower = q.toLowerCase();
+    const fmt = (n: number) =>
+      new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }).format(n);
+
+    if (/brr|risco|abaixo/.test(lower)) {
+      const rows = portfolio.porProjeto
+        .filter((p) => p.brr != null && p.brr < 0.7)
+        .map((p) => ({
+          projeto: p.nome,
+          brr: p.brr == null ? null : `${(p.brr * 100).toFixed(0)}%`,
+          realizado: fmt(p.realizado),
+          prometido: fmt(p.prometido),
+        }))
+        .sort((a, b) => (a.brr || '').localeCompare(b.brr || ''));
+      return {
+        answer: `${rows.length} projeto(s) com BRR abaixo de 70%.`,
+        rows,
+        kind: 'table',
+      };
+    }
+
+    if (/hard|soft|categ/.test(lower)) {
+      return {
+        answer: `Hard savings validados: ${fmt(portfolio.hard)}. Soft: ${fmt(portfolio.soft)}.`,
+        rows: [
+          { categoria: 'hard', valor: fmt(portfolio.hard) },
+          { categoria: 'soft', valor: fmt(portfolio.soft) },
+        ],
+        kind: 'table',
+      };
+    }
+
+    if (/curva\s*s|planejado|realizado/.test(lower)) {
+      const rows = (portfolio.curvaS || []).slice(-6).map((c) => ({
+        periodo: c.periodo,
+        planejado: fmt(c.planejadoAcumulado),
+        realizado: fmt(c.realizadoAcumulado),
+        variancia:
+          c.varianciaPct == null ? '—' : `${c.varianciaPct.toFixed(0)}%`,
+      }));
+      return {
+        answer: 'Curva S consolidada (últimos períodos).',
+        rows,
+        kind: 'table',
+      };
+    }
+
+    if (/fila|pendente|homolog/.test(lower)) {
+      const pendentes = await this.prisma.medicao.findMany({
+        where: { status: MedicaoStatus.pendente_validacao, deletedAt: null },
+        include: {
+          beneficio: {
+            include: { businessCase: { include: { projeto: true } } },
+          },
+        },
+        take: 20,
+      });
+      const rows = pendentes.map((m) => ({
+        projeto: m.beneficio.businessCase.projeto.nome,
+        beneficio: m.beneficio.nome,
+        valor: fmt(Number(m.valorRealizado)),
+        periodo: m.periodoReferencia.toISOString().slice(0, 10),
+      }));
+      return {
+        answer: `${rows.length} medição(ões) na fila de homologação.`,
+        rows,
+        kind: 'table',
+      };
+    }
+
+    if (/roi|top/.test(lower)) {
+      const rows = [...portfolio.porProjeto]
+        .filter((p) => p.roi != null)
+        .sort((a, b) => Number(b.roi) - Number(a.roi))
+        .slice(0, 5)
+        .map((p) => ({
+          projeto: p.nome,
+          roi: p.roiLabel,
+          realizado: fmt(p.realizado),
+          custo: fmt(p.custoRealizado),
+        }));
+      return {
+        answer: 'Top 5 projetos por ROI.',
+        rows,
+        kind: 'table',
+      };
+    }
+
+    return {
+      answer: `Portfólio · prometido ${fmt(portfolio.prometido)}, realizado ${fmt(portfolio.realizado)}, ROI ${portfolio.roiLabel}, ${portfolio.projetosEmRisco} em risco.`,
+      rows: portfolio.porProjeto.slice(0, 8).map((p) => ({
+        projeto: p.nome,
+        brr: p.brr == null ? '—' : `${(p.brr * 100).toFixed(0)}%`,
+        roi: p.roiLabel,
+        realizado: fmt(p.realizado),
+      })),
+      kind: 'summary',
+      hints: [
+        'Quais projetos têm BRR abaixo de 70%?',
+        'Compare hard vs soft savings validados no portfólio',
+        'Mostre a curva S planejado vs realizado',
+        'Liste medições pendentes na fila de homologação',
+        'Top 5 projetos por ROI',
+      ],
+    };
+  }
 }

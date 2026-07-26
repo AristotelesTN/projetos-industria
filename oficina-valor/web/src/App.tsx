@@ -10,6 +10,7 @@ import {
   type User,
 } from './lib/api';
 import { NaoWorkspace } from './components/NaoWorkspace';
+import { WizardGanhos } from './components/WizardGanhos';
 
 type Tab =
   | 'diretoria'
@@ -17,6 +18,7 @@ type Tab =
   | 'financas'
   | 'gates'
   | 'nao'
+  | 'wizard'
   | 'auditoria'
   | 'import';
 
@@ -36,6 +38,7 @@ const NAV: { section: string; items: { id: Tab; label: string; icon: string }[] 
     {
       section: 'Valor',
       items: [
+        { id: 'wizard', label: 'Wizard ganhos', icon: '✦' },
         { id: 'financas', label: 'Homologação', icon: '☑' },
         { id: 'gates', label: 'Gates', icon: '⇢' },
         { id: 'nao', label: 'Insights', icon: '◎' },
@@ -56,6 +59,7 @@ const TITLES: Record<Tab, string> = {
   financas: 'Homologação',
   gates: 'Gates',
   nao: 'Insights',
+  wizard: 'Wizard de ganhos',
   auditoria: 'Auditoria',
   import: 'Importações',
 };
@@ -380,12 +384,12 @@ export default function App() {
             <h1>{TITLES[tab]}</h1>
           </div>
           <div className="top-actions">
-            {tab === 'projetos' && (
+            {(tab === 'projetos' || tab === 'wizard') && (
               <button
                 className="btn"
                 onClick={() => {
-                  setTab('financas');
-                  setMsg('Registre medições no projeto selecionado e homologue o valor');
+                  setTab('wizard');
+                  setMsg('Wizard BPMN · baseline ou realização');
                 }}
               >
                 + Create
@@ -403,9 +407,33 @@ export default function App() {
           </div>
         </header>
 
-        <div className={`content ${tab === 'projetos' || tab === 'diretoria' ? 'wide' : ''}`}>
+        <div
+          className={`content ${
+            tab === 'projetos' || tab === 'diretoria' || tab === 'wizard' || tab === 'nao'
+              ? 'wide'
+              : ''
+          }`}
+        >
           {error && <p className="error">{error}</p>}
           {msg && <p className="ok">{msg}</p>}
+
+          {tab === 'wizard' && (
+            <WizardGanhos
+              projetos={projetos}
+              selectedId={selectedId}
+              onSelectProjeto={setSelectedId}
+              onDone={() => {
+                void refreshList();
+                if (selectedId) void refreshSelected(selectedId);
+                void api.portfolio().then(setPortfolio);
+              }}
+              onError={setError}
+              onMessage={(m) => {
+                setMsg(m);
+                setError('');
+              }}
+            />
+          )}
 
           {tab === 'diretoria' && (
             <>

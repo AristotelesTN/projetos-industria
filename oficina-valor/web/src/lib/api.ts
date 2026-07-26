@@ -198,6 +198,38 @@ export const api = {
   },
   syncNao: () => request<any>('/nao/sync', { method: 'POST', body: '{}' }),
   naoStatus: () => request<any>('/nao/status'),
+  askNao: (question: string) =>
+    request<any>('/nao/ask', {
+      method: 'POST',
+      body: JSON.stringify({ question }),
+    }),
+  startWizard: (
+    projetoId: string,
+    body: {
+      tipo: 'baseline' | 'realizacao';
+      respondenteNome?: string;
+      conheceProjeto?: boolean;
+    },
+  ) =>
+    request<any>(`/projetos/${projetoId}/wizards`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  completeWizard: (id: string, body: Record<string, unknown>) =>
+    request<any>(`/wizards/${id}/complete`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  encaminharWizard: (
+    id: string,
+    body: { encaminhadoPara: string; respondenteNome?: string },
+  ) =>
+    request<any>(`/wizards/${id}/encaminhar`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  listWizards: (projetoId: string) =>
+    request<any[]>(`/projetos/${projetoId}/wizards`),
   auditoria: () => request<any[]>('/auditoria'),
   exportGanhos: async () => {
     const blob = (await request<Blob>('/relatorios/ganhos')) as Blob;

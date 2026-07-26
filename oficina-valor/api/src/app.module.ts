@@ -12,6 +12,7 @@ import { AuditoriaModule } from './auditoria/auditoria.module';
 import { IntegracoesModule } from './integracoes/integracoes.module';
 import { NaoModule } from './nao/nao.module';
 import { RelatoriosModule } from './relatorios/relatorios.module';
+import { WizardModule } from './wizard/wizard.module';
 import { HealthController } from './health.controller';
 
 @Module({
@@ -29,6 +30,7 @@ import { HealthController } from './health.controller';
     IntegracoesModule,
     NaoModule,
     RelatoriosModule,
+    WizardModule,
   ],
   controllers: [HealthController],
 })

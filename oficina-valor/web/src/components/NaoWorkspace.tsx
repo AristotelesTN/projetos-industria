@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { api } from '../lib/api';
 
 const PROMPTS = [
@@ -10,7 +10,11 @@ const PROMPTS = [
   'Ganhos por categoria (hard, soft, avoidance)',
 ];
 
-type NaoHealth = 'checking' | 'online' | 'offline';
+type Msg = {
+  role: 'user' | 'assistant';
+  text: string;
+  rows?: Record<string, unknown>[];
+};
 
 export function NaoWorkspace({
   onMessage,
@@ -19,51 +23,38 @@ export function NaoWorkspace({
   onMessage: (m: string) => void;
   onError: (e: string) => void;
 }) {
-  const [health, setHealth] = useState<NaoHealth>('checking');
   const [busy, setBusy] = useState(false);
-  const [iframeKey, setIframeKey] = useState(0);
   const [status, setStatus] = useState<any>(null);
-  const [lastSync, setLastSync] = useState<string | null>(null);
-  const [copied, setCopied] = useState<string | null>(null);
-
-  const naoUrl = api.naoUrl;
-
-  const checkHealth = useCallback(async () => {
-    setHealth('checking');
-    try {
-      const ctrl = new AbortController();
-      const t = window.setTimeout(() => ctrl.abort(), 4000);
-      await fetch(naoUrl, { mode: 'no-cors', signal: ctrl.signal });
-      window.clearTimeout(t);
-      setHealth('online');
-    } catch {
-      setHealth('offline');
-    }
-  }, [naoUrl]);
+  const [input, setInput] = useState('');
+  const [msgs, setMsgs] = useState<Msg[]>([
+    {
+      role: 'assistant',
+      text: 'Insights nativo da Oficina de Valor — pergunte sobre BRR, ROI, curva S, hard/soft ou a fila de homologação. Sem login externo.',
+    },
+  ]);
+  const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    void checkHealth();
     api
       .naoStatus()
       .then(setStatus)
       .catch(() => setStatus(null));
-    const id = window.setInterval(() => void checkHealth(), 30000);
-    return () => window.clearInterval(id);
-  }, [checkHealth]);
+  }, []);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [msgs]);
 
   async function sync() {
     setBusy(true);
     try {
       const res = await api.syncNao();
-      setLastSync(new Date().toLocaleString('pt-BR'));
+      setStatus(await api.naoStatus());
       onMessage(
         res.ok
-          ? `Nao sincronizado · ${res.written?.length ?? 0} CSVs · DuckDB ${res.ok ? 'OK' : 'falhou'}`
-          : `Sync parcial: ${res.buildStderr || res.error || 'verifique o DuckDB'}`,
+          ? `Dados sincronizados · ${res.written?.length ?? 0} CSVs · DuckDB OK`
+          : `Sync parcial: ${res.buildStderr || 'verifique o DuckDB'}`,
       );
-      setStatus(await api.naoStatus());
-      setIframeKey((k) => k + 1);
-      void checkHealth();
     } catch (e: any) {
       onError(e.message || String(e));
     } finally {
@@ -71,92 +62,115 @@ export function NaoWorkspace({
     }
   }
 
-  async function copyPrompt(q: string) {
+  async function ask(question: string) {
+    const q = question.trim();
+    if (!q || busy) return;
+    setBusy(true);
+    setMsgs((m) => [...m, { role: 'user', text: q }]);
+    setInput('');
     try {
-      await navigator.clipboard.writeText(q);
-      setCopied(q);
-      window.setTimeout(() => setCopied(null), 2000);
-    } catch {
-      /* ignore */
+      const res = await api.askNao(q);
+      setMsgs((m) => [
+        ...m,
+        { role: 'assistant', text: res.answer, rows: res.rows || [] },
+      ]);
+    } catch (e: any) {
+      onError(e.message || String(e));
+      setMsgs((m) => [
+        ...m,
+        { role: 'assistant', text: 'Não foi possível responder agora.' },
+      ]);
+    } finally {
+      setBusy(false);
     }
   }
 
+  function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    void ask(input);
+  }
+
   return (
-    <div className="nao-layout">
+    <div className="nao-layout native">
       <aside className="nao-side">
         <div className="nao-side-head">
-          <h2>Nao</h2>
-          <p className="muted">Analytics conversacional sobre o portfólio</p>
+          <h2>Insights</h2>
+          <p className="muted">Analytics conversacional nativo · design Oficina</p>
         </div>
 
         <div className="nao-status-row">
-          <span className={`nao-dot is-${health}`} aria-hidden />
-          <span className="muted">
-            {health === 'checking' && 'Verificando…'}
-            {health === 'online' && 'Chat online'}
-            {health === 'offline' && 'Chat offline — inicie o Nao'}
-          </span>
+          <span className="nao-dot is-online" aria-hidden />
+          <span className="muted">Motor nativo online</span>
         </div>
-
-        <p className="muted" style={{ fontSize: 12, wordBreak: 'break-all' }}>
-          {naoUrl}
+        <p className="muted" style={{ fontSize: 12 }}>
+          DuckDB: {status?.duckdbExists ? 'pronto (sync opcional)' : 'ausente — sincronize'}
         </p>
-        {status && (
-          <p className="muted" style={{ fontSize: 12 }}>
-            DuckDB: {status.duckdbExists ? 'pronto' : 'ausente — sincronize'}
-            {lastSync ? ` · sync ${lastSync}` : ''}
-          </p>
-        )}
 
         <div className="actions" style={{ marginTop: 8 }}>
           <button className="btn" disabled={busy} onClick={sync}>
-            {busy ? 'Sincronizando…' : 'Sincronizar dados → Nao'}
+            {busy ? 'Sincronizando…' : 'Sincronizar dados'}
           </button>
-          <button
-            className="btn secondary"
-            onClick={() => {
-              setIframeKey((k) => k + 1);
-              void checkHealth();
-            }}
-          >
-            Recarregar chat
-          </button>
-          <a className="btn secondary" href={naoUrl} target="_blank" rel="noreferrer">
-            Abrir Nao ↗
-          </a>
         </div>
 
         <h3 style={{ marginTop: 20, fontSize: 13 }}>Perguntas sugeridas</h3>
         <ul className="nao-prompts">
           {PROMPTS.map((q) => (
             <li key={q}>
-              <button type="button" className="nao-prompt" onClick={() => copyPrompt(q)}>
-                {copied === q ? 'Copiado!' : q}
+              <button
+                type="button"
+                className="nao-prompt"
+                disabled={busy}
+                onClick={() => void ask(q)}
+              >
+                {q}
               </button>
             </li>
           ))}
         </ul>
       </aside>
 
-      <div className="nao-main">
-        {health === 'offline' ? (
-          <div className="nao-offline">
-            <strong>Nao não está acessível</strong>
-            <p className="muted">
-              No servidor: <code>cd oficina-valor/nao && nao chat --port 5006</code>
-              <br />
-              Depois sincronize os dados do portfólio e recarregue o chat.
-            </p>
-          </div>
-        ) : (
-          <iframe
-            key={iframeKey}
-            className="nao-frame"
-            title="Nao chat"
-            src={naoUrl}
-            allow="clipboard-read; clipboard-write"
+      <div className="nao-main native-chat">
+        <div className="chat-thread">
+          {msgs.map((m, i) => (
+            <div key={i} className={`chat-bubble ${m.role}`}>
+              <p>{m.text}</p>
+              {!!m.rows?.length && (
+                <div className="chat-table-wrap">
+                  <table className="chat-table">
+                    <thead>
+                      <tr>
+                        {Object.keys(m.rows[0]).map((k) => (
+                          <th key={k}>{k}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {m.rows.map((row, ri) => (
+                        <tr key={ri}>
+                          {Object.keys(m.rows![0]).map((k) => (
+                            <td key={k}>{String(row[k] ?? '—')}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          ))}
+          <div ref={endRef} />
+        </div>
+        <form className="chat-composer" onSubmit={onSubmit}>
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Pergunte sobre o portfólio…"
+            disabled={busy}
           />
-        )}
+          <button className="btn" type="submit" disabled={busy || !input.trim()}>
+            Enviar
+          </button>
+        </form>
       </div>
     </div>
   );

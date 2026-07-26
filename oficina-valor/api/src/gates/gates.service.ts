@@ -53,6 +53,11 @@ export class GatesService {
           'Premissas financeiras precisam ser OK (Finanças)',
         );
       }
+      if (!projeto.wizardBaselineCompleto) {
+        throw new UnprocessableEntityException(
+          'Complete o Wizard de Análise de Ganhos (baseline) antes do G2',
+        );
+      }
     }
 
     const gate = await this.prisma.$transaction(async (tx) => {

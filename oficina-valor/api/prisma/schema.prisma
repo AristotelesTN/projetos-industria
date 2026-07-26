@@ -146,19 +146,23 @@ model CentroCusto {
 }
 
 model Projeto {
-  id                   String        @id @default(uuid())
-  nome                 String
-  portfolioId          String        @map("portfolio_id")
-  areaId               String        @map("area_id")
-  sponsorId            String        @map("sponsor_id")
-  pmId                 String        @map("pm_id")
-  status               ProjetoStatus @default(conceito)
-  investimentoAprovado Decimal       @default(0) @map("investimento_aprovado") @db.Decimal(18, 2)
-  inicioPrevisto       DateTime?     @map("inicio_previsto") @db.Date
-  fimPrevisto          DateTime?     @map("fim_previsto") @db.Date
-  premissasOkFinancas  Boolean       @default(false) @map("premissas_ok_financas")
-  createdAt            DateTime      @default(now()) @map("created_at")
-  updatedAt            DateTime      @updatedAt @map("updated_at")
+  id                     String        @id @default(uuid())
+  nome                   String
+  portfolioId            String        @map("portfolio_id")
+  areaId                 String        @map("area_id")
+  sponsorId              String        @map("sponsor_id")
+  pmId                   String        @map("pm_id")
+  status                 ProjetoStatus @default(conceito)
+  investimentoAprovado   Decimal       @default(0) @map("investimento_aprovado") @db.Decimal(18, 2)
+  inicioPrevisto         DateTime?     @map("inicio_previsto") @db.Date
+  fimPrevisto            DateTime?     @map("fim_previsto") @db.Date
+  premissasOkFinancas    Boolean       @default(false) @map("premissas_ok_financas")
+  wizardBaselineCompleto Boolean       @default(false) @map("wizard_baseline_completo")
+  semGanhos              Boolean       @default(false) @map("sem_ganhos")
+  naoAdotado             Boolean       @default(false) @map("nao_adotado")
+  causaNaoAdocao         String?       @map("causa_nao_adocao")
+  createdAt              DateTime      @default(now()) @map("created_at")
+  updatedAt              DateTime      @updatedAt @map("updated_at")
 
   portfolio      Portfolio         @relation(fields: [portfolioId], references: [id])
   area           Area              @relation(fields: [areaId], references: [id])
@@ -168,8 +172,54 @@ model Projeto {
   gates          GateDecisao[]
   custos         CustoRealizado[]
   historicosResp HistoricoResponsavel[]
+  wizards        WizardSessao[]
 
   @@map("projetos")
+}
+
+enum WizardTipo {
+  baseline
+  realizacao
+}
+
+enum WizardRamo {
+  producao
+  reducao_custos
+  tempo_produtividade
+  qualitativo_qualidade
+  qualitativo_risco
+  sem_ganhos
+}
+
+enum WizardStatus {
+  em_andamento
+  concluido
+  encaminhado
+}
+
+model WizardSessao {
+  id               String       @id @default(uuid())
+  projetoId        String       @map("projeto_id")
+  tipo             WizardTipo
+  status           WizardStatus @default(em_andamento)
+  respondenteId    String?      @map("respondente_id")
+  respondenteNome  String?      @map("respondente_nome")
+  conheceProjeto   Boolean?     @map("conhece_projeto")
+  adotado          Boolean?
+  causaNaoAdocao   String?      @map("causa_nao_adocao")
+  ramo             WizardRamo?
+  cicloRetry       Int          @default(0) @map("ciclo_retry")
+  respostas        Json         @default("{}")
+  resultado        Json?
+  semGanhos        Boolean      @default(false) @map("sem_ganhos")
+  encaminhadoPara  String?      @map("encaminhado_para")
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
+
+  projeto Projeto @relation(fields: [projetoId], references: [id])
+
+  @@index([projetoId, tipo])
+  @@map("wizard_sessoes")
 }
 
 model BusinessCase {
