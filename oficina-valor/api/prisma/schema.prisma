@@ -8,12 +8,7 @@ datasource db {
 }
 
 enum PapelCodigo {
-  ADMIN
-  VMO_LEAD
-  FINANCAS
-  SPONSOR
-  PM
-  DIRETORIA
+  GERENTE_PORTFOLIO
 }
 
 enum ProjetoStatus {

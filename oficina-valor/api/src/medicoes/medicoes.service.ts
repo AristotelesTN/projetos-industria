@@ -1,6 +1,5 @@
 import {
   ConflictException,
-  ForbiddenException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
@@ -8,7 +7,6 @@ import {
 import {
   BeneficioCategoria,
   MedicaoStatus,
-  PapelCodigo,
   Prisma,
 } from '@prisma/client';
 import { createWriteStream, mkdirSync } from 'fs';
@@ -16,7 +14,7 @@ import { join } from 'path';
 import { pipeline } from 'stream/promises';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditoriaService } from '../auditoria/auditoria.service';
-import { AuthUser, hasAnyRole } from '../common/roles';
+import { AuthUser } from '../common/roles';
 import { addMonths, monthStart } from '../common/dates';
 
 @Injectable()
@@ -50,13 +48,6 @@ export class MedicoesService {
     }
     if (beneficio.capturaPausada) {
       throw new UnprocessableEntityException('Captura pausada (Hold)');
-    }
-    if (
-      !hasAnyRole(user, [PapelCodigo.ADMIN]) &&
-      user.id !== beneficio.benefitOwnerId &&
-      user.id !== beneficio.businessCase.projeto.pmId
-    ) {
-      throw new ForbiddenException('Somente PM ou benefit owner');
     }
 
     let periodo = monthStart(input.periodoReferencia);
@@ -153,9 +144,6 @@ export class MedicoesService {
       },
     });
     if (!medicao || medicao.deletedAt) throw new NotFoundException();
-    if (medicao.registradaPorId !== user.id && !hasAnyRole(user, [PapelCodigo.ADMIN])) {
-      throw new ForbiddenException();
-    }
     if (
       medicao.beneficio.categoria === BeneficioCategoria.hard &&
       medicao.evidencias.length === 0
@@ -183,9 +171,6 @@ export class MedicoesService {
     comentario: string | undefined,
     user: AuthUser,
   ) {
-    if (!hasAnyRole(user, [PapelCodigo.FINANCAS])) {
-      throw new ForbiddenException('Somente Finanças valida');
-    }
     const medicao = await this.prisma.medicao.findUnique({
       where: { id: medicaoId },
       include: { beneficio: true },
@@ -193,9 +178,6 @@ export class MedicoesService {
     if (!medicao || medicao.deletedAt) throw new NotFoundException();
     if (medicao.status !== MedicaoStatus.pendente_validacao) {
       throw new ConflictException('Medição não está pendente');
-    }
-    if (medicao.registradaPorId === user.id) {
-      throw new ForbiddenException('Segregação de funções: registrador ≠ validador');
     }
 
     const result = await this.prisma.$transaction(async (tx) => {
@@ -246,9 +228,6 @@ export class MedicoesService {
     justificativa: string,
     user: AuthUser,
   ) {
-    if (!hasAnyRole(user, [PapelCodigo.FINANCAS])) {
-      throw new ForbiddenException('Somente Finanças estorna');
-    }
     if (!justificativa?.trim()) {
       throw new UnprocessableEntityException('Justificativa obrigatória');
     }
@@ -352,9 +331,6 @@ export class MedicoesService {
   }
 
   async fecharPeriodo(periodoRef: string, user: AuthUser) {
-    if (!hasAnyRole(user, [PapelCodigo.FINANCAS, PapelCodigo.ADMIN])) {
-      throw new ForbiddenException();
-    }
     const periodo = monthStart(periodoRef);
     const created = await this.prisma.periodoFechado.upsert({
       where: { periodo },

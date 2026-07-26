@@ -1,18 +1,12 @@
 import {
-  ForbiddenException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import {
-  BeneficioCategoria,
-  PapelCodigo,
-  Prisma,
-  ProjetoStatus,
-} from '@prisma/client';
+import { BeneficioCategoria, ProjetoStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditoriaService } from '../auditoria/auditoria.service';
-import { AuthUser, hasAnyRole } from '../common/roles';
+import { AuthUser } from '../common/roles';
 import { buildPerfilMensal, monthStart } from '../common/dates';
 import { ConfigService } from '../config/config.service';
 
@@ -35,25 +29,9 @@ export class ProjetosService {
     private readonly config: ConfigService,
   ) {}
 
-  private scopeWhere(user: AuthUser): Prisma.ProjetoWhereInput {
-    if (
-      hasAnyRole(user, [
-        PapelCodigo.ADMIN,
-        PapelCodigo.VMO_LEAD,
-        PapelCodigo.FINANCAS,
-        PapelCodigo.DIRETORIA,
-      ])
-    ) {
-      return {};
-    }
-    return {
-      OR: [{ pmId: user.id }, { sponsorId: user.id }],
-    };
-  }
-
-  list(user: AuthUser) {
+  list(_user: AuthUser) {
     return this.prisma.projeto.findMany({
-      where: this.scopeWhere(user),
+      where: {},
       include: {
         area: true,
         portfolio: true,
@@ -74,9 +52,9 @@ export class ProjetosService {
     });
   }
 
-  async get(id: string, user: AuthUser) {
+  async get(id: string, _user: AuthUser) {
     const projeto = await this.prisma.projeto.findFirst({
-      where: { id, ...this.scopeWhere(user) },
+      where: { id },
       include: {
         area: true,
         portfolio: true,
@@ -129,15 +107,6 @@ export class ProjetosService {
     },
     user: AuthUser,
   ) {
-    if (
-      !hasAnyRole(user, [
-        PapelCodigo.ADMIN,
-        PapelCodigo.VMO_LEAD,
-        PapelCodigo.PM,
-      ])
-    ) {
-      throw new ForbiddenException();
-    }
     if (!input.beneficios?.length) {
       throw new UnprocessableEntityException(
         'Business case exige ≥1 benefício quantificado',
@@ -295,9 +264,6 @@ export class ProjetosService {
     user: AuthUser,
     comentario?: string,
   ) {
-    if (!hasAnyRole(user, [PapelCodigo.FINANCAS, PapelCodigo.ADMIN])) {
-      throw new ForbiddenException();
-    }
     const projeto = await this.prisma.projeto.update({
       where: { id },
       data: { premissasOkFinancas: ok },
@@ -313,9 +279,6 @@ export class ProjetosService {
   }
 
   async reatribuirPm(id: string, novoPmId: string, user: AuthUser, motivo?: string) {
-    if (!hasAnyRole(user, [PapelCodigo.ADMIN, PapelCodigo.VMO_LEAD])) {
-      throw new ForbiddenException();
-    }
     const projeto = await this.prisma.projeto.findUniqueOrThrow({
       where: { id },
     });

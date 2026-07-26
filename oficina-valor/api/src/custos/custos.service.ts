@@ -1,9 +1,9 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
-import { OrigemCusto, PapelCodigo } from '@prisma/client';
+import { Injectable } from '@nestjs/common';
+import { OrigemCusto } from '@prisma/client';
 import { parse } from 'csv-parse/sync';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditoriaService } from '../auditoria/auditoria.service';
-import { AuthUser, hasAnyRole } from '../common/roles';
+import { AuthUser } from '../common/roles';
 import { monthStart } from '../common/dates';
 
 @Injectable()
@@ -23,9 +23,6 @@ export class CustosService {
     },
     user: AuthUser,
   ) {
-    if (!hasAnyRole(user, [PapelCodigo.FINANCAS, PapelCodigo.ADMIN])) {
-      throw new ForbiddenException();
-    }
     let centroCustoId: string | undefined;
     if (input.centroCustoCodigo) {
       const cc = await this.prisma.centroCusto.upsert({
@@ -59,9 +56,6 @@ export class CustosService {
   }
 
   async importCsv(buffer: Buffer, user: AuthUser) {
-    if (!hasAnyRole(user, [PapelCodigo.FINANCAS, PapelCodigo.ADMIN])) {
-      throw new ForbiddenException();
-    }
     const rows = parse(buffer, {
       columns: true,
       skip_empty_lines: true,

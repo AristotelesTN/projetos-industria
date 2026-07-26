@@ -1,2 +1,2 @@
 projeto,area,problema,investimento,prazo_meses,beneficio,categoria,valor_mensal,centro_custo,sponsor_email,pm_email,owner_email
-Projeto Exemplo CSV,Produção,Reduzir perdas,100000,12,Hard scrap,hard,8000,CC-CSV-1,sponsor@oficina.local,pm@oficina.local,sponsor@oficina.local
+Projeto Exemplo CSV,Produção,Reduzir perdas,100000,12,Hard scrap,hard,8000,CC-CSV-1,gerente@oficina.local,gerente@oficina.local,gerente@oficina.local

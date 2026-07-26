@@ -1,6 +1,7 @@
 import { PapelCodigo } from '@prisma/client';
 
-export const ALL_ROLES = Object.values(PapelCodigo);
+/** Único papel do MVP: Gerente de Portfólio gerencia tudo. */
+export const GERENTE = PapelCodigo.GERENTE_PORTFOLIO;
 
 export type AuthUser = {
   id: string;
@@ -9,6 +10,6 @@ export type AuthUser = {
   papeis: PapelCodigo[];
 };
 
-export function hasAnyRole(user: AuthUser, roles: PapelCodigo[]): boolean {
-  return user.papeis.some((p) => roles.includes(p));
+export function isGerente(user: AuthUser): boolean {
+  return user.papeis.includes(GERENTE);
 }

@@ -1,5 +1,4 @@
 import {
-  ForbiddenException,
   Injectable,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -8,12 +7,11 @@ import {
   GateDecisaoTipo,
   GateTipo,
   MedicaoStatus,
-  PapelCodigo,
   ProjetoStatus,
 } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditoriaService } from '../auditoria/auditoria.service';
-import { AuthUser, hasAnyRole } from '../common/roles';
+import { AuthUser } from '../common/roles';
 
 @Injectable()
 export class GatesService {
@@ -32,14 +30,6 @@ export class GatesService {
     },
     user: AuthUser,
   ) {
-    const canDecide = hasAnyRole(user, [
-      PapelCodigo.VMO_LEAD,
-      PapelCodigo.SPONSOR,
-      PapelCodigo.DIRETORIA,
-      PapelCodigo.ADMIN,
-    ]);
-    if (!canDecide) throw new ForbiddenException();
-
     const projeto = await this.prisma.projeto.findUnique({
       where: { id: projetoId },
       include: {

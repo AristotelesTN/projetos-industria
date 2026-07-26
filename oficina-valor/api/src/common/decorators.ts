@@ -1,13 +1,5 @@
-import {
-  createParamDecorator,
-  ExecutionContext,
-  SetMetadata,
-} from '@nestjs/common';
-import { PapelCodigo } from '@prisma/client';
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { AuthUser } from './roles';
-
-export const ROLES_KEY = 'roles';
-export const Roles = (...roles: PapelCodigo[]) => SetMetadata(ROLES_KEY, roles);
 
 export const CurrentUser = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext): AuthUser => {

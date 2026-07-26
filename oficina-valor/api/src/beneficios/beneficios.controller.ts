@@ -1,9 +1,8 @@
 import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { PapelCodigo } from '@prisma/client';
 import { IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 import { BeneficiosService } from './beneficios.service';
 import { DevAuthGuard } from '../auth/dev-auth.guard';
-import { CurrentUser, Roles } from '../common/decorators';
+import { CurrentUser } from '../common/decorators';
 import { RolesGuard } from '../common/roles.guard';
 import { AuthUser } from '../common/roles';
 
@@ -33,20 +32,11 @@ export class BeneficiosController {
   constructor(private readonly beneficios: BeneficiosService) {}
 
   @Get(':id')
-  @Roles(
-    PapelCodigo.ADMIN,
-    PapelCodigo.VMO_LEAD,
-    PapelCodigo.FINANCAS,
-    PapelCodigo.SPONSOR,
-    PapelCodigo.PM,
-    PapelCodigo.DIRETORIA,
-  )
   get(@Param('id') id: string) {
     return this.beneficios.get(id);
   }
 
   @Post(':id/baseline')
-  @Roles(PapelCodigo.ADMIN, PapelCodigo.VMO_LEAD, PapelCodigo.PM)
   baseline(
     @Param('id') id: string,
     @Body() dto: BaselineDto,
@@ -56,7 +46,6 @@ export class BeneficiosController {
   }
 
   @Patch(':id/owner')
-  @Roles(PapelCodigo.ADMIN, PapelCodigo.VMO_LEAD)
   owner(
     @Param('id') id: string,
     @Body() dto: OwnerDto,

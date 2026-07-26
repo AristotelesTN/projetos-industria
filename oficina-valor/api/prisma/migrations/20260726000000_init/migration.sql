@@ -2,7 +2,7 @@
 CREATE SCHEMA IF NOT EXISTS "public";
 
 -- CreateEnum
-CREATE TYPE "PapelCodigo" AS ENUM ('ADMIN', 'VMO_LEAD', 'FINANCAS', 'SPONSOR', 'PM', 'DIRETORIA');
+CREATE TYPE "PapelCodigo" AS ENUM ('GERENTE_PORTFOLIO');
 CREATE TYPE "ProjetoStatus" AS ENUM ('conceito', 'aprovado', 'execucao', 'encerrado', 'sustentacao', 'morto', 'hold');
 CREATE TYPE "BeneficioCategoria" AS ENUM ('hard', 'soft', 'avoidance', 'estrategico');
 CREATE TYPE "BeneficioStatus" AS ENUM ('planejado', 'em_captura', 'incorporado', 'cancelado');

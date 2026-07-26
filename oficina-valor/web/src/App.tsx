@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   api,
   brl,
@@ -19,10 +19,19 @@ type Tab =
 
 const brlFmt = brl;
 
+const TABS: { id: Tab; label: string }[] = [
+  { id: 'projetos', label: 'Projetos' },
+  { id: 'diretoria', label: 'Portfólio' },
+  { id: 'financas', label: 'Homologação' },
+  { id: 'gates', label: 'Gates' },
+  { id: 'nao', label: 'Nao' },
+  { id: 'auditoria', label: 'Auditoria' },
+  { id: 'import', label: 'Importações' },
+];
+
 export default function App() {
   const [user, setUser] = useState<User | null>(getUser());
   const [tab, setTab] = useState<Tab>('projetos');
-  const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState('');
   const [projetos, setProjetos] = useState<any[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -34,25 +43,10 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
 
-  // medição form
   const [beneficioId, setBeneficioId] = useState('');
   const [periodo, setPeriodo] = useState('2026-04-01');
   const [valor, setValor] = useState('10000');
   const [file, setFile] = useState<File | null>(null);
-
-  const papeis = user?.papeis ?? [];
-  const isFin = papeis.includes('FINANCAS') || papeis.includes('ADMIN');
-  const isVmo =
-    papeis.includes('VMO_LEAD') ||
-    papeis.includes('ADMIN') ||
-    papeis.includes('DIRETORIA') ||
-    papeis.includes('SPONSOR');
-
-  useEffect(() => {
-    if (!user) {
-      api.devUsers().then(setUsers).catch((e) => setError(String(e.message || e)));
-    }
-  }, [user]);
 
   async function refreshList() {
     const list = await api.projetos();
@@ -92,27 +86,14 @@ export default function App() {
     }
   }, [tab, user]);
 
-  const tabs = useMemo(() => {
-    const t: { id: Tab; label: string }[] = [
-      { id: 'projetos', label: 'Meu projeto' },
-      { id: 'diretoria', label: 'Portfólio' },
-    ];
-    if (isFin) t.push({ id: 'financas', label: 'Homologação' });
-    if (isVmo) t.push({ id: 'gates', label: 'Gates' });
-    t.push({ id: 'nao', label: 'Nao' });
-    if (isFin || isVmo) t.push({ id: 'auditoria', label: 'Auditoria' });
-    if (isVmo) t.push({ id: 'import', label: 'Importações' });
-    return t;
-  }, [isFin, isVmo]);
-
-  async function login(email: string) {
+  async function entrar() {
     setBusy(true);
     setError('');
     try {
-      const res = await api.login(email);
+      const res = await api.login('gerente@oficina.local');
       setSession(res.accessToken, res.user);
       setUser(res.user);
-      setTab(res.user.papeis.includes('FINANCAS') ? 'financas' : 'projetos');
+      setTab('projetos');
     } catch (e: any) {
       setError(e.message || String(e));
     } finally {
@@ -135,7 +116,7 @@ export default function App() {
       });
       await api.uploadEvidencia(med.id, file);
       await api.submeter(med.id);
-      setMsg('Medição enviada para homologação');
+      setMsg('Medição enviada — você pode homologar na aba Homologação');
       if (selectedId) await refreshSelected(selectedId);
     } catch (e: any) {
       setError(e.message || String(e));
@@ -152,21 +133,14 @@ export default function App() {
             Oficina de <em>Valor</em>
           </h1>
           <p className="muted">
-            Plataforma VMO — value tracking, gates e homologação financeira.
-            Ambiente de desenvolvimento com personas seed.
+            Gestão de portfólio e realização de valor — um único perfil:
+            Gerente de Portfólio.
           </p>
           {error && <p className="error">{error}</p>}
           <div className="stack" style={{ marginTop: 18 }}>
-            {users.map((u) => (
-              <button
-                key={u.id}
-                className="btn secondary"
-                disabled={busy}
-                onClick={() => login(u.email)}
-              >
-                {u.nome} · {u.papeis.join(', ')}
-              </button>
-            ))}
+            <button className="btn" disabled={busy} onClick={entrar}>
+              Entrar como Gerente de Portfólio
+            </button>
           </div>
         </div>
       </div>
@@ -181,8 +155,7 @@ export default function App() {
             Oficina de <span>Valor</span>
           </h1>
           <p className="sub">
-            {user.nome} · {papeis.join(' · ')} — fonte única de valor prometido vs.
-            realizado
+            {user.nome} — gerencie projetos, medições, gates e ROI do portfólio
           </p>
         </div>
         <button
@@ -197,7 +170,7 @@ export default function App() {
       </header>
 
       <nav className="tabs">
-        {tabs.map((t) => (
+        {TABS.map((t) => (
           <button
             key={t.id}
             className={`tab ${tab === t.id ? 'active' : ''}`}
@@ -213,7 +186,7 @@ export default function App() {
 
       {tab === 'diretoria' && (
         <section className="panel">
-          <h2>Sumário executivo</h2>
+          <h2>Sumário do portfólio</h2>
           {!portfolio ? (
             <p className="muted">Carregando…</p>
           ) : (
@@ -296,47 +269,45 @@ export default function App() {
               </div>
               <CurvaS data={analytics.curvaS || []} />
 
-              {(papeis.includes('PM') || papeis.includes('ADMIN')) && (
-                <div className="stack" style={{ marginTop: 16 }}>
-                  <h3>Registrar medição</h3>
-                  <p className="muted">Fluxo rápido: valor + evidência + envio (&lt;2 min).</p>
-                  <label className="field">
-                    Benefício
-                    <select
-                      value={beneficioId}
-                      onChange={(e) => setBeneficioId(e.target.value)}
-                    >
-                      {(projeto.businessCase?.beneficios || []).map((b: any) => (
-                        <option key={b.id} value={b.id}>
-                          {b.nome} ({b.categoria})
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="field">
-                    Período (AAAA-MM-DD)
-                    <input value={periodo} onChange={(e) => setPeriodo(e.target.value)} />
-                  </label>
-                  <label className="field">
-                    Valor realizado (R$)
-                    <input
-                      value={valor}
-                      onChange={(e) => setValor(e.target.value)}
-                      type="number"
-                    />
-                  </label>
-                  <label className="field">
-                    Evidência
-                    <input
-                      type="file"
-                      onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-                    />
-                  </label>
-                  <button className="btn" disabled={busy} onClick={registrarMedicao}>
-                    Enviar para Finanças
-                  </button>
-                </div>
-              )}
+              <div className="stack" style={{ marginTop: 16 }}>
+                <h3>Registrar medição</h3>
+                <p className="muted">Valor + evidência + envio para homologação.</p>
+                <label className="field">
+                  Benefício
+                  <select
+                    value={beneficioId}
+                    onChange={(e) => setBeneficioId(e.target.value)}
+                  >
+                    {(projeto.businessCase?.beneficios || []).map((b: any) => (
+                      <option key={b.id} value={b.id}>
+                        {b.nome} ({b.categoria})
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="field">
+                  Período (AAAA-MM-DD)
+                  <input value={periodo} onChange={(e) => setPeriodo(e.target.value)} />
+                </label>
+                <label className="field">
+                  Valor realizado (R$)
+                  <input
+                    value={valor}
+                    onChange={(e) => setValor(e.target.value)}
+                    type="number"
+                  />
+                </label>
+                <label className="field">
+                  Evidência
+                  <input
+                    type="file"
+                    onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                  />
+                </label>
+                <button className="btn" disabled={busy} onClick={registrarMedicao}>
+                  Registrar e enviar
+                </button>
+              </div>
             </>
           )}
         </section>
@@ -344,18 +315,19 @@ export default function App() {
 
       {tab === 'financas' && (
         <section className="panel stack">
-          <h2>Fila de homologação</h2>
+          <h2>Homologação de medições</h2>
           <div className="list">
             {pendentes.map((m) => (
               <div key={m.id} className="row" style={{ cursor: 'default' }}>
                 <div>
                   <strong>{m.beneficio?.businessCase?.projeto?.nome}</strong>
                   <div className="muted">
-                    {m.beneficio?.nome} · {m.periodoReferencia?.slice?.(0, 10) || m.periodoReferencia} ·{' '}
+                    {m.beneficio?.nome} ·{' '}
+                    {m.periodoReferencia?.slice?.(0, 10) || m.periodoReferencia} ·{' '}
                     {brlFmt(m.valorRealizado)}
                   </div>
                   <div className="muted">
-                    Por {m.registradaPor?.nome} · evidências: {m.evidencias?.length ?? 0}
+                    evidências: {m.evidencias?.length ?? 0}
                   </div>
                 </div>
                 <div className="actions">
@@ -367,7 +339,7 @@ export default function App() {
                       try {
                         await api.validar(m.id, 'aprovada', 'OK');
                         setPendentes(await api.pendentes());
-                        setMsg('Medição validada');
+                        setMsg('Medição homologada');
                       } catch (e: any) {
                         setError(e.message);
                       } finally {
@@ -375,7 +347,7 @@ export default function App() {
                       }
                     }}
                   >
-                    Validar
+                    Homologar
                   </button>
                   <button
                     className="btn danger"
@@ -402,7 +374,7 @@ export default function App() {
 
           {selectedId && (
             <div className="stack">
-              <h3>Importar / lançar custo realizado</h3>
+              <h3>Custo realizado</h3>
               <button
                 className="btn secondary"
                 onClick={async () => {
@@ -429,9 +401,9 @@ export default function App() {
         <section className="panel stack">
           <h2>Gates — {projeto.nome}</h2>
           <p className="muted">
-            Premissas Finanças: {projeto.premissasOkFinancas ? 'OK' : 'pendente'}
+            Premissas: {projeto.premissasOkFinancas ? 'OK' : 'pendente'}
           </p>
-          {isFin && !projeto.premissasOkFinancas && (
+          {!projeto.premissasOkFinancas && (
             <button
               className="btn"
               onClick={async () => {
@@ -452,7 +424,7 @@ export default function App() {
                     await api.gate(projeto.id, {
                       gate: g,
                       decisao: 'go',
-                      comentario: `${g} go via UI`,
+                      comentario: `${g} go`,
                     });
                     await refreshSelected(projeto.id);
                     setMsg(`Gate ${g} registrado`);
@@ -500,7 +472,7 @@ export default function App() {
                     {g.gate} · {g.decisao}
                   </strong>
                   <div className="muted">
-                    {g.decididaPor?.nome} · {new Date(g.decididaEm).toLocaleString('pt-BR')}
+                    {new Date(g.decididaEm).toLocaleString('pt-BR')}
                   </div>
                 </div>
               </div>
@@ -512,9 +484,6 @@ export default function App() {
       {tab === 'nao' && (
         <section className="panel stack">
           <h2>Analytics Nao</h2>
-          <p className="muted">
-            Snapshot DuckDB para perguntas ad-hoc (ROI, curva S, fila Finanças).
-          </p>
           <div className="actions">
             <button
               className="btn"
@@ -524,7 +493,7 @@ export default function App() {
                 try {
                   const res = await api.syncNao();
                   setMsg(
-                    `Sync Nao: mode=${res.mode} ok=${res.ok ?? true} arquivos=${res.manifesto?.files?.length ?? Object.keys(res.files || {}).length}`,
+                    `Sync Nao: mode=${res.mode} arquivos=${res.manifesto?.files?.length ?? Object.keys(res.files || {}).length}`,
                   );
                 } catch (e: any) {
                   setError(e.message);
@@ -536,11 +505,6 @@ export default function App() {
               Sincronizar Nao
             </button>
           </div>
-          <ul className="muted">
-            <li>Quais projetos têm BRR &lt; 70%?</li>
-            <li>Hard vs soft savings YTD</li>
-            <li>Aging da fila de homologação</li>
-          </ul>
           <iframe className="nao-frame" title="Nao" src={api.naoUrl} />
         </section>
       )}
@@ -570,7 +534,7 @@ export default function App() {
         <section className="panel stack">
           <h2>Importações</h2>
           <label className="field">
-            Planilha legada (CSV projetos/benefícios)
+            Planilha legada (CSV)
             <input
               type="file"
               accept=".csv"
@@ -588,7 +552,7 @@ export default function App() {
             />
           </label>
           <label className="field">
-            Custos ERP (CSV: projeto_ref,centro_custo,periodo,valor)
+            Custos ERP (CSV)
             <input
               type="file"
               accept=".csv"
@@ -640,7 +604,7 @@ function CurvaS({
           </div>
         </div>
       ))}
-      <p className="muted">Verde: planejado acumulado · Laranja: realizado acumulado</p>
+      <p className="muted">Verde: planejado · Laranja: realizado</p>
     </div>
   );
 }

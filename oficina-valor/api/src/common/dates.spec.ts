@@ -32,12 +32,3 @@ describe('ROI rules', () => {
     expect(calcRoi(120000, 80000)).toBeCloseTo(0.5);
   });
 });
-
-describe('SoD', () => {
-  it('bloqueia validador == registrador', () => {
-    const registrador = 'u1';
-    const validador = 'u1';
-    const allowed = registrador !== validador;
-    expect(allowed).toBe(false);
-  });
-});

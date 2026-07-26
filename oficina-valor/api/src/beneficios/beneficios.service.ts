@@ -1,14 +1,12 @@
 import {
   ConflictException,
-  ForbiddenException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { PapelCodigo } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditoriaService } from '../auditoria/auditoria.service';
-import { AuthUser, hasAnyRole } from '../common/roles';
+import { AuthUser } from '../common/roles';
 import { buildPerfilMensal, monthStart } from '../common/dates';
 
 @Injectable()
@@ -75,9 +73,6 @@ export class BeneficiosService {
     user: AuthUser,
     motivo?: string,
   ) {
-    if (!hasAnyRole(user, [PapelCodigo.ADMIN, PapelCodigo.VMO_LEAD])) {
-      throw new ForbiddenException();
-    }
     const b = await this.get(beneficioId);
     await this.prisma.$transaction([
       this.prisma.beneficio.update({

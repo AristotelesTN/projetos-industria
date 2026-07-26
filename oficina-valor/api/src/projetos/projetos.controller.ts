@@ -7,10 +7,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import {
-  BeneficioCategoria,
-  PapelCodigo,
-} from '@prisma/client';
+import { BeneficioCategoria } from '@prisma/client';
 import {
   IsArray,
   IsBoolean,
@@ -25,7 +22,7 @@ import {
 import { Type } from 'class-transformer';
 import { ProjetosService } from './projetos.service';
 import { DevAuthGuard } from '../auth/dev-auth.guard';
-import { CurrentUser, Roles } from '../common/decorators';
+import { CurrentUser } from '../common/decorators';
 import { RolesGuard } from '../common/roles.guard';
 import { AuthUser } from '../common/roles';
 
@@ -124,45 +121,26 @@ export class ProjetosController {
   constructor(private readonly projetos: ProjetosService) {}
 
   @Get()
-  @Roles(
-    PapelCodigo.ADMIN,
-    PapelCodigo.VMO_LEAD,
-    PapelCodigo.FINANCAS,
-    PapelCodigo.SPONSOR,
-    PapelCodigo.PM,
-    PapelCodigo.DIRETORIA,
-  )
   list(@CurrentUser() user: AuthUser) {
     return this.projetos.list(user);
   }
 
   @Get(':id')
-  @Roles(
-    PapelCodigo.ADMIN,
-    PapelCodigo.VMO_LEAD,
-    PapelCodigo.FINANCAS,
-    PapelCodigo.SPONSOR,
-    PapelCodigo.PM,
-    PapelCodigo.DIRETORIA,
-  )
   get(@Param('id') id: string, @CurrentUser() user: AuthUser) {
     return this.projetos.get(id, user);
   }
 
   @Post()
-  @Roles(PapelCodigo.ADMIN, PapelCodigo.VMO_LEAD, PapelCodigo.PM)
   create(@Body() dto: CreateProjetoDto, @CurrentUser() user: AuthUser) {
     return this.projetos.create(dto, user);
   }
 
   @Post(':id/submeter')
-  @Roles(PapelCodigo.ADMIN, PapelCodigo.VMO_LEAD, PapelCodigo.PM)
   submeter(@Param('id') id: string, @CurrentUser() user: AuthUser) {
     return this.projetos.submeterBusinessCase(id, user);
   }
 
   @Post(':id/premissas')
-  @Roles(PapelCodigo.FINANCAS, PapelCodigo.ADMIN)
   premissas(
     @Param('id') id: string,
     @Body() dto: PremissasDto,
@@ -177,7 +155,6 @@ export class ProjetosController {
   }
 
   @Patch(':id/pm')
-  @Roles(PapelCodigo.ADMIN, PapelCodigo.VMO_LEAD)
   reatribuir(
     @Param('id') id: string,
     @Body() dto: ReatribuirDto,

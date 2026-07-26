@@ -41,16 +41,13 @@ cd web && npm install && npm run dev
 
 ## Login de desenvolvimento
 
-Use o header `X-Dev-User` com um dos e-mails seed, ou o seletor de persona na UI:
+Único papel: **Gerente de Portfólio** (gerencia projetos, medições, homologação, gates e ROI).
 
 | E-mail | Papel |
 |--------|-------|
-| admin@oficina.local | Admin |
-| vmo@oficina.local | VMO Lead |
-| fin@oficina.local | Finanças |
-| sponsor@oficina.local | Sponsor |
-| pm@oficina.local | PM |
-| diretoria@oficina.local | Diretoria |
+| gerente@oficina.local | Gerente de Portfólio |
+
+Botão único na tela de login, ou header `X-Dev-User: gerente@oficina.local`.
 
 ## Fluxo piloto
 

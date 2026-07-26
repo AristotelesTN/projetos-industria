@@ -11,27 +11,6 @@ import { buildPerfilMensal, monthStart, addMonths } from '../src/common/dates';
 
 const prisma = new PrismaClient();
 
-async function upsertUser(email: string, nome: string, papel: PapelCodigo) {
-  const user = await prisma.usuario.upsert({
-    where: { email },
-    update: { nome, ativo: true },
-    create: { email, nome },
-  });
-  const role = await prisma.papel.upsert({
-    where: { codigo: papel },
-    update: {},
-    create: { codigo: papel, nome: papel },
-  });
-  await prisma.papelUsuario.upsert({
-    where: {
-      usuarioId_papelId: { usuarioId: user.id, papelId: role.id },
-    },
-    update: {},
-    create: { usuarioId: user.id, papelId: role.id },
-  });
-  return user;
-}
-
 async function main() {
   const existing = await prisma.projeto.count();
   if (existing >= 10) {
@@ -39,34 +18,33 @@ async function main() {
     return;
   }
 
-  for (const p of Object.values(PapelCodigo)) {
-    await prisma.papel.upsert({
-      where: { codigo: p },
-      update: {},
-      create: { codigo: p, nome: p },
-    });
-  }
+  const papel = await prisma.papel.upsert({
+    where: { codigo: PapelCodigo.GERENTE_PORTFOLIO },
+    update: { nome: 'Gerente de Portfólio' },
+    create: {
+      codigo: PapelCodigo.GERENTE_PORTFOLIO,
+      nome: 'Gerente de Portfólio',
+    },
+  });
 
-  const admin = await upsertUser('admin@oficina.local', 'Admin Sistema', PapelCodigo.ADMIN);
-  const vmo = await upsertUser('vmo@oficina.local', 'Ana VMO', PapelCodigo.VMO_LEAD);
-  const fin = await upsertUser('fin@oficina.local', 'Carlos Finanças', PapelCodigo.FINANCAS);
-  const sponsor = await upsertUser(
-    'sponsor@oficina.local',
-    'Sofia Sponsor',
-    PapelCodigo.SPONSOR,
-  );
-  const pm = await upsertUser('pm@oficina.local', 'Paulo PM', PapelCodigo.PM);
-  const dir = await upsertUser(
-    'diretoria@oficina.local',
-    'Diana Diretoria',
-    PapelCodigo.DIRETORIA,
-  );
-  void admin;
-  void dir;
+  const gerente = await prisma.usuario.upsert({
+    where: { email: 'gerente@oficina.local' },
+    update: { nome: 'Gerente de Portfólio', ativo: true },
+    create: {
+      email: 'gerente@oficina.local',
+      nome: 'Gerente de Portfólio',
+    },
+  });
 
-  await prisma.configVmo.create({
-    data: {},
-  }).catch(() => undefined);
+  await prisma.papelUsuario.upsert({
+    where: {
+      usuarioId_papelId: { usuarioId: gerente.id, papelId: papel.id },
+    },
+    update: {},
+    create: { usuarioId: gerente.id, papelId: papel.id },
+  });
+
+  await prisma.configVmo.create({ data: {} }).catch(() => undefined);
 
   const portfolio = await prisma.portfolio.create({
     data: { nome: 'Portfólio Manufatura 2026' },
@@ -110,8 +88,8 @@ async function main() {
         nome: p.nome,
         portfolioId: portfolio.id,
         areaId: areaIds[p.area],
-        sponsorId: sponsor.id,
-        pmId: pm.id,
+        sponsorId: gerente.id,
+        pmId: gerente.id,
         status: ProjetoStatus.execucao,
         investimentoAprovado: p.hard * 8,
         inicioPrevisto: inicio,
@@ -138,7 +116,7 @@ async function main() {
         valorMensalEsperado: p.hard,
         inicioCaptura: inicio,
         janelaMeses: 12,
-        benefitOwnerId: sponsor.id,
+        benefitOwnerId: gerente.id,
         status: 'em_captura',
       },
     });
@@ -150,7 +128,7 @@ async function main() {
         versao: 1,
         vigente: true,
         congeladaEm: new Date('2026-01-15'),
-        aprovadaPorId: vmo.id,
+        aprovadaPorId: gerente.id,
       },
     });
 
@@ -163,7 +141,7 @@ async function main() {
           valorMensalEsperado: p.soft,
           inicioCaptura: inicio,
           janelaMeses: 12,
-          benefitOwnerId: sponsor.id,
+          benefitOwnerId: gerente.id,
           status: 'em_captura',
         },
       });
@@ -175,7 +153,7 @@ async function main() {
           versao: 1,
           vigente: true,
           congeladaEm: new Date('2026-01-15'),
-          aprovadaPorId: vmo.id,
+          aprovadaPorId: gerente.id,
         },
       });
     }
@@ -185,12 +163,11 @@ async function main() {
         projetoId: projeto.id,
         gate: GateTipo.G2,
         decisao: GateDecisaoTipo.go,
-        decididaPorId: vmo.id,
+        decididaPorId: gerente.id,
         comentario: 'Aprovado no seed',
       },
     });
 
-    // 3 meses de medições validadas (jan-mar) — PM registra, Fin valida
     for (let m = 0; m < 3; m++) {
       const periodo = addMonths(inicio, m);
       const med = await prisma.medicao.create({
@@ -199,7 +176,7 @@ async function main() {
           periodoReferencia: periodo,
           valorRealizado: p.hard * (0.85 + m * 0.05),
           status: MedicaoStatus.validada,
-          registradaPorId: pm.id,
+          registradaPorId: gerente.id,
           comentario: 'Seed ciclo mensal',
         },
       });
@@ -215,21 +192,20 @@ async function main() {
       await prisma.validacao.create({
         data: {
           medicaoId: med.id,
-          validadaPorId: fin.id,
+          validadaPorId: gerente.id,
           decisao: 'aprovada',
-          comentario: 'Homologado seed',
+          comentario: 'Homologado pelo gerente de portfólio',
         },
       });
     }
 
-    // uma medição pendente no mês atual do seed (abril)
     const pend = await prisma.medicao.create({
       data: {
         beneficioId: hard.id,
         periodoReferencia: addMonths(inicio, 3),
         valorRealizado: p.hard,
         status: MedicaoStatus.pendente_validacao,
-        registradaPorId: pm.id,
+        registradaPorId: gerente.id,
       },
     });
     await prisma.evidencia.create({
@@ -248,12 +224,12 @@ async function main() {
         periodoReferencia: inicio,
         valor: p.hard * 2,
         origem: 'manual',
-        importadoPorId: fin.id,
+        importadoPorId: gerente.id,
       },
     });
   }
 
-  console.log('Seed OK: 10 projetos, usuários e ciclo mensal');
+  console.log('Seed OK: 10 projetos · usuário gerente@oficina.local');
 }
 
 main()
