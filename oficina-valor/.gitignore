@@ -6,3 +6,5 @@ uploads/*
 .env
 .DS_Store
 api/uploads/
+nao/data/*.csv
+web/dist/
