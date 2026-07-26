@@ -30,12 +30,7 @@ export function NaoWorkspace({
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<any>(null);
   const [input, setInput] = useState('');
-  const [msgs, setMsgs] = useState<Msg[]>([
-    {
-      role: 'assistant',
-      text: 'Insights nativo da Oficina de Valor — pergunte sobre BRR, ROI, curva S, hard/soft ou a fila de homologação. Sem login externo.',
-    },
-  ]);
+  const [msgs, setMsgs] = useState<Msg[]>([]);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -106,16 +101,14 @@ export function NaoWorkspace({
       <aside className="nao-side">
         <div className="nao-side-head">
           <h2>Insights</h2>
-          <p className="muted">Analytics conversacional nativo · design Oficina</p>
         </div>
 
         <div className="nao-status-row">
           <span className="nao-dot is-online" aria-hidden />
-          <span className="muted">Motor nativo online</span>
+          <span className="muted">
+            {status?.duckdbExists ? 'DuckDB pronto' : 'Sincronize os dados'}
+          </span>
         </div>
-        <p className="muted" style={{ fontSize: 12 }}>
-          DuckDB: {status?.duckdbExists ? 'pronto (sync opcional)' : 'ausente — sincronize'}
-        </p>
 
         <div className="actions" style={{ marginTop: 8 }}>
           <button className="btn" disabled={busy} onClick={sync}>

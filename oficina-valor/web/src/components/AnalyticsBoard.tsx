@@ -217,9 +217,6 @@ export function AnalyticsBoard({
       <div className="analytics-hero">
         <div>
           <h2>Analytics de valor</h2>
-          <p className="muted">
-            Rastreie ganhos, ROI, BRR e desvios do portfólio — visão executiva da Oficina.
-          </p>
         </div>
         <div className="top-actions">
           <button
@@ -530,7 +527,6 @@ export function AnalyticsBoard({
       <section className="panel">
         <div className="panel-head">
           <h2>Prescrições · Agents</h2>
-          <span className="meta">Supervisor pattern</span>
         </div>
         <div className="prescription-list">
           {prescriptions.slice(0, 2).map((p) => (
@@ -581,7 +577,6 @@ function CurvaSCompact({
           </div>
         </div>
       ))}
-      <p className="muted">Azul: planejado · Verde: realizado</p>
     </div>
   );
 }

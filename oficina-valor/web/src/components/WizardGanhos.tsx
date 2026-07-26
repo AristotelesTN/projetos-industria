@@ -292,19 +292,12 @@ export function WizardGanhos({
               )}
             </div>
           )}
-          <p className="muted" style={{ marginTop: 16, fontSize: 12 }}>
-            RF-25/26 · árvore BPMN · calculadoras F3
-          </p>
         </aside>
 
         <section className="wizard-main panel">
           {step === 'tipo' && (
             <>
               <h2>Wizard de Análise de Ganhos</h2>
-              <p className="muted">
-                Percorre a árvore BPMN para estimar ganhos (baseline) ou registrar
-                realização após a entrega.
-              </p>
               <div className="wizard-cards">
                 <button
                   type="button"
@@ -312,7 +305,6 @@ export function WizardGanhos({
                   onClick={() => setTipo('baseline')}
                 >
                   <strong>Pré-projeto (baseline)</strong>
-                  <span>Gera BENEFÍCIOs + BASELINE · obrigatório para G2</span>
                 </button>
                 <button
                   type="button"
@@ -320,7 +312,6 @@ export function WizardGanhos({
                   onClick={() => setTipo('realizacao')}
                 >
                   <strong>Pós-entrega (realização)</strong>
-                  <span>Gera MEDIÇÕES · verificação de adoção</span>
                 </button>
               </div>
               <div className="actions">

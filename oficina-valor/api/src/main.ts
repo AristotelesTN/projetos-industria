@@ -5,8 +5,15 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // "*" + credentials quebra o browser (não envia Allow-Origin).
+  // true reflete o Origin da request; lista explícita também funciona.
+  const rawCors = process.env.CORS_ORIGIN?.trim();
+  const origin =
+    !rawCors || rawCors === '*'
+      ? true
+      : rawCors.split(',').map((s) => s.trim()).filter(Boolean);
   app.enableCors({
-    origin: process.env.CORS_ORIGIN?.split(',') ?? true,
+    origin,
     credentials: true,
   });
   app.useGlobalPipes(

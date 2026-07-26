@@ -98,9 +98,14 @@ export default function App() {
       try {
         await api.ensureSession();
         if (!cancelled) setError('');
-      } catch {
-        clearSession();
-        if (!cancelled) setUser(null);
+      } catch (e) {
+        // Só derruba sessão em 401; falha de rede não impede novo login
+        if (e instanceof AuthError) {
+          clearSession();
+          if (!cancelled) setUser(null);
+        } else if (!cancelled) {
+          setError(e instanceof Error ? e.message : String(e));
+        }
       } finally {
         if (!cancelled) setBootstrapping(false);
       }
@@ -225,10 +230,6 @@ export default function App() {
             <strong>Oficina de Valor</strong>
           </div>
           <h1>Gerencie o portfólio pelo valor</h1>
-          <p className="muted">
-            Analytics de ganhos, ROI e prescrições — com Wizard BPMN e Insights
-            nativos.
-          </p>
           {error && <p className="error">{error}</p>}
           <button className="btn" disabled={busy} onClick={entrar} style={{ width: '100%' }}>
             Entrar como Gerente de Portfólio
@@ -245,7 +246,7 @@ export default function App() {
           <span className="mark" aria-hidden />
           <div>
             <strong>Oficina de Valor</strong>
-            <span>Software project · VMO</span>
+            <span>VMO</span>
           </div>
         </div>
         {NAV.map((group) => (
@@ -298,10 +299,7 @@ export default function App() {
             {(tab === 'projetos' || tab === 'wizard' || tab === 'agents') && (
               <button
                 className="btn"
-                onClick={() => {
-                  setTab('wizard');
-                  setMsg('Wizard BPMN · baseline ou realização');
-                }}
+                onClick={() => setTab('wizard')}
               >
                 + Registrar ganho
               </button>

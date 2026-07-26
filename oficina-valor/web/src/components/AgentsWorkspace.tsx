@@ -173,9 +173,6 @@ export function AgentsWorkspace({
       <div className="agents-hero">
         <div>
           <h2>Agents</h2>
-          <p className="muted">
-            Agents propose; you approve. Especialistas de captura, ROI, Curva S, risco e Insights.
-          </p>
         </div>
         <div className="top-actions">
           <div className="mode-toggle">
@@ -270,14 +267,12 @@ export function AgentsWorkspace({
           <section className="panel">
             <div className="panel-head">
               <h2>Supervisor hierarchy</h2>
-              <span className="meta">Chief AI · 5 especialistas</span>
             </div>
             <div className="agent-tree">
               <div className="chief-node">
                 <span className="orb lg blue" />
                 <div>
                   <strong>{overview.hierarchy.chief.label}</strong>
-                  <div className="muted">{overview.hierarchy.chief.role}</div>
                 </div>
               </div>
               <div className="agent-branches">
@@ -296,7 +291,6 @@ export function AgentsWorkspace({
                       style={{ background: s.color }}
                     />
                     <strong>{s.label}</strong>
-                    <span className="muted">{s.role}</span>
                     <span className="badge in-progress">{s.pending} pending</span>
                   </button>
                 ))}
@@ -552,8 +546,7 @@ export function AgentsWorkspace({
                   style={{ background: agentColor(drawer.agent, meta) }}
                 />
                 <div>
-                  <strong>{agentLabel(drawer.agent, meta)} Orchestrator</strong>
-                  <div className="muted">Specialist agent</div>
+                  <strong>{agentLabel(drawer.agent, meta)}</strong>
                 </div>
                 <span className="match-pill">{drawer.confidence}% Match</span>
               </div>
