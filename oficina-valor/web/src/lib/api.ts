@@ -295,7 +295,7 @@ export const api = {
   },
 };
 
-export function brl(n: number | null | undefined) {
+export function brl(n: number | string | null | undefined) {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',

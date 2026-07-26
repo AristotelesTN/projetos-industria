@@ -13,6 +13,7 @@ import { WizardGanhos } from './components/WizardGanhos';
 import { AnalyticsBoard } from './components/AnalyticsBoard';
 import { AgentsWorkspace } from './components/AgentsWorkspace';
 import { PortfolioWorkspace } from './components/PortfolioWorkspace';
+import { HomologacaoWorkspace } from './components/HomologacaoWorkspace';
 
 type Tab =
   | 'diretoria'
@@ -20,6 +21,7 @@ type Tab =
   | 'nao'
   | 'wizard'
   | 'agents'
+  | 'homologacao'
   | 'auditoria'
   | 'import';
 
@@ -39,6 +41,7 @@ const NAV: { section: string; items: { id: Tab; label: string; icon: string }[] 
       items: [
         { id: 'agents', label: 'Agents', icon: '◉' },
         { id: 'wizard', label: 'Wizard ganhos', icon: '✦' },
+        { id: 'homologacao', label: 'Homologação', icon: '✓' },
         { id: 'nao', label: 'Insights', icon: '◎' },
       ],
     },
@@ -57,6 +60,7 @@ const TITLES: Record<Tab, string> = {
   nao: 'Insights',
   wizard: 'Wizard de ganhos',
   agents: 'Agents',
+  homologacao: 'Homologação',
   auditoria: 'Auditoria',
   import: 'Importações',
 };
@@ -80,6 +84,7 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
   const [agentsPending, setAgentsPending] = useState(0);
+  const [homologPending, setHomologPending] = useState(0);
   const [insightsPrompt, setInsightsPrompt] = useState<string | null>(null);
 
   useEffect(() => {
@@ -146,6 +151,17 @@ export default function App() {
       api
         .agentsOverview()
         .then((o) => setAgentsPending(o?.kpis?.awaiting ?? 0))
+        .catch(() => undefined);
+    }
+    if (
+      tab === 'homologacao' ||
+      tab === 'wizard' ||
+      tab === 'projetos' ||
+      tab === 'diretoria'
+    ) {
+      api
+        .pendentes()
+        .then((list) => setHomologPending(list.length))
         .catch(() => undefined);
     }
   }, [tab, user, bootstrapping]);
@@ -280,11 +296,20 @@ export default function App() {
         <header className="top-bar">
           <div>
             <div className="breadcrumb">
-              Projects / <strong>Manufatura</strong>
+              Oficina de Valor / <strong>{TITLES[tab]}</strong>
             </div>
             <h1>{TITLES[tab]}</h1>
           </div>
           <div className="top-actions">
+            {homologPending > 0 && (
+              <button
+                className="btn secondary"
+                onClick={() => setTab('homologacao')}
+              >
+                Homologação
+                <span className="badge-count">{homologPending}</span>
+              </button>
+            )}
             <button
               className="btn secondary agents-badge-btn"
               onClick={() => setTab('agents')}
@@ -294,12 +319,31 @@ export default function App() {
                 <span className="badge-count">{agentsPending}</span>
               )}
             </button>
-            {(tab === 'projetos' || tab === 'wizard' || tab === 'agents') && (
-              <button
-                className="btn"
-                onClick={() => setTab('wizard')}
-              >
+            {(tab === 'projetos' ||
+              tab === 'wizard' ||
+              tab === 'agents' ||
+              tab === 'homologacao') && (
+              <button className="btn" onClick={() => setTab('wizard')}>
                 + Registrar ganho
+              </button>
+            )}
+            {(tab === 'projetos' || tab === 'diretoria') && (
+              <button
+                className="btn secondary"
+                disabled={busy}
+                onClick={async () => {
+                  setBusy(true);
+                  try {
+                    await api.exportGanhos();
+                    setMsg('Exportação de ganhos iniciada');
+                  } catch (e) {
+                    handleApiError(e);
+                  } finally {
+                    setBusy(false);
+                  }
+                }}
+              >
+                Exportar
               </button>
             )}
             <button
@@ -320,7 +364,8 @@ export default function App() {
             tab === 'diretoria' ||
             tab === 'wizard' ||
             tab === 'nao' ||
-            tab === 'agents'
+            tab === 'agents' ||
+            tab === 'homologacao'
               ? 'wide'
               : ''
           }`}
@@ -388,6 +433,7 @@ export default function App() {
                 setSelectedId(id);
                 setTab('wizard');
               }}
+              onOpenHomologacao={() => setTab('homologacao')}
               onRefresh={async () => {
                 await refreshList();
                 setPortfolio(await api.portfolio());
@@ -395,6 +441,21 @@ export default function App() {
               onMessage={(m) => {
                 setMsg(m);
                 setError('');
+              }}
+              onError={setError}
+            />
+          )}
+
+          {tab === 'homologacao' && (
+            <HomologacaoWorkspace
+              onOpenWizard={() => setTab('wizard')}
+              onMessage={(m) => {
+                setMsg(m);
+                setError('');
+                api
+                  .pendentes()
+                  .then((list) => setHomologPending(list.length))
+                  .catch(() => undefined);
               }}
               onError={setError}
             />

@@ -224,7 +224,7 @@ export function WizardGanhos({
         onMessage(
           tipo === 'baseline'
             ? 'Baseline criada via wizard — G2 liberado após premissas'
-            : 'Medição gerada — vá à Homologação',
+            : 'Medição gerada — vá em Homologação para validar',
         );
         onDone();
       } else if (res.cicloRetry === 1) {

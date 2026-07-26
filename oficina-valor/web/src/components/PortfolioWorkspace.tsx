@@ -54,6 +54,7 @@ export function PortfolioWorkspace({
   selectedId,
   onSelect,
   onOpenWizard,
+  onOpenHomologacao,
   onRefresh,
   onMessage,
   onError,
@@ -63,6 +64,7 @@ export function PortfolioWorkspace({
   selectedId: string | null;
   onSelect: (id: string) => void;
   onOpenWizard: (id: string) => void;
+  onOpenHomologacao?: () => void;
   onRefresh: () => Promise<void>;
   onMessage: (m: string) => void;
   onError: (m: string) => void;
@@ -72,6 +74,8 @@ export function PortfolioWorkspace({
   const [dragId, setDragId] = useState<string | null>(null);
   const [dropCol, setDropCol] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detail, setDetail] = useState<any | null>(null);
   const [form, setForm] = useState({
     nome: '',
     areaNome: 'Produção',
@@ -79,6 +83,11 @@ export function PortfolioWorkspace({
     valorMensalEsperado: '8000',
     status: 'conceito',
   });
+
+  const selected = useMemo(
+    () => projetos.find((p) => p.id === selectedId) || null,
+    [projetos, selectedId],
+  );
 
   const byStatus = useMemo(() => {
     const map: Record<string, ProjetoRow[]> = {};
@@ -126,6 +135,38 @@ export function PortfolioWorkspace({
       onSelect(created.id);
       await onRefresh();
       onMessage(`Projeto criado · ${created.nome}`);
+    } catch (err: any) {
+      onError(err.message || String(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function openDetail(id: string) {
+    onSelect(id);
+    setDetailOpen(true);
+    setBusy(true);
+    try {
+      const [full, analytics] = await Promise.all([
+        api.projeto(id),
+        api.analytics(id).catch(() => null),
+      ]);
+      setDetail({ ...full, analytics });
+    } catch (err: any) {
+      onError(err.message || String(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function setPremissas(ok: boolean) {
+    if (!selectedId) return;
+    setBusy(true);
+    try {
+      await api.premissas(selectedId, ok);
+      onMessage(ok ? 'Premissas OK (Finanças)' : 'Premissas rejeitadas');
+      await openDetail(selectedId);
+      await onRefresh();
     } catch (err: any) {
       onError(err.message || String(err));
     } finally {
@@ -378,7 +419,7 @@ export function PortfolioWorkspace({
                       setDragId(null);
                       setDropCol(null);
                     }}
-                    onClick={() => onSelect(p.id)}
+                    onClick={() => void openDetail(p.id)}
                   >
                     <div className="kanban-card-top">
                       <span className={`rag-dot ${p.health}`} />
@@ -400,10 +441,20 @@ export function PortfolioWorkspace({
                         className="linkish"
                         onClick={(e) => {
                           e.stopPropagation();
+                          void openDetail(p.id);
+                        }}
+                      >
+                        Detalhes
+                      </button>
+                      <button
+                        type="button"
+                        className="linkish"
+                        onClick={(e) => {
+                          e.stopPropagation();
                           onOpenWizard(p.id);
                         }}
                       >
-                        Abrir
+                        Wizard
                       </button>
                       <button
                         type="button"
@@ -440,7 +491,7 @@ export function PortfolioWorkspace({
                   <article
                     key={p.id}
                     className={`kanban-card ${selectedId === p.id ? 'selected' : ''}`}
-                    onClick={() => onSelect(p.id)}
+                    onClick={() => void openDetail(p.id)}
                   >
                     <div className="kanban-card-top">
                       <strong>{p.nome}</strong>
@@ -461,10 +512,20 @@ export function PortfolioWorkspace({
                         className="linkish"
                         onClick={(e) => {
                           e.stopPropagation();
+                          void openDetail(p.id);
+                        }}
+                      >
+                        Detalhes
+                      </button>
+                      <button
+                        type="button"
+                        className="linkish"
+                        onClick={(e) => {
+                          e.stopPropagation();
                           onOpenWizard(p.id);
                         }}
                       >
-                        Abrir
+                        Wizard
                       </button>
                       <button
                         type="button"
@@ -513,7 +574,7 @@ export function PortfolioWorkspace({
                     <tr
                       key={p.id}
                       className={selectedId === p.id ? 'is-selected' : ''}
-                      onClick={() => onSelect(p.id)}
+                      onClick={() => void openDetail(p.id)}
                     >
                       <td>
                         <strong>{p.nome}</strong>
@@ -540,10 +601,20 @@ export function PortfolioWorkspace({
                             className="linkish"
                             onClick={(e) => {
                               e.stopPropagation();
+                              void openDetail(p.id);
+                            }}
+                          >
+                            Detalhes
+                          </button>
+                          <button
+                            type="button"
+                            className="linkish"
+                            onClick={(e) => {
+                              e.stopPropagation();
                               onOpenWizard(p.id);
                             }}
                           >
-                            Abrir
+                            Wizard
                           </button>
                           <button
                             type="button"
@@ -576,6 +647,109 @@ export function PortfolioWorkspace({
             </span>
           </div>
         </section>
+      )}
+
+      {detailOpen && (selected || detail) && (
+        <div className="drawer-backdrop" onClick={() => setDetailOpen(false)}>
+          <aside
+            className="project-detail-drawer"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="drawer-head">
+              <div>
+                <button
+                  type="button"
+                  className="linkish"
+                  onClick={() => setDetailOpen(false)}
+                >
+                  ← Fechar
+                </button>
+                <h2 style={{ margin: '8px 0 0' }}>
+                  {detail?.nome || selected?.nome}
+                </h2>
+                <p className="muted" style={{ margin: '4px 0 0' }}>
+                  {statusLabel(detail?.status || selected?.status || '')} ·{' '}
+                  {detail?.area?.nome || selected?.area?.nome || 'Área'}
+                </p>
+              </div>
+              <span
+                className={`rag-dot ${selected?.health || 'yellow'}`}
+                title="Saúde BRR"
+              />
+            </div>
+            <div className="drawer-body">
+              <div className="detail-kv">
+                <span>Prometido</span>
+                <strong>{brl(selected?.prometido ?? 0)}</strong>
+              </div>
+              <div className="detail-kv">
+                <span>Realizado</span>
+                <strong>{brl(selected?.realizado ?? 0)}</strong>
+              </div>
+              <div className="detail-kv">
+                <span>BRR</span>
+                <strong>
+                  {selected?.brr == null
+                    ? '—'
+                    : `${Math.round(selected.brr * 100)}%`}
+                </strong>
+              </div>
+              <div className="detail-kv">
+                <span>ROI</span>
+                <strong>{selected?.analytics?.roiLabel ?? '—'}</strong>
+              </div>
+              <div className="detail-kv">
+                <span>Investimento</span>
+                <strong>{brl(detail?.investimentoAprovado ?? selected?.investimentoAprovado ?? 0)}</strong>
+              </div>
+              <div className="detail-kv">
+                <span>PM</span>
+                <strong>{detail?.pm?.nome || selected?.pm?.nome || '—'}</strong>
+              </div>
+              <div className="detail-kv">
+                <span>Premissas Finanças</span>
+                <strong>
+                  {detail?.premissasOkFinancas ? 'OK' : 'Pendente'}
+                </strong>
+              </div>
+              <div className="detail-kv">
+                <span>Baseline wizard</span>
+                <strong>
+                  {detail?.wizardBaselineCompleto ? 'Completo' : 'Pendente'}
+                </strong>
+              </div>
+              <div className="detail-kv">
+                <span>Benefícios</span>
+                <strong>
+                  {detail?.businessCase?.beneficios?.length ?? 0}
+                </strong>
+              </div>
+            </div>
+            <div className="drawer-foot">
+              {!detail?.premissasOkFinancas && (
+                <button
+                  className="btn secondary"
+                  disabled={busy || !selectedId}
+                  onClick={() => void setPremissas(true)}
+                >
+                  Premissas OK
+                </button>
+              )}
+              {onOpenHomologacao && (
+                <button className="btn secondary" onClick={onOpenHomologacao}>
+                  Homologação
+                </button>
+              )}
+              <button
+                className="btn"
+                disabled={!selectedId}
+                onClick={() => selectedId && onOpenWizard(selectedId)}
+              >
+                Wizard
+              </button>
+            </div>
+          </aside>
+        </div>
       )}
     </div>
   );

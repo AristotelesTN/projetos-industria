@@ -104,7 +104,10 @@ export function NaoWorkspace({
         </div>
 
         <div className="nao-status-row">
-          <span className="nao-dot is-online" aria-hidden />
+          <span
+            className={`nao-dot ${status?.duckdbExists ? 'is-online' : 'is-offline'}`}
+            aria-hidden
+          />
           <span className="muted">
             {status?.duckdbExists ? 'DuckDB pronto' : 'Sincronize os dados'}
           </span>

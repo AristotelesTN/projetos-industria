@@ -4,7 +4,7 @@ import { api } from '../lib/api';
 type Tab = 'overview' | 'recommendations' | 'activity';
 
 const AGENT_FILTERS = [
-  { id: 'all', label: 'All' },
+  { id: 'all', label: 'Todos' },
   { id: 'captura', label: 'Captura' },
   { id: 'roi_auditor', label: 'ROI' },
   { id: 'curva_s', label: 'Curva S' },
@@ -129,7 +129,7 @@ export function AgentsWorkspace({
     try {
       await api.agentsSetMode(mode);
       await load();
-      onMessage(`Modo ${mode === 'assisted' ? 'Assisted' : 'Automated'}`);
+      onMessage(`Modo ${mode === 'assisted' ? 'Assistido' : 'Automático'}`);
     } catch (e: any) {
       onError(e.message || String(e));
     } finally {
@@ -182,18 +182,18 @@ export function AgentsWorkspace({
               onClick={() => void setMode('automated')}
               disabled={busy}
             >
-              <span className="orb sm blue" /> Automated
+              <span className="orb sm blue" /> Automático
             </button>
             <button
               className={`mode-pill ${mode === 'assisted' ? 'active' : ''}`}
               onClick={() => void setMode('assisted')}
               disabled={busy}
             >
-              Assisted
+              Assistido
             </button>
           </div>
           <button className="btn secondary" disabled={busy} onClick={scan}>
-            Scan now
+            Escanear
           </button>
         </div>
       </div>
@@ -201,9 +201,9 @@ export function AgentsWorkspace({
       <div className="agents-tabs">
         {(
           [
-            ['overview', 'Overview'],
-            ['recommendations', `Recommendations${pendingCount ? ` (${pendingCount})` : ''}`],
-            ['activity', 'Activity'],
+            ['overview', 'Visão geral'],
+            ['recommendations', `Recomendações${pendingCount ? ` (${pendingCount})` : ''}`],
+            ['activity', 'Atividade'],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -218,7 +218,7 @@ export function AgentsWorkspace({
 
       {tab !== 'overview' && (
         <div className="toolbar">
-          {tab === 'activity' && <span className="live-dot">LIVE</span>}
+          {tab === 'activity' && <span className="live-dot">AO VIVO</span>}
           <div className="filter-pills">
             {AGENT_FILTERS.map((f) => (
               <button
@@ -235,10 +235,10 @@ export function AgentsWorkspace({
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="all">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="accepted">Accepted</option>
-            <option value="rejected">Rejected</option>
+            <option value="all">Todos status</option>
+            <option value="pending">Pendente</option>
+            <option value="accepted">Aceitas</option>
+            <option value="rejected">Rejeitadas</option>
             <option value="auto">Auto</option>
           </select>
         </div>
@@ -403,10 +403,10 @@ export function AgentsWorkspace({
                       setShowReasoning((s) => ({ ...s, [r.id]: !s[r.id] }))
                     }
                   >
-                    {open ? 'Hide Reasoning' : 'Show Reasoning'}
+                    {open ? 'Ocultar raciocínio' : 'Ver raciocínio'}
                   </button>
                   {r.status === 'pending' && (
-                    <span className="waiting">Waiting</span>
+                    <span className="waiting">Aguardando</span>
                   )}
                 </div>
                 {open && (
@@ -450,14 +450,14 @@ export function AgentsWorkspace({
                       disabled={busy}
                       onClick={() => void reject(r.id)}
                     >
-                      Reject
+                      Rejeitar
                     </button>
                     <button
                       className="btn accept"
                       disabled={busy}
                       onClick={() => void accept(r.id)}
                     >
-                      Accept
+                      Aceitar
                     </button>
                   </div>
                 )}
@@ -467,9 +467,9 @@ export function AgentsWorkspace({
           {!filteredRecs.length && (
             <div className="empty-state">
               <strong>Nenhuma recomendação</strong>
-              <span>Execute Scan now para o Maestro orquestrar os especialistas.</span>
+              <span>Execute Escanear para o Maestro orquestrar os especialistas.</span>
               <button className="btn" onClick={scan} disabled={busy}>
-                Scan now
+                Escanear
               </button>
             </div>
           )}
@@ -618,14 +618,14 @@ export function AgentsWorkspace({
                 disabled={busy}
                 onClick={() => void reject(drawer.id)}
               >
-                Reject
+                Rejeitar
               </button>
               <button
                 className="btn accept"
                 disabled={busy}
                 onClick={() => void accept(drawer.id)}
               >
-                Accept & Apply
+                Aceitar e aplicar
               </button>
             </div>
           </aside>
