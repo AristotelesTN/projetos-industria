@@ -1,5 +1,5 @@
-import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { api } from '../lib/api';
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { api, getUser } from '../lib/api';
 
 const PROMPTS = [
   'Quais projetos têm BRR abaixo de 70%?',
@@ -11,14 +11,35 @@ const PROMPTS = [
   'Crie um Story com o resumo do portfólio e gráficos de BRR',
 ];
 
+const LS_ONBOARDED = 'ov_nao_onboarded_v1';
+const LS_EMBED = 'ov_nao_prefer_embed_v1';
+
 type NaoHealth = 'checking' | 'online' | 'offline';
 type ViewMode = 'nao' | 'rapido';
+type NaoSurface = 'onboard' | 'tab' | 'embed';
 
 type Msg = {
   role: 'user' | 'assistant';
   text: string;
   rows?: Record<string, unknown>[];
 };
+
+function readFlag(key: string) {
+  try {
+    return localStorage.getItem(key) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function writeFlag(key: string, on: boolean) {
+  try {
+    if (on) localStorage.setItem(key, '1');
+    else localStorage.removeItem(key);
+  } catch {
+    /* ignore */
+  }
+}
 
 export function NaoWorkspace({
   onMessage,
@@ -39,12 +60,32 @@ export function NaoWorkspace({
   const [lastSync, setLastSync] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
   const [pendingPrompt, setPendingPrompt] = useState<string | null>(null);
+  const [onboarded, setOnboarded] = useState(() => readFlag(LS_ONBOARDED));
+  const [preferEmbed, setPreferEmbed] = useState(() => readFlag(LS_EMBED));
   const [input, setInput] = useState('');
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const endRef = useRef<HTMLDivElement>(null);
+  const naoWindowRef = useRef<Window | null>(null);
 
-  /** URL pública do adaptador Nao (gráficos + Stories). Prefer VITE_NAO_URL. */
   const naoUrl = api.naoUrl;
+  const user = getUser();
+
+  const crossOrigin = useMemo(() => {
+    try {
+      return new URL(naoUrl, window.location.href).origin !== window.location.origin;
+    } catch {
+      return true;
+    }
+  }, [naoUrl]);
+
+  /** Aba dedicada é o caminho recomendado (sessão Better Auth do Nao). */
+  const surface: NaoSurface = !onboarded
+    ? 'onboard'
+    : preferEmbed && !crossOrigin
+      ? 'embed'
+      : preferEmbed && crossOrigin
+        ? 'embed'
+        : 'tab';
 
   const checkHealth = useCallback(async () => {
     setHealth('checking');
@@ -82,6 +123,45 @@ export function NaoWorkspace({
     } catch {
       return false;
     }
+  }
+
+  function openNaoTab(withPrompt?: string | null) {
+    if (withPrompt) void copyPrompt(withPrompt);
+    const w = window.open(naoUrl, 'oficina-nao-chat');
+    naoWindowRef.current = w;
+    if (!w) {
+      onError('Popup bloqueado — permita pop-ups ou use o link Abrir Nao');
+      return;
+    }
+    onMessage(
+      withPrompt
+        ? 'Nao aberto — cole o prompt (Ctrl/Cmd+V) após entrar'
+        : 'Nao aberto em nova aba — entre uma vez e volte aqui',
+    );
+  }
+
+  function markOnboarded() {
+    writeFlag(LS_ONBOARDED, true);
+    setOnboarded(true);
+  }
+
+  function chooseTabSurface() {
+    writeFlag(LS_EMBED, false);
+    setPreferEmbed(false);
+    markOnboarded();
+    openNaoTab(pendingPrompt);
+  }
+
+  function chooseEmbedSurface() {
+    writeFlag(LS_EMBED, true);
+    setPreferEmbed(true);
+    markOnboarded();
+    setIframeKey((k) => k + 1);
+    onMessage(
+      crossOrigin
+        ? 'Painel embed ativo — se pedir login, use Abrir Nao ↗ na mesma sessão do navegador'
+        : 'Painel embed ativo',
+    );
   }
 
   async function sync() {
@@ -127,7 +207,6 @@ export function NaoWorkspace({
     }
   }
 
-  /** Agents / deep-link: no adaptador Nao, copia o prompt; no modo rápido, pergunta nativo. */
   useEffect(() => {
     if (!initialPrompt) return;
     const q = initialPrompt.trim();
@@ -138,10 +217,9 @@ export function NaoWorkspace({
     if (mode === 'nao' && health !== 'offline') {
       setPendingPrompt(q);
       void copyPrompt(q).then((ok) => {
-        if (ok) {
-          onMessage('Prompt copiado — cole no chat Nao para gráficos e Stories');
-        }
+        if (ok) onMessage('Prompt copiado — abra o Nao e cole para gráficos/Stories');
       });
+      if (onboarded && surface !== 'onboard') openNaoTab(q);
       onInitialPromptConsumed?.();
       return;
     }
@@ -159,6 +237,7 @@ export function NaoWorkspace({
     if (mode === 'nao') {
       setPendingPrompt(q);
       void copyPrompt(q);
+      if (onboarded) openNaoTab(q);
       return;
     }
     void ask(q);
@@ -201,7 +280,7 @@ export function NaoWorkspace({
           <span className="muted">
             {mode === 'nao' && health === 'checking' && 'Verificando Nao…'}
             {mode === 'nao' && health === 'online' && 'Nao online · charts/Stories'}
-            {mode === 'nao' && health === 'offline' && 'Nao offline — use Rápido ou inicie o serviço'}
+            {mode === 'nao' && health === 'offline' && 'Nao offline — use Rápido'}
             {mode === 'rapido' && (duckReady ? 'DuckDB pronto · chat nativo' : 'Sincronize os dados')}
           </span>
         </div>
@@ -216,6 +295,14 @@ export function NaoWorkspace({
           </p>
         )}
 
+        <div className="nao-auth-note">
+          <strong>Sessões</strong>
+          <p className="muted" style={{ fontSize: 12, margin: '4px 0 0' }}>
+            App: {user?.nome || 'Gerente'} (Oficina). Nao: login próprio uma vez — recomendado
+            {crossOrigin ? ' em nova aba (origem diferente).' : '.'}
+          </p>
+        </div>
+
         <div className="actions" style={{ marginTop: 10, flexWrap: 'wrap' }}>
           <button className="btn" disabled={busy} onClick={() => void sync()}>
             {busy ? 'Sincronizando…' : 'Sincronizar → Nao'}
@@ -223,18 +310,23 @@ export function NaoWorkspace({
           {mode === 'nao' && (
             <>
               <button
+                className="btn"
+                type="button"
+                disabled={health === 'offline'}
+                onClick={() => openNaoTab(pendingPrompt)}
+              >
+                Abrir Nao ↗
+              </button>
+              <button
                 className="btn secondary"
                 type="button"
                 onClick={() => {
-                  setIframeKey((k) => k + 1);
-                  void checkHealth();
+                  writeFlag(LS_ONBOARDED, false);
+                  setOnboarded(false);
                 }}
               >
-                Recarregar
+                Refazer setup
               </button>
-              <a className="btn secondary" href={naoUrl} target="_blank" rel="noreferrer">
-                Abrir Nao ↗
-              </a>
             </>
           )}
         </div>
@@ -244,13 +336,16 @@ export function NaoWorkspace({
             <strong>Prompt pronto</strong>
             <p className="muted" style={{ fontSize: 12, margin: '4px 0 8px' }}>
               {copied === pendingPrompt
-                ? 'Copiado — cole no chat Nao (Ctrl/Cmd+V).'
-                : 'Clique para copiar e cole no Nao.'}
+                ? 'Copiado — cole no Nao (Ctrl/Cmd+V).'
+                : 'Clique para copiar e abra o Nao.'}
             </p>
             <button
               type="button"
               className="nao-prompt"
-              onClick={() => void copyPrompt(pendingPrompt)}
+              onClick={() => {
+                void copyPrompt(pendingPrompt);
+                openNaoTab(pendingPrompt);
+              }}
             >
               {pendingPrompt}
             </button>
@@ -267,16 +362,11 @@ export function NaoWorkspace({
                 disabled={busy}
                 onClick={() => usePrompt(q)}
               >
-                {mode === 'nao' && copied === q ? 'Copiado!' : q}
+                {mode === 'nao' && copied === q ? 'Copiado · abrir Nao' : q}
               </button>
             </li>
           ))}
         </ul>
-
-        <p className="muted" style={{ fontSize: 11, marginTop: 16 }}>
-          Sessão do app: Gerente de Portfólio. O Nao usa o DuckDB sincronizado deste
-          portfólio (gráficos, Stories e SQL).
-        </p>
       </aside>
 
       <div className={`nao-main ${mode === 'rapido' ? 'native-chat' : ''}`}>
@@ -285,22 +375,110 @@ export function NaoWorkspace({
             <div className="nao-offline">
               <strong>Adaptador Nao inacessível</strong>
               <p className="muted">
-                Inicie o serviço (<code>nao chat --port 5006</code> ou Docker) e
-                sincronize os dados. Enquanto isso, use o modo <strong>Rápido</strong>{' '}
-                (tabelas via API autenticada).
+                Inicie o serviço (<code>nao chat --port 5006</code> ou Docker) e sincronize.
+                Enquanto isso, use o modo <strong>Rápido</strong>.
               </p>
               <button className="btn" type="button" onClick={() => setMode('rapido')}>
                 Abrir modo Rápido
               </button>
             </div>
+          ) : surface === 'onboard' ? (
+            <div className="nao-onboard">
+              <p className="nao-onboard-kicker">Setup · 1 vez</p>
+              <h3>Entrar no Nao para gráficos e Stories</h3>
+              <p className="muted">
+                O login do <strong>Oficina de Valor</strong> já está ativo. O Nao tem autenticação
+                própria (Better Auth) — não dá para desligar. Faça o login <em>uma vez</em> na aba
+                do Nao; depois use prompts daqui (copiar + colar).
+              </p>
+              <ol className="nao-onboard-steps">
+                <li>
+                  <strong>Sincronizar</strong> o portfólio para o DuckDB
+                </li>
+                <li>
+                  <strong>Abrir Nao</strong> em nova aba e concluir o primeiro acesso
+                </li>
+                <li>
+                  Voltar e usar perguntas sugeridas (prompt copiado automaticamente)
+                </li>
+              </ol>
+              <div className="nao-onboard-actions">
+                <button className="btn" disabled={busy} onClick={() => void sync()}>
+                  {busy ? 'Sincronizando…' : '1. Sincronizar dados'}
+                </button>
+                <button className="btn" type="button" onClick={chooseTabSurface}>
+                  2. Abrir Nao e entrar ↗
+                </button>
+                <button className="btn secondary" type="button" onClick={chooseEmbedSurface}>
+                  Já entrei — tentar painel
+                </button>
+                <button className="btn secondary" type="button" onClick={() => setMode('rapido')}>
+                  Pular · modo Rápido
+                </button>
+              </div>
+              {crossOrigin && (
+                <p className="muted" style={{ fontSize: 12, marginTop: 16 }}>
+                  Nao está em outra origem ({naoUrl}). Cookies do iframe podem falhar — a aba
+                  dedicada é o caminho mais estável.
+                </p>
+              )}
+            </div>
+          ) : surface === 'embed' || preferEmbed ? (
+            <div className="nao-embed-wrap">
+              <div className="nao-embed-bar">
+                <span className="muted" style={{ fontSize: 12 }}>
+                  Painel embed · se pedir login, use a aba
+                </span>
+                <div className="top-actions">
+                  <button className="btn secondary" type="button" onClick={() => openNaoTab()}>
+                    Abrir Nao ↗
+                  </button>
+                  <button
+                    className="btn secondary"
+                    type="button"
+                    onClick={() => {
+                      setIframeKey((k) => k + 1);
+                      void checkHealth();
+                    }}
+                  >
+                    Recarregar
+                  </button>
+                  <button
+                    className="btn secondary"
+                    type="button"
+                    onClick={() => {
+                      writeFlag(LS_EMBED, false);
+                      setPreferEmbed(false);
+                    }}
+                  >
+                    Só aba
+                  </button>
+                </div>
+              </div>
+              <iframe
+                key={iframeKey}
+                className="nao-frame"
+                title="Nao — Insights com gráficos e Stories"
+                src={naoUrl}
+                allow="clipboard-read; clipboard-write"
+              />
+            </div>
           ) : (
-            <iframe
-              key={iframeKey}
-              className="nao-frame"
-              title="Nao — Insights com gráficos e Stories"
-              src={naoUrl}
-              allow="clipboard-read; clipboard-write"
-            />
+            <div className="nao-tab-hero">
+              <strong>Nao pronto na aba</strong>
+              <p className="muted">
+                Use <strong>Abrir Nao ↗</strong> ou uma pergunta sugerida. O prompt é copiado;
+                cole no chat do Nao para charts e Stories sobre o DuckDB sincronizado.
+              </p>
+              <div className="nao-onboard-actions">
+                <button className="btn" type="button" onClick={() => openNaoTab(pendingPrompt)}>
+                  Abrir / focar Nao ↗
+                </button>
+                <button className="btn secondary" type="button" onClick={chooseEmbedSurface}>
+                  Mostrar no painel
+                </button>
+              </div>
+            </div>
           )
         ) : (
           <>
@@ -308,8 +486,8 @@ export function NaoWorkspace({
               {!msgs.length && (
                 <div className="chat-bubble assistant">
                   <p>
-                    Modo Rápido: respostas tabulares via API autenticada do app (sem
-                    gráficos). Para charts e Stories, volte ao modo <strong>Nao</strong>.
+                    Modo Rápido: tabelas via API autenticada do app (sem gráficos). Para charts e
+                    Stories, volte ao modo <strong>Nao</strong>.
                   </p>
                 </div>
               )}
