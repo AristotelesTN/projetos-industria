@@ -29,6 +29,17 @@ export class DevAuthGuard implements CanActivate {
         req.user = user;
         return true;
       } catch {
+        // Em dev, JWT expirado/stale → tenta X-Dev-User antes de falhar
+        if ((process.env.AUTH_MODE ?? 'dev') === 'dev') {
+          const email = req.headers['x-dev-user'] as string | undefined;
+          if (email) {
+            const user = await this.auth.findByEmail(email);
+            if (user) {
+              req.user = user;
+              return true;
+            }
+          }
+        }
         throw new UnauthorizedException('Token inválido');
       }
     }

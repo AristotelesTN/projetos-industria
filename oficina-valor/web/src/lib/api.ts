@@ -1,5 +1,9 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
+/** Bump ao mudar modelo de auth/seed para invalidar sessões antigas. */
+const TOKEN_KEY = 'ov_token_v2';
+const USER_KEY = 'ov_user_v2';
+
 export type User = {
   id: string;
   email: string;
@@ -7,11 +11,34 @@ export type User = {
   papeis: string[];
 };
 
-let token: string | null = localStorage.getItem('ov_token');
+export class AuthError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AuthError';
+  }
+}
+
+let token: string | null = localStorage.getItem(TOKEN_KEY);
 let currentUser: User | null = (() => {
-  const raw = localStorage.getItem('ov_user');
+  // limpa chaves antigas (pré-v2) que causavam "Token inválido"
+  localStorage.removeItem('ov_token');
+  localStorage.removeItem('ov_user');
+  const raw = localStorage.getItem(USER_KEY);
   return raw ? (JSON.parse(raw) as User) : null;
 })();
+
+const authListeners = new Set<(user: User | null) => void>();
+
+export function onAuthChange(cb: (user: User | null) => void) {
+  authListeners.add(cb);
+  return () => {
+    authListeners.delete(cb);
+  };
+}
+
+function notifyAuth() {
+  for (const cb of authListeners) cb(currentUser);
+}
 
 export function getUser() {
   return currentUser;
@@ -20,24 +47,34 @@ export function getUser() {
 export function setSession(t: string, user: User) {
   token = t;
   currentUser = user;
-  localStorage.setItem('ov_token', t);
-  localStorage.setItem('ov_user', JSON.stringify(user));
+  localStorage.setItem(TOKEN_KEY, t);
+  localStorage.setItem(USER_KEY, JSON.stringify(user));
+  notifyAuth();
 }
 
 export function clearSession() {
   token = null;
   currentUser = null;
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
   localStorage.removeItem('ov_token');
   localStorage.removeItem('ov_user');
+  notifyAuth();
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+async function request<T>(
+  path: string,
+  init: RequestInit = {},
+  opts?: { skipAuth?: boolean },
+): Promise<T> {
   const headers = new Headers(init.headers);
   if (!(init.body instanceof FormData)) {
     headers.set('Content-Type', 'application/json');
   }
-  if (token) headers.set('Authorization', `Bearer ${token}`);
-  else if (currentUser) headers.set('X-Dev-User', currentUser.email);
+  if (!opts?.skipAuth) {
+    if (token) headers.set('Authorization', `Bearer ${token}`);
+    else if (currentUser) headers.set('X-Dev-User', currentUser.email);
+  }
 
   const res = await fetch(`${API_URL}${path}`, { ...init, headers });
   if (!res.ok) {
@@ -48,7 +85,15 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     } catch {
       /* ignore */
     }
-    throw new Error(Array.isArray(msg) ? msg.join(', ') : String(msg));
+    const message = Array.isArray(msg) ? msg.join(', ') : String(msg);
+    if (
+      res.status === 401 ||
+      /token inválido|não autenticado|unauthorized/i.test(message)
+    ) {
+      clearSession();
+      throw new AuthError(message);
+    }
+    throw new Error(message);
   }
   if (res.status === 204) return undefined as T;
   const ct = res.headers.get('content-type') || '';
@@ -59,12 +104,22 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 export const api = {
   apiUrl: API_URL,
   naoUrl: import.meta.env.VITE_NAO_URL || 'http://localhost:5006',
-  devUsers: () => request<User[]>('/auth/dev-users'),
   login: (email: string) =>
-    request<{ accessToken: string; user: User }>('/auth/dev-login', {
-      method: 'POST',
-      body: JSON.stringify({ email }),
-    }),
+    request<{ accessToken: string; user: User }>(
+      '/auth/dev-login',
+      {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+      },
+      { skipAuth: true },
+    ),
+  /** Renova JWT a partir do e-mail em sessão (ou gerente padrão). */
+  async ensureSession(email = 'gerente@oficina.local') {
+    const target = currentUser?.email || email;
+    const res = await api.login(target);
+    setSession(res.accessToken, res.user);
+    return res.user;
+  },
   projetos: () => request<any[]>('/projetos'),
   projeto: (id: string) => request<any>(`/projetos/${id}`),
   analytics: (id: string) => request<any>(`/projetos/${id}/analytics`),
@@ -72,7 +127,11 @@ export const api = {
   pendentes: () => request<any[]>('/medicoes/pendentes'),
   criarMedicao: (
     beneficioId: string,
-    body: { periodoReferencia: string; valorRealizado: number; comentario?: string },
+    body: {
+      periodoReferencia: string;
+      valorRealizado: number;
+      comentario?: string;
+    },
   ) =>
     request(`/beneficios/${beneficioId}/medicoes`, {
       method: 'POST',
@@ -88,7 +147,11 @@ export const api = {
   },
   submeter: (medicaoId: string) =>
     request(`/medicoes/${medicaoId}/submeter`, { method: 'POST', body: '{}' }),
-  validar: (medicaoId: string, decisao: 'aprovada' | 'rejeitada', comentario?: string) =>
+  validar: (
+    medicaoId: string,
+    decisao: 'aprovada' | 'rejeitada',
+    comentario?: string,
+  ) =>
     request(`/medicoes/${medicaoId}/validacao`, {
       method: 'POST',
       body: JSON.stringify({ decisao, comentario }),
@@ -113,7 +176,11 @@ export const api = {
     }),
   custo: (
     projetoId: string,
-    body: { periodoReferencia: string; valor: number; centroCustoCodigo?: string },
+    body: {
+      periodoReferencia: string;
+      valor: number;
+      centroCustoCodigo?: string;
+    },
   ) =>
     request(`/projetos/${projetoId}/custos`, {
       method: 'POST',

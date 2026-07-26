@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import {
   api,
+  AuthError,
   brl,
   clearSession,
   getUser,
+  onAuthChange,
   setSession,
   type User,
 } from './lib/api';
@@ -41,6 +43,7 @@ const TITLES: Record<Tab, string> = {
 
 export default function App() {
   const [user, setUser] = useState<User | null>(getUser());
+  const [bootstrapping, setBootstrapping] = useState(!!getUser());
   const [tab, setTab] = useState<Tab>('projetos');
   const [error, setError] = useState('');
   const [projetos, setProjetos] = useState<any[]>([]);
@@ -58,6 +61,33 @@ export default function App() {
   const [valor, setValor] = useState('10000');
   const [file, setFile] = useState<File | null>(null);
 
+  useEffect(() => {
+    return onAuthChange(setUser);
+  }, []);
+
+  // Renova JWT ao abrir (evita "Token inválido" após reset do banco)
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!getUser()) {
+        setBootstrapping(false);
+        return;
+      }
+      try {
+        await api.ensureSession();
+        if (!cancelled) setError('');
+      } catch {
+        clearSession();
+        if (!cancelled) setUser(null);
+      } finally {
+        if (!cancelled) setBootstrapping(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   async function refreshList() {
     const list = await api.projetos();
     setProjetos(list);
@@ -72,29 +102,38 @@ export default function App() {
     if (hard) setBeneficioId(hard.id);
   }
 
+  function handleApiError(e: unknown) {
+    if (e instanceof AuthError) {
+      setUser(null);
+      setError('');
+      return;
+    }
+    setError(e instanceof Error ? e.message : String(e));
+  }
+
   useEffect(() => {
-    if (!user) return;
+    if (!user || bootstrapping) return;
     setError('');
-    refreshList().catch((e) => setError(String(e.message || e)));
-  }, [user]);
+    refreshList().catch(handleApiError);
+  }, [user, bootstrapping]);
 
   useEffect(() => {
-    if (!user || !selectedId) return;
-    refreshSelected(selectedId).catch((e) => setError(String(e.message || e)));
-  }, [user, selectedId]);
+    if (!user || !selectedId || bootstrapping) return;
+    refreshSelected(selectedId).catch(handleApiError);
+  }, [user, selectedId, bootstrapping]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || bootstrapping) return;
     if (tab === 'diretoria') {
-      api.portfolio().then(setPortfolio).catch((e) => setError(String(e.message || e)));
+      api.portfolio().then(setPortfolio).catch(handleApiError);
     }
     if (tab === 'financas') {
-      api.pendentes().then(setPendentes).catch((e) => setError(String(e.message || e)));
+      api.pendentes().then(setPendentes).catch(handleApiError);
     }
     if (tab === 'auditoria') {
-      api.auditoria().then(setAuditoria).catch((e) => setError(String(e.message || e)));
+      api.auditoria().then(setAuditoria).catch(handleApiError);
     }
-  }, [tab, user]);
+  }, [tab, user, bootstrapping]);
 
   async function entrar() {
     setBusy(true);
@@ -105,7 +144,7 @@ export default function App() {
       setUser(res.user);
       setTab('projetos');
     } catch (e: any) {
-      setError(e.message || String(e));
+      handleApiError(e);
     } finally {
       setBusy(false);
     }
@@ -129,10 +168,24 @@ export default function App() {
       setMsg('Medição enviada — homologue na seção Homologação');
       if (selectedId) await refreshSelected(selectedId);
     } catch (e: any) {
-      setError(e.message || String(e));
+      handleApiError(e);
     } finally {
       setBusy(false);
     }
+  }
+
+  if (bootstrapping) {
+    return (
+      <div className="login">
+        <div className="login-card">
+          <div className="logo-mark">
+            <span className="mark" aria-hidden />
+            <strong>Oficina de Valor</strong>
+          </div>
+          <p className="muted">Restaurando sessão…</p>
+        </div>
+      </div>
+    );
   }
 
   const initials = (user?.nome || 'GP')
