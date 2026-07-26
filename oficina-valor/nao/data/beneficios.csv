@@ -1,0 +1,20 @@
+id,nome,categoria,status,valor_mensal_esperado,centro_custo,benefit_owner,janela_meses
+c3106336-19a0-4c90-befd-57e56fa99f82,Hard — Redução de Scrap Linha A,hard,em_captura,25000,CC-1000,sponsor@oficina.local,12
+ca351c19-9928-4b0c-8df9-e9f058b4b447,Soft — Redução de Scrap Linha A,soft,em_captura,5000,,sponsor@oficina.local,12
+8e8e04f5-c6a9-4f06-91b9-719adfb2f138,Hard — OEE Prensa 2,hard,em_captura,18000,CC-1001,sponsor@oficina.local,12
+1ba1862b-aff2-481e-874e-3efe05e0be1f,Soft — OEE Prensa 2,soft,em_captura,4000,,sponsor@oficina.local,12
+ae423b85-0404-4ecd-95b7-afbd0fd0372d,Hard — Contrato Energia 2026,hard,em_captura,40000,CC-1002,sponsor@oficina.local,12
+2a6c6587-f385-452f-9f3a-c6944fd68cc1,Hard — TMS Frete Nacional,hard,em_captura,22000,CC-1003,sponsor@oficina.local,12
+906cb709-4957-4817-be25-e674db8ad19f,Soft — TMS Frete Nacional,soft,em_captura,8000,,sponsor@oficina.local,12
+dadd591f-38e2-4482-8602-40d5a78c400a,Hard — WMS Slotting,hard,em_captura,15000,CC-1004,sponsor@oficina.local,12
+b20f6e96-7311-4d8f-b303-5dd368924283,Soft — WMS Slotting,soft,em_captura,6000,,sponsor@oficina.local,12
+c0b4c3e4-5316-42ef-93cc-a8fb1925d9bf,Hard — Automação NFe,hard,em_captura,9000,CC-1005,sponsor@oficina.local,12
+6c59d1d8-22e7-4763-a7cc-547892c48ddb,Soft — Automação NFe,soft,em_captura,3000,,sponsor@oficina.local,12
+df1090bf-06d4-4e40-bd8e-5528a28e3a73,Hard — MES Alertas Qualidade,hard,em_captura,12000,CC-1006,sponsor@oficina.local,12
+f2f20dd3-854c-4b0b-b8a7-a2fdd05c0bf9,Soft — MES Alertas Qualidade,soft,em_captura,7000,,sponsor@oficina.local,12
+65a48fe0-0114-4acc-a2b7-61f8a8f868f6,Hard — TPM Fase 1,hard,em_captura,10000,CC-1007,sponsor@oficina.local,12
+5eb799c8-c173-439e-96ac-f0a255c66ebb,Soft — TPM Fase 1,soft,em_captura,9000,,sponsor@oficina.local,12
+4565da6b-18e9-4972-b8af-b8eb26292cb3,Hard — Redução Retrabalho Pintura,hard,em_captura,16000,CC-1008,sponsor@oficina.local,12
+0dce9236-961b-4793-89bb-a493aad0e8fd,Soft — Redução Retrabalho Pintura,soft,em_captura,2000,,sponsor@oficina.local,12
+4aa68abf-ce4d-418b-a88d-3de1ff98f88a,Hard — Portal Fornecedores,hard,em_captura,11000,CC-1009,sponsor@oficina.local,12
+4d997d2e-eaed-49fb-a294-59b7db7f0fd6,Soft — Portal Fornecedores,soft,em_captura,5000,,sponsor@oficina.local,12

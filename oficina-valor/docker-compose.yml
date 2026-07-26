@@ -1,0 +1,96 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: oficina-valor-db
+    environment:
+      POSTGRES_USER: oficina
+      POSTGRES_PASSWORD: oficina
+      POSTGRES_DB: oficina_valor
+    ports:
+      - "5433:5432"
+    volumes:
+      - oficina_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U oficina -d oficina_valor"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - oficina
+
+  api:
+    build:
+      context: ./api
+    container_name: oficina-valor-api
+    environment:
+      DATABASE_URL: postgresql://oficina:oficina@postgres:5432/oficina_valor
+      PORT: "3001"
+      JWT_SECRET: dev-oficina-valor-secret
+      AUTH_MODE: dev
+      CORS_ORIGIN: http://localhost:3080
+      UPLOAD_DIR: /app/uploads
+      NAO_SYNC_URL: http://sync-api:8787/sync
+      NAO_URL: http://localhost:5006
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - oficina
+
+  web:
+    build:
+      context: ./web
+      args:
+        VITE_API_URL: http://localhost:3001
+        VITE_NAO_URL: http://localhost:5006
+    container_name: oficina-valor-web
+    ports:
+      - "3080:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+    networks:
+      - oficina
+
+  sync-api:
+    build:
+      context: ./docker/sync-api
+    container_name: oficina-valor-sync
+    environment:
+      NAO_PROJECT_PATH: /nao
+      PORT: "8787"
+    volumes:
+      - ./nao:/nao
+    ports:
+      - "8788:8787"
+    networks:
+      - oficina
+
+  nao:
+    image: getnao/nao:latest
+    container_name: oficina-valor-nao
+    ports:
+      - "5006:5005"
+    env_file:
+      - path: ../.env
+        required: false
+    environment:
+      BETTER_AUTH_URL: http://localhost:5006
+      NAO_DEFAULT_PROJECT_PATH: /app/project
+    volumes:
+      - ./nao:/app/project
+    restart: unless-stopped
+    networks:
+      - oficina
+
+volumes:
+  oficina_pg:
+
+networks:
+  oficina:
+    driver: bridge

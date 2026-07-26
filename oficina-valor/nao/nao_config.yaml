@@ -1,0 +1,17 @@
+project_name: oficina-valor
+databases:
+  - name: duckdb-oficina-valor
+    templates:
+      - columns
+      - preview
+    profiling:
+      refresh_policy: "interval"
+      interval_days: 1
+    include: []
+    exclude: []
+    type: duckdb
+    path: ./oficina_valor.duckdb
+repos: []
+notion: null
+llm: null
+slack: null
