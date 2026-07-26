@@ -21,6 +21,12 @@ enum ProjetoStatus {
   hold
 }
 
+/// Papel estratégico na matriz FAPD (avaliação de projetos digitais).
+enum PapelEstrategicoFapd {
+  estruturante
+  gerador
+}
+
 enum BeneficioCategoria {
   hard
   soft
@@ -162,6 +168,21 @@ model Projeto {
   semGanhos              Boolean       @default(false) @map("sem_ganhos")
   naoAdotado             Boolean       @default(false) @map("nao_adotado")
   causaNaoAdocao         String?       @map("causa_nao_adocao")
+
+  /// Avaliação FAPD (MVP): notas OE 0–5 ou N/A + papel estratégico.
+  notaOe1                Int?          @map("nota_oe1")
+  notaOe3                Int?          @map("nota_oe3")
+  notaOe4                Int?          @map("nota_oe4")
+  notaOe5Sust            Int?          @map("nota_oe5_sust")
+  notaOe5Tech            Int?          @map("nota_oe5_tech")
+  naOe1                  Boolean       @default(false) @map("na_oe1")
+  naOe3                  Boolean       @default(false) @map("na_oe3")
+  naOe4                  Boolean       @default(false) @map("na_oe4")
+  naOe5Sust              Boolean       @default(false) @map("na_oe5_sust")
+  naOe5Tech              Boolean       @default(false) @map("na_oe5_tech")
+  papelEstrategico       PapelEstrategicoFapd? @map("papel_estrategico")
+  comentarioFapd         String?       @map("comentario_fapd")
+
   createdAt              DateTime      @default(now()) @map("created_at")
   updatedAt              DateTime      @updatedAt @map("updated_at")
 

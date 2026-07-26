@@ -3,12 +3,40 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { BeneficioCategoria, ProjetoStatus } from '@prisma/client';
+import {
+  BeneficioCategoria,
+  PapelEstrategicoFapd,
+  ProjetoStatus,
+} from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditoriaService } from '../auditoria/auditoria.service';
 import { AuthUser } from '../common/roles';
 import { buildPerfilMensal, monthStart } from '../common/dates';
 import { ConfigService } from '../config/config.service';
+
+export type AvaliacaoFapdInput = {
+  notaOe1?: number | null;
+  notaOe3?: number | null;
+  notaOe4?: number | null;
+  notaOe5Sust?: number | null;
+  notaOe5Tech?: number | null;
+  naOe1?: boolean;
+  naOe3?: boolean;
+  naOe4?: boolean;
+  naOe5Sust?: boolean;
+  naOe5Tech?: boolean;
+  papelEstrategico?: PapelEstrategicoFapd | null;
+  comentarioFapd?: string | null;
+};
+
+function clampNota(n: number | null | undefined): number | null {
+  if (n == null || Number.isNaN(Number(n))) return null;
+  const v = Math.round(Number(n));
+  if (v < 0 || v > 5) {
+    throw new UnprocessableEntityException('Notas OE devem estar entre 0 e 5');
+  }
+  return v;
+}
 
 export type BeneficioInput = {
   nome: string;
@@ -370,6 +398,67 @@ export class ProjetosService {
       valorNovo: { status },
     });
     return this.get(updated.id, user);
+  }
+
+  /** Avaliação FAPD mínima: 5 OEs (0–5 ou N/A) + papel + comentário. */
+  async updateAvaliacaoFapd(
+    id: string,
+    input: AvaliacaoFapdInput,
+    user: AuthUser,
+  ) {
+    const before = await this.prisma.projeto.findUnique({ where: { id } });
+    if (!before) throw new NotFoundException('Projeto não encontrado');
+
+    const naOe1 = Boolean(input.naOe1);
+    const naOe3 = Boolean(input.naOe3);
+    const naOe4 = Boolean(input.naOe4);
+    const naOe5Sust = Boolean(input.naOe5Sust);
+    const naOe5Tech = Boolean(input.naOe5Tech);
+
+    const data = {
+      notaOe1: naOe1 ? null : clampNota(input.notaOe1),
+      notaOe3: naOe3 ? null : clampNota(input.notaOe3),
+      notaOe4: naOe4 ? null : clampNota(input.notaOe4),
+      notaOe5Sust: naOe5Sust ? null : clampNota(input.notaOe5Sust),
+      notaOe5Tech: naOe5Tech ? null : clampNota(input.notaOe5Tech),
+      naOe1,
+      naOe3,
+      naOe4,
+      naOe5Sust,
+      naOe5Tech,
+      papelEstrategico:
+        input.papelEstrategico === undefined
+          ? before.papelEstrategico
+          : input.papelEstrategico,
+      comentarioFapd:
+        input.comentarioFapd === undefined
+          ? before.comentarioFapd
+          : input.comentarioFapd?.trim() || null,
+    };
+
+    await this.prisma.projeto.update({ where: { id }, data });
+    await this.auditoria.log({
+      entidade: 'Projeto',
+      entidadeId: id,
+      acao: 'avaliacao_fapd',
+      usuarioId: user.id,
+      valorAnterior: {
+        notaOe1: before.notaOe1,
+        notaOe3: before.notaOe3,
+        notaOe4: before.notaOe4,
+        notaOe5Sust: before.notaOe5Sust,
+        notaOe5Tech: before.notaOe5Tech,
+        naOe1: before.naOe1,
+        naOe3: before.naOe3,
+        naOe4: before.naOe4,
+        naOe5Sust: before.naOe5Sust,
+        naOe5Tech: before.naOe5Tech,
+        papelEstrategico: before.papelEstrategico,
+        comentarioFapd: before.comentarioFapd,
+      },
+      valorNovo: data,
+    });
+    return this.get(id, user);
   }
 
   async remove(id: string, user: AuthUser) {

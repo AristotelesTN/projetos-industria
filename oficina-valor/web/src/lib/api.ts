@@ -141,6 +141,27 @@ export const api = {
       method: 'PATCH',
       body: JSON.stringify({ status }),
     }),
+  atualizarAvaliacaoFapd: (
+    id: string,
+    body: {
+      notaOe1?: number | null;
+      notaOe3?: number | null;
+      notaOe4?: number | null;
+      notaOe5Sust?: number | null;
+      notaOe5Tech?: number | null;
+      naOe1?: boolean;
+      naOe3?: boolean;
+      naOe4?: boolean;
+      naOe5Sust?: boolean;
+      naOe5Tech?: boolean;
+      papelEstrategico?: 'estruturante' | 'gerador' | null;
+      comentarioFapd?: string | null;
+    },
+  ) =>
+    request<any>(`/projetos/${id}/avaliacao-fapd`, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    }),
   removerProjeto: (id: string) =>
     request<{ ok: boolean; id: string; nome: string }>(`/projetos/${id}`, {
       method: 'DELETE',

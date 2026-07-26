@@ -3201,6 +3201,94 @@ a {
   border-top: 1px solid var(--ds-border);
 }
 
+.fapd-block {
+  margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ds-border);
+  display: grid;
+  gap: 12px;
+}
+
+.fapd-block h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.fapd-lead {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.fapd-oe-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.fapd-oe {
+  display: grid;
+  gap: 4px;
+}
+
+.fapd-oe-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.fapd-oe-label small {
+  font-weight: 450;
+  color: var(--ds-text-subtlest);
+}
+
+.fapd-oe-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fapd-oe-controls input[type='number'] {
+  width: 72px;
+  padding: 6px 8px;
+  border: 1px solid var(--ds-border);
+  border-radius: 6px;
+  background: var(--ds-bg);
+  color: inherit;
+  font: inherit;
+}
+
+.fapd-na {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--ds-text-subtlest);
+  font-weight: 500;
+}
+
+.fapd-field {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.fapd-field select,
+.fapd-field textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--ds-border);
+  border-radius: 6px;
+  background: var(--ds-bg);
+  color: inherit;
+  font: inherit;
+  font-weight: 450;
+  resize: vertical;
+}
+
 .mark {
   background: radial-gradient(circle at 30% 30%, #828fff, #5e6ad2 70%);
 }

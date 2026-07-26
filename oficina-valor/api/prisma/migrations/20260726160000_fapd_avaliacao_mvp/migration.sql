@@ -1,0 +1,16 @@
+-- CreateEnum
+CREATE TYPE "PapelEstrategicoFapd" AS ENUM ('estruturante', 'gerador');
+
+-- AlterTable
+ALTER TABLE "projetos" ADD COLUMN IF NOT EXISTS "nota_oe1" INTEGER;
+ALTER TABLE "projetos" ADD COLUMN IF NOT EXISTS "nota_oe3" INTEGER;
+ALTER TABLE "projetos" ADD COLUMN IF NOT EXISTS "nota_oe4" INTEGER;
+ALTER TABLE "projetos" ADD COLUMN IF NOT EXISTS "nota_oe5_sust" INTEGER;
+ALTER TABLE "projetos" ADD COLUMN IF NOT EXISTS "nota_oe5_tech" INTEGER;
+ALTER TABLE "projetos" ADD COLUMN IF NOT EXISTS "na_oe1" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "projetos" ADD COLUMN IF NOT EXISTS "na_oe3" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "projetos" ADD COLUMN IF NOT EXISTS "na_oe4" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "projetos" ADD COLUMN IF NOT EXISTS "na_oe5_sust" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "projetos" ADD COLUMN IF NOT EXISTS "na_oe5_tech" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "projetos" ADD COLUMN IF NOT EXISTS "papel_estrategico" "PapelEstrategicoFapd";
+ALTER TABLE "projetos" ADD COLUMN IF NOT EXISTS "comentario_fapd" TEXT;

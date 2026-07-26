@@ -8,15 +8,21 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { BeneficioCategoria, ProjetoStatus } from '@prisma/client';
+import {
+  BeneficioCategoria,
+  PapelEstrategicoFapd,
+  ProjetoStatus,
+} from '@prisma/client';
 import {
   IsArray,
   IsBoolean,
   IsEnum,
+  IsInt,
   IsNumber,
   IsOptional,
   IsString,
   IsUUID,
+  Max,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -152,6 +158,66 @@ class StatusDto {
   status!: ProjetoStatus;
 }
 
+class AvaliacaoFapdDto {
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(5)
+  notaOe1?: number | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(5)
+  notaOe3?: number | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(5)
+  notaOe4?: number | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(5)
+  notaOe5Sust?: number | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(5)
+  notaOe5Tech?: number | null;
+
+  @IsOptional()
+  @IsBoolean()
+  naOe1?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  naOe3?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  naOe4?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  naOe5Sust?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  naOe5Tech?: boolean;
+
+  @IsOptional()
+  @IsEnum(PapelEstrategicoFapd)
+  papelEstrategico?: PapelEstrategicoFapd | null;
+
+  @IsOptional()
+  @IsString()
+  comentarioFapd?: string | null;
+}
+
 @Controller('projetos')
 @UseGuards(DevAuthGuard, RolesGuard)
 export class ProjetosController {
@@ -212,6 +278,15 @@ export class ProjetosController {
     @CurrentUser() user: AuthUser,
   ) {
     return this.projetos.updateStatus(id, dto.status, user);
+  }
+
+  @Patch(':id/avaliacao-fapd')
+  avaliacaoFapd(
+    @Param('id') id: string,
+    @Body() dto: AvaliacaoFapdDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.projetos.updateAvaliacaoFapd(id, dto, user);
   }
 
   @Delete(':id')

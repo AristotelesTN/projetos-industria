@@ -1,7 +1,9 @@
-import { useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { api, brl } from '../lib/api';
 
 type Health = 'green' | 'yellow' | 'red';
+
+type PapelFapd = 'estruturante' | 'gerador';
 
 type ProjetoRow = {
   id: string;
@@ -15,9 +17,36 @@ type ProjetoRow = {
   realizado: number;
   investimentoAprovado?: number | string;
   pm?: { nome?: string };
+  notaOe1?: number | null;
+  notaOe3?: number | null;
+  notaOe4?: number | null;
+  notaOe5Sust?: number | null;
+  notaOe5Tech?: number | null;
+  naOe1?: boolean;
+  naOe3?: boolean;
+  naOe4?: boolean;
+  naOe5Sust?: boolean;
+  naOe5Tech?: boolean;
+  papelEstrategico?: PapelFapd | null;
+  comentarioFapd?: string | null;
 };
 
 type ViewTab = 'board' | 'lista' | 'saude';
+
+type FapdForm = {
+  notaOe1: string;
+  notaOe3: string;
+  notaOe4: string;
+  notaOe5Sust: string;
+  notaOe5Tech: string;
+  naOe1: boolean;
+  naOe3: boolean;
+  naOe4: boolean;
+  naOe5Sust: boolean;
+  naOe5Tech: boolean;
+  papelEstrategico: '' | PapelFapd;
+  comentarioFapd: string;
+};
 
 const STATUS_COLUMNS: { id: string; label: string }[] = [
   { id: 'conceito', label: 'Conceito' },
@@ -44,8 +73,86 @@ const AREA_OPTIONS = [
   'Geral',
 ];
 
+const OE_FIELDS: {
+  key: 'Oe1' | 'Oe3' | 'Oe4' | 'Oe5Sust' | 'Oe5Tech';
+  label: string;
+  hint: string;
+}[] = [
+  { key: 'Oe1', label: 'OE1', hint: 'Estratégia / alinhamento' },
+  { key: 'Oe3', label: 'OE3', hint: 'Valor / benefício' },
+  { key: 'Oe4', label: 'OE4', hint: 'Execução / capacidade' },
+  { key: 'Oe5Sust', label: 'OE5 Sust.', hint: 'Sustentação' },
+  { key: 'Oe5Tech', label: 'OE5 Tech', hint: 'Tecnologia' },
+];
+
+const EMPTY_FAPD: FapdForm = {
+  notaOe1: '',
+  notaOe3: '',
+  notaOe4: '',
+  notaOe5Sust: '',
+  notaOe5Tech: '',
+  naOe1: false,
+  naOe3: false,
+  naOe4: false,
+  naOe5Sust: false,
+  naOe5Tech: false,
+  papelEstrategico: '',
+  comentarioFapd: '',
+};
+
 function statusLabel(status: string) {
   return STATUS_COLUMNS.find((c) => c.id === status)?.label || status;
+}
+
+function fapdFromProjeto(p: any | null | undefined): FapdForm {
+  if (!p) return { ...EMPTY_FAPD };
+  return {
+    notaOe1: p.notaOe1 == null ? '' : String(p.notaOe1),
+    notaOe3: p.notaOe3 == null ? '' : String(p.notaOe3),
+    notaOe4: p.notaOe4 == null ? '' : String(p.notaOe4),
+    notaOe5Sust: p.notaOe5Sust == null ? '' : String(p.notaOe5Sust),
+    notaOe5Tech: p.notaOe5Tech == null ? '' : String(p.notaOe5Tech),
+    naOe1: Boolean(p.naOe1),
+    naOe3: Boolean(p.naOe3),
+    naOe4: Boolean(p.naOe4),
+    naOe5Sust: Boolean(p.naOe5Sust),
+    naOe5Tech: Boolean(p.naOe5Tech),
+    papelEstrategico: (p.papelEstrategico as PapelFapd) || '',
+    comentarioFapd: p.comentarioFapd || '',
+  };
+}
+
+function mediaFapd(p: {
+  notaOe1?: number | null;
+  notaOe3?: number | null;
+  notaOe4?: number | null;
+  notaOe5Sust?: number | null;
+  notaOe5Tech?: number | null;
+  naOe1?: boolean;
+  naOe3?: boolean;
+  naOe4?: boolean;
+  naOe5Sust?: boolean;
+  naOe5Tech?: boolean;
+}): string {
+  const pairs: [number | null | undefined, boolean | undefined][] = [
+    [p.notaOe1, p.naOe1],
+    [p.notaOe3, p.naOe3],
+    [p.notaOe4, p.naOe4],
+    [p.notaOe5Sust, p.naOe5Sust],
+    [p.notaOe5Tech, p.naOe5Tech],
+  ];
+  const vals = pairs
+    .filter(([, na]) => !na)
+    .map(([n]) => n)
+    .filter((n): n is number => n != null && !Number.isNaN(Number(n)));
+  if (!vals.length) return '—';
+  return (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1);
+}
+
+function papelLabel(papel?: PapelFapd | null) {
+  if (papel === 'estruturante') return 'Estruturante';
+  if (papel === 'gerador') return 'Gerador';
+  return null;
 }
 
 export function PortfolioWorkspace({
@@ -76,6 +183,7 @@ export function PortfolioWorkspace({
   const [showCreate, setShowCreate] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detail, setDetail] = useState<any | null>(null);
+  const [fapd, setFapd] = useState<FapdForm>({ ...EMPTY_FAPD });
   const [form, setForm] = useState({
     nome: '',
     areaNome: 'Produção',
@@ -88,6 +196,10 @@ export function PortfolioWorkspace({
     () => projetos.find((p) => p.id === selectedId) || null,
     [projetos, selectedId],
   );
+
+  useEffect(() => {
+    setFapd(fapdFromProjeto(detail || selected));
+  }, [detail, selected]);
 
   const byStatus = useMemo(() => {
     const map: Record<string, ProjetoRow[]> = {};
@@ -167,6 +279,44 @@ export function PortfolioWorkspace({
       onMessage(ok ? 'Premissas OK (Finanças)' : 'Premissas rejeitadas');
       await openDetail(selectedId);
       await onRefresh();
+    } catch (err: any) {
+      onError(err.message || String(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function saveAvaliacaoFapd() {
+    if (!selectedId) return;
+    setBusy(true);
+    try {
+      const parseNota = (raw: string, na: boolean) => {
+        if (na) return null;
+        if (raw.trim() === '') return null;
+        const n = Number(raw);
+        if (!Number.isInteger(n) || n < 0 || n > 5) {
+          throw new Error('Notas OE devem ser inteiros de 0 a 5 (ou N/A)');
+        }
+        return n;
+      };
+      const updated = await api.atualizarAvaliacaoFapd(selectedId, {
+        notaOe1: parseNota(fapd.notaOe1, fapd.naOe1),
+        notaOe3: parseNota(fapd.notaOe3, fapd.naOe3),
+        notaOe4: parseNota(fapd.notaOe4, fapd.naOe4),
+        notaOe5Sust: parseNota(fapd.notaOe5Sust, fapd.naOe5Sust),
+        notaOe5Tech: parseNota(fapd.notaOe5Tech, fapd.naOe5Tech),
+        naOe1: fapd.naOe1,
+        naOe3: fapd.naOe3,
+        naOe4: fapd.naOe4,
+        naOe5Sust: fapd.naOe5Sust,
+        naOe5Tech: fapd.naOe5Tech,
+        papelEstrategico: fapd.papelEstrategico || null,
+        comentarioFapd: fapd.comentarioFapd.trim() || null,
+      });
+      setDetail((prev: any) => ({ ...(prev || {}), ...updated }));
+      setFapd(fapdFromProjeto(updated));
+      await onRefresh();
+      onMessage('Avaliação FAPD salva');
     } catch (err: any) {
       onError(err.message || String(err));
     } finally {
@@ -550,7 +700,7 @@ export function PortfolioWorkspace({
       {view === 'lista' && (
         <section className="panel">
           <div className="panel-head">
-            <h2>Health por projeto</h2>
+            <h2>Portfólio · lista</h2>
             <span className="meta">{projetos.length} programas</span>
           </div>
           <div className="rag-table-wrap">
@@ -559,17 +709,18 @@ export function PortfolioWorkspace({
                 <tr>
                   <th>Programa</th>
                   <th>Status</th>
-                  <th>Prometido</th>
+                  <th>Nota FAPD</th>
+                  <th>Papel</th>
+                  <th>Investimento</th>
                   <th>Realizado</th>
                   <th>BRR</th>
-                  <th>ROI</th>
-                  <th>Overall</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
                 {projetos.map((p) => {
                   const brrPct = p.brr == null ? null : Math.round(p.brr * 100);
+                  const papel = papelLabel(p.papelEstrategico);
                   return (
                     <tr
                       key={p.id}
@@ -587,13 +738,25 @@ export function PortfolioWorkspace({
                           {statusLabel(p.status)}
                         </span>
                       </td>
-                      <td>{brl(p.prometido)}</td>
+                      <td>{mediaFapd(p)}</td>
+                      <td>
+                        {papel ? (
+                          <span
+                            className={`badge ${
+                              p.papelEstrategico === 'estruturante'
+                                ? 'info'
+                                : 'success'
+                            }`}
+                          >
+                            {papel}
+                          </span>
+                        ) : (
+                          <span className="muted">—</span>
+                        )}
+                      </td>
+                      <td>{brl(p.investimentoAprovado ?? 0)}</td>
                       <td>{brl(p.realizado)}</td>
                       <td>{brrPct == null ? '—' : `${brrPct}%`}</td>
-                      <td>{p.analytics?.roiLabel ?? '—'}</td>
-                      <td>
-                        <span className={`rag-dot ${p.health}`} />
-                      </td>
                       <td>
                         <div className="lista-actions">
                           <button
@@ -634,17 +797,6 @@ export function PortfolioWorkspace({
                 })}
               </tbody>
             </table>
-          </div>
-          <div className="rag-legend">
-            <span>
-              <i className="rag-dot green" /> On track
-            </span>
-            <span>
-              <i className="rag-dot yellow" /> At risk
-            </span>
-            <span>
-              <i className="rag-dot red" /> Delayed
-            </span>
           </div>
         </section>
       )}
@@ -695,34 +847,115 @@ export function PortfolioWorkspace({
                 </strong>
               </div>
               <div className="detail-kv">
-                <span>ROI</span>
-                <strong>{selected?.analytics?.roiLabel ?? '—'}</strong>
-              </div>
-              <div className="detail-kv">
                 <span>Investimento</span>
-                <strong>{brl(detail?.investimentoAprovado ?? selected?.investimentoAprovado ?? 0)}</strong>
+                <strong>
+                  {brl(
+                    detail?.investimentoAprovado ??
+                      selected?.investimentoAprovado ??
+                      0,
+                  )}
+                </strong>
               </div>
               <div className="detail-kv">
                 <span>PM</span>
                 <strong>{detail?.pm?.nome || selected?.pm?.nome || '—'}</strong>
               </div>
-              <div className="detail-kv">
-                <span>Premissas Finanças</span>
-                <strong>
-                  {detail?.premissasOkFinancas ? 'OK' : 'Pendente'}
-                </strong>
-              </div>
-              <div className="detail-kv">
-                <span>Baseline wizard</span>
-                <strong>
-                  {detail?.wizardBaselineCompleto ? 'Completo' : 'Pendente'}
-                </strong>
-              </div>
-              <div className="detail-kv">
-                <span>Benefícios</span>
-                <strong>
-                  {detail?.businessCase?.beneficios?.length ?? 0}
-                </strong>
+
+              <div className="fapd-block">
+                <h3>Avaliação FAPD</h3>
+                <p className="muted fapd-lead">
+                  Notas 0–5 por objetivo estratégico (ou N/A), papel na matriz e
+                  comentário curto.
+                </p>
+                <div className="fapd-oe-grid">
+                  {OE_FIELDS.map((oe) => {
+                    const notaKey = `nota${oe.key}` as keyof FapdForm;
+                    const naKey = `na${oe.key}` as keyof FapdForm;
+                    const na = Boolean(fapd[naKey]);
+                    return (
+                      <label key={oe.key} className="fapd-oe">
+                        <span className="fapd-oe-label">
+                          {oe.label}
+                          <small>{oe.hint}</small>
+                        </span>
+                        <div className="fapd-oe-controls">
+                          <input
+                            type="number"
+                            min={0}
+                            max={5}
+                            step={1}
+                            disabled={na || busy}
+                            value={na ? '' : String(fapd[notaKey] ?? '')}
+                            onChange={(e) =>
+                              setFapd((f) => ({
+                                ...f,
+                                [notaKey]: e.target.value,
+                              }))
+                            }
+                            placeholder="0–5"
+                          />
+                          <label className="fapd-na">
+                            <input
+                              type="checkbox"
+                              checked={na}
+                              disabled={busy}
+                              onChange={(e) =>
+                                setFapd((f) => ({
+                                  ...f,
+                                  [naKey]: e.target.checked,
+                                  ...(e.target.checked
+                                    ? { [notaKey]: '' }
+                                    : {}),
+                                }))
+                              }
+                            />
+                            N/A
+                          </label>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+                <label className="fapd-field">
+                  <span>Papel estratégico</span>
+                  <select
+                    value={fapd.papelEstrategico}
+                    disabled={busy}
+                    onChange={(e) =>
+                      setFapd((f) => ({
+                        ...f,
+                        papelEstrategico: e.target.value as '' | PapelFapd,
+                      }))
+                    }
+                  >
+                    <option value="">Não definido</option>
+                    <option value="estruturante">Estruturante</option>
+                    <option value="gerador">Gerador</option>
+                  </select>
+                </label>
+                <label className="fapd-field">
+                  <span>Comentário</span>
+                  <textarea
+                    rows={3}
+                    disabled={busy}
+                    value={fapd.comentarioFapd}
+                    onChange={(e) =>
+                      setFapd((f) => ({
+                        ...f,
+                        comentarioFapd: e.target.value,
+                      }))
+                    }
+                    placeholder="Observações da avaliação…"
+                  />
+                </label>
+                <button
+                  type="button"
+                  className="btn secondary"
+                  disabled={busy || !selectedId}
+                  onClick={() => void saveAvaliacaoFapd()}
+                >
+                  Salvar avaliação
+                </button>
               </div>
             </div>
             <div className="drawer-foot">
