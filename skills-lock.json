@@ -18,6 +18,12 @@
       "sourceType": "github",
       "skillPath": "skills/llm-council/SKILL.md",
       "computedHash": "ac408ec68f72afce439aac6dc45d0f35394ef6b17bd08ce5f35843909eadb51c"
+    },
+    "awesome-design-md": {
+      "source": "VoltAgent/awesome-design-md",
+      "sourceType": "github",
+      "skillPath": "README.md",
+      "computedHash": "5f910062a49166aa17d940050ac7327703954e08a12d0644fce94e6063cdf243"
     }
   }
 }

@@ -21,3 +21,18 @@ cd ~/gstack && bun install && bun run gen:skill-docs --host cursor
 ## Karpathy guidelines
 
 `.cursor/rules/karpathy-guidelines.mdc` (`alwaysApply: true`).
+
+## Awesome DESIGN.md
+
+[VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) — curated brand `DESIGN.md` files for AI UI generation.
+
+- **Global library:** `~/.cursor/awesome-design-md/design-md/<brand>/DESIGN.md`
+- **Skill:** `.agents/skills/awesome-design-md` / `.cursor/skills/awesome-design-md`
+- **Rule:** `.cursor/rules/awesome-design-md.mdc`
+
+Refresh:
+
+```bash
+git clone --single-branch --depth 1 https://github.com/VoltAgent/awesome-design-md.git ~/.cursor/awesome-design-md
+# or: cd ~/.cursor/awesome-design-md && git pull
+```
