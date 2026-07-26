@@ -162,6 +162,17 @@ export const api = {
       method: 'PATCH',
       body: JSON.stringify(body),
     }),
+  atualizarAnotacoesProjeto: (
+    id: string,
+    body: {
+      memoriaCalculoGanho?: string | null;
+      comentarios?: string | null;
+    },
+  ) =>
+    request<any>(`/projetos/${id}/anotacoes`, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    }),
   removerProjeto: (id: string) =>
     request<{ ok: boolean; id: string; nome: string }>(`/projetos/${id}`, {
       method: 'DELETE',

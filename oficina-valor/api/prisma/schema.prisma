@@ -183,6 +183,10 @@ model Projeto {
   papelEstrategico       PapelEstrategicoFapd? @map("papel_estrategico")
   comentarioFapd         String?       @map("comentario_fapd")
 
+  /// Memória de cálculo do ganho (premissas, fórmula, fontes) + comentários livres.
+  memoriaCalculoGanho    String?       @map("memoria_calculo_ganho") @db.Text
+  comentarios            String?       @map("comentarios") @db.Text
+
   createdAt              DateTime      @default(now()) @map("created_at")
   updatedAt              DateTime      @updatedAt @map("updated_at")
 
