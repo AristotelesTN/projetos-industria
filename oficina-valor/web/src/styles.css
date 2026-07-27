@@ -3312,7 +3312,8 @@ a {
 }
 
 .fapd-field select,
-.fapd-field textarea {
+.fapd-field textarea,
+.fapd-field input {
   width: 100%;
   padding: 8px 10px;
   border: 1px solid var(--ds-border);
@@ -3322,6 +3323,10 @@ a {
   font: inherit;
   font-weight: 450;
   resize: vertical;
+}
+
+.fapd-field input {
+  resize: none;
 }
 
 .mark {
