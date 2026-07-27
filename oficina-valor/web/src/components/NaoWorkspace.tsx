@@ -227,9 +227,6 @@ export function NaoWorkspace({
       <aside className="nao-side">
         <div className="nao-side-head">
           <h2>Insights</h2>
-          <p className="muted" style={{ margin: 0, fontSize: 12 }}>
-            Motor nativo · charts e Story
-          </p>
         </div>
 
         <div className="nao-status-row">
