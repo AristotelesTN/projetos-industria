@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { brl } from '../lib/api';
 
 type Health = 'green' | 'yellow' | 'red';
@@ -54,6 +54,8 @@ function Donut({
   totalLabel: string;
   totalValue: string;
 }) {
+  const centerRef = useRef<HTMLDivElement>(null);
+  const valueRef = useRef<HTMLElement>(null);
   const total = segments.reduce((s, x) => s + x.value, 0) || 1;
   let acc = 0;
   const stops = segments
@@ -65,14 +67,49 @@ function Donut({
     })
     .join(', ');
 
+  useLayoutEffect(() => {
+    const box = centerRef.current;
+    const el = valueRef.current;
+    if (!box || !el) return;
+
+    const fit = () => {
+      const maxW = Math.max(0, box.clientWidth - 4);
+      const maxH = Math.max(0, box.clientHeight * 0.62);
+      let lo = 8;
+      let hi = 22;
+      let best = lo;
+      el.style.fontSize = `${hi}px`;
+      // Binary search font size that fits width and height
+      while (lo <= hi) {
+        const mid = (lo + hi) / 2;
+        el.style.fontSize = `${mid}px`;
+        const fits =
+          el.scrollWidth <= maxW + 0.5 && el.scrollHeight <= maxH + 0.5;
+        if (fits) {
+          best = mid;
+          lo = mid + 0.25;
+        } else {
+          hi = mid - 0.25;
+        }
+      }
+      el.style.fontSize = `${best}px`;
+    };
+
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(box);
+    if (box.parentElement) ro.observe(box.parentElement);
+    return () => ro.disconnect();
+  }, [totalValue]);
+
   return (
     <div className="status-overview">
       <div
         className="donut"
         style={{ background: `conic-gradient(${stops})` }}
       >
-        <div className="donut-center">
-          <strong>{totalValue}</strong>
+        <div className="donut-center" ref={centerRef}>
+          <strong ref={valueRef}>{totalValue}</strong>
           <span>{totalLabel}</span>
         </div>
       </div>

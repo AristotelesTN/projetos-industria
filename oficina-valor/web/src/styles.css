@@ -704,22 +704,36 @@ a {
 }
 
 .donut-center {
-  position: relative;
+  position: absolute;
+  inset: 28px;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  overflow: hidden;
+  padding: 2px 4px;
+  box-sizing: border-box;
 }
 
 .donut-center strong {
   display: block;
-  font-size: 22px;
+  max-width: 100%;
+  font-size: 18px;
   font-weight: 700;
   color: var(--ds-success-text);
-  line-height: 1.1;
+  line-height: 1.05;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .donut-center span {
-  font-size: 12px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
   color: var(--ds-text-subtlest);
+  line-height: 1.2;
+  margin-top: 2px;
 }
 
 .status-legend {
