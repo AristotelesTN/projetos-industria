@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { api, brl } from '../lib/api';
+import { FitText } from './FitText';
 
 type Health = 'green' | 'yellow' | 'red';
 
@@ -409,8 +410,10 @@ export function PortfolioWorkspace({
           <div className="metric-icon green" aria-hidden>
             ✓
           </div>
-          <div>
-            <div className="value tone-green">{brl(portfolio.realizado)}</div>
+          <div className="metric-body">
+            <FitText className="value tone-green">
+              {brl(portfolio.realizado)}
+            </FitText>
             <div className="label">Valor homologado</div>
           </div>
         </div>
@@ -418,8 +421,10 @@ export function PortfolioWorkspace({
           <div className="metric-icon blue" aria-hidden>
             ◆
           </div>
-          <div>
-            <div className="value tone-blue">{portfolio.roiLabel}</div>
+          <div className="metric-body">
+            <FitText className="value tone-blue">
+              {portfolio.roiLabel}
+            </FitText>
             <div className="label">ROI do portfólio</div>
           </div>
         </div>
@@ -427,8 +432,10 @@ export function PortfolioWorkspace({
           <div className="metric-icon orange" aria-hidden>
             !
           </div>
-          <div>
-            <div className="value tone-orange">{portfolio.projetosEmRisco}</div>
+          <div className="metric-body">
+            <FitText className="value tone-orange">
+              {portfolio.projetosEmRisco}
+            </FitText>
             <div className="label">Em risco (BRR &lt; 70%)</div>
           </div>
         </div>
@@ -436,8 +443,10 @@ export function PortfolioWorkspace({
           <div className="metric-icon purple" aria-hidden>
             ≡
           </div>
-          <div>
-            <div className="value tone-purple">{brl(portfolio.prometido)}</div>
+          <div className="metric-body">
+            <FitText className="value tone-purple">
+              {brl(portfolio.prometido)}
+            </FitText>
             <div className="label">Baseline prometida</div>
           </div>
         </div>
