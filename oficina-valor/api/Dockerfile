@@ -1,7 +1,8 @@
 FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm install
+# postinstall runs prisma generate; schema is not present yet in this stage
+RUN npm install --ignore-scripts
 
 FROM node:22-alpine AS build
 WORKDIR /app
