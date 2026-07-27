@@ -112,38 +112,48 @@ export function InsightsChart({ chart }: { chart: ChartSpec }) {
     );
   }
 
-  // pie
-  const total = chart.series.reduce((s, x) => s + x.value, 0) || 1;
-  let acc = 0;
-  const stops = chart.series.map((s, i) => {
-    const start = (acc / total) * 360;
-    acc += s.value;
-    const end = (acc / total) * 360;
-    return `${PIE_COLORS[i % PIE_COLORS.length]} ${start}deg ${end}deg`;
-  });
+  if (chart.type === 'pie') {
+    const total = chart.series.reduce((s, x) => s + x.value, 0) || 1;
+    let acc = 0;
+    const stops = chart.series.map((s, i) => {
+      const start = (acc / total) * 360;
+      acc += s.value;
+      const end = (acc / total) * 360;
+      return `${PIE_COLORS[i % PIE_COLORS.length]} ${start}deg ${end}deg`;
+    });
+
+    return (
+      <div className="insights-chart">
+        <div className="insights-chart-title">{chart.title}</div>
+        <div className="insights-pie-wrap">
+          <div
+            className="insights-pie"
+            style={{
+              background: stops.length
+                ? `conic-gradient(${stops.join(', ')})`
+                : 'var(--ds-border)',
+            }}
+          />
+          <ul className="insights-pie-legend">
+            {chart.series.map((s, i) => (
+              <li key={s.label}>
+                <i style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
+                <span>{s.label}</span>
+                <strong>{brl(s.value)}</strong>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="insights-chart">
-      <div className="insights-chart-title">{chart.title}</div>
-      <div className="insights-pie-wrap">
-        <div
-          className="insights-pie"
-          style={{
-            background: stops.length
-              ? `conic-gradient(${stops.join(', ')})`
-              : 'var(--ds-border)',
-          }}
-        />
-        <ul className="insights-pie-legend">
-          {chart.series.map((s, i) => (
-            <li key={s.label}>
-              <i style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
-              <span>{s.label}</span>
-              <strong>{brl(s.value)}</strong>
-            </li>
-          ))}
-        </ul>
+      <div className="insights-chart-title">
+        {(chart as { title?: string }).title || 'Gráfico'}
       </div>
+      <p className="muted">Tipo de gráfico não suportado neste painel.</p>
     </div>
   );
 }

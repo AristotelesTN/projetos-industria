@@ -112,6 +112,7 @@ export function NaoWorkspace({
   onInitialPromptConsumed?: () => void;
 }) {
   const [busy, setBusy] = useState(false);
+  const [storyBusy, setStoryBusy] = useState(false);
   const [status, setStatus] = useState<any>(null);
   const [input, setInput] = useState('');
   const [msgs, setMsgs] = useState<Msg[]>([
@@ -123,6 +124,7 @@ export function NaoWorkspace({
   ]);
   const [story, setStory] = useState<StoryDoc | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
+  const locked = busy || storyBusy;
 
   useEffect(() => {
     api
@@ -183,9 +185,10 @@ export function NaoWorkspace({
   }
 
   async function openStory() {
-    setBusy(true);
+    setStoryBusy(true);
     try {
       const res = await api.storyNao();
+      const doc = res.story as StoryDoc | undefined;
       setMsgs((m) => [
         ...m,
         {
@@ -194,17 +197,21 @@ export function NaoWorkspace({
         },
         {
           role: 'assistant',
-          text: res.answer,
-          story: res.story,
+          text: res.answer || 'Story gerada.',
+          story: doc,
           source: res.source,
         },
       ]);
-      if (res.story) setStory(res.story);
+      if (!doc?.sections?.length) {
+        onError('A API não retornou seções de Story.');
+        return;
+      }
+      setStory(doc);
       onMessage('Story do portfólio aberta');
     } catch (e: any) {
       onError(e.message || String(e));
     } finally {
-      setBusy(false);
+      setStoryBusy(false);
     }
   }
 
@@ -222,7 +229,7 @@ export function NaoWorkspace({
   const duckReady = !!status?.duckdbExists;
 
   return (
-    <div className={`nao-layout native insights-native ${story ? 'has-story' : ''}`}>
+    <div className={`nao-layout native insights-native${story ? ' has-story' : ''}`}>
       <aside className="nao-side">
         <div className="nao-side-head">
           <h2>Insights</h2>
@@ -239,11 +246,21 @@ export function NaoWorkspace({
         </div>
 
         <div className="actions" style={{ marginTop: 10, flexWrap: 'wrap' }}>
-          <button className="btn" disabled={busy} onClick={() => void sync()}>
+          <button
+            type="button"
+            className="btn"
+            disabled={locked}
+            onClick={() => void sync()}
+          >
             {busy ? 'Sincronizando…' : 'Atualizar snapshot'}
           </button>
-          <button className="btn" disabled={busy} onClick={() => void openStory()}>
-            Gerar Story
+          <button
+            type="button"
+            className="btn"
+            disabled={locked}
+            onClick={() => void openStory()}
+          >
+            {storyBusy ? 'Gerando…' : 'Gerar Story'}
           </button>
         </div>
 
@@ -254,7 +271,7 @@ export function NaoWorkspace({
               <button
                 type="button"
                 className="nao-prompt"
-                disabled={busy}
+                disabled={locked}
                 onClick={() => void ask(q)}
               >
                 {q}
@@ -291,7 +308,7 @@ export function NaoWorkspace({
                       key={h}
                       type="button"
                       className="nao-prompt"
-                      disabled={busy}
+                      disabled={locked}
                       onClick={() => void ask(h)}
                     >
                       {h}
@@ -308,9 +325,13 @@ export function NaoWorkspace({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Pergunte ou peça um Story…"
-            disabled={busy}
+            disabled={locked}
           />
-          <button className="btn" type="submit" disabled={busy || !input.trim()}>
+          <button
+            className="btn"
+            type="submit"
+            disabled={locked || !input.trim()}
+          >
             Enviar
           </button>
         </form>
