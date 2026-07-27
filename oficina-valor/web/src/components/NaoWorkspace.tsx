@@ -115,13 +115,7 @@ export function NaoWorkspace({
   const [storyBusy, setStoryBusy] = useState(false);
   const [status, setStatus] = useState<any>(null);
   const [input, setInput] = useState('');
-  const [msgs, setMsgs] = useState<Msg[]>([
-    {
-      role: 'assistant',
-      text: 'Insights nativo da Oficina — pergunte sobre BRR, ROI, curva S, homologação ou peça um Story com gráficos. Sem login externo.',
-      hints: PROMPTS.slice(0, 4),
-    },
-  ]);
+  const [msgs, setMsgs] = useState<Msg[]>([]);
   const [story, setStory] = useState<StoryDoc | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const locked = busy || storyBusy;
