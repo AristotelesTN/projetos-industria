@@ -28,7 +28,7 @@ services:
       PORT: "3001"
       JWT_SECRET: dev-oficina-valor-secret
       AUTH_MODE: dev
-      CORS_ORIGIN: http://localhost:3080,http://127.0.0.1:3080
+      CORS_ORIGIN: "*"
       UPLOAD_DIR: /app/uploads
       NAO_SYNC_URL: http://host.docker.internal:8788/sync
       NAO_URL: http://localhost:5006
@@ -49,8 +49,8 @@ services:
     build:
       context: ./web
       args:
-        VITE_API_URL: http://localhost:3001
-        VITE_NAO_URL: http://localhost:5006
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3001}
+        VITE_NAO_URL: ${VITE_NAO_URL:-http://localhost:5006}
     container_name: oficina-valor-web
     ports:
       - "3080:80"
