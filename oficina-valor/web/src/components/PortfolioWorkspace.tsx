@@ -328,7 +328,7 @@ export function PortfolioWorkspace({
       setDetail((prev: any) => ({ ...(prev || {}), ...updated }));
       setFapd(fapdFromProjeto(updated));
       await onRefresh();
-      onMessage('Avaliação FAPD salva');
+      onMessage('Avaliação salva');
     } catch (err: any) {
       onError(err.message || String(err));
     } finally {
@@ -751,7 +751,7 @@ export function PortfolioWorkspace({
                 <tr>
                   <th>Programa</th>
                   <th>Status</th>
-                  <th>Nota FAPD</th>
+                  <th>Nota</th>
                   <th>Papel</th>
                   <th>Memória</th>
                   <th>Investimento</th>
@@ -963,7 +963,7 @@ export function PortfolioWorkspace({
               </div>
 
               <div className="fapd-block">
-                <h3>Avaliação FAPD</h3>
+                <h3>Avaliação</h3>
                 <p className="muted fapd-lead">
                   Notas 0–5 por objetivo estratégico (ou N/A), papel na matriz e
                   comentário curto.
