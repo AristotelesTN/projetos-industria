@@ -361,7 +361,6 @@ export function AnalyticsBoard({
           <section className="panel">
             <div className="panel-head">
               <h2>Ganhos por categoria</h2>
-              <span className="meta">Hard · Soft · Avoidance</span>
             </div>
             <Donut
               totalLabel="TOTAL"
