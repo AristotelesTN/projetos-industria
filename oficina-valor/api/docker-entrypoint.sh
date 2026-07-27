@@ -13,8 +13,11 @@ until npx prisma migrate deploy; do
   sleep 2
 done
 
+# Sync columns/tables added in schema but not yet covered by older migrations (local/dev).
+npx prisma db push --accept-data-loss --skip-generate || true
+
 if [ "${SKIP_SEED}" != "1" ]; then
-  npx prisma db seed || npx ts-node --transpile-only prisma/seed.ts || true
+  npm run seed || true
 fi
 
 exec node dist/src/main.js
