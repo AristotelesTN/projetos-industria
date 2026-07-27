@@ -23,15 +23,16 @@ services:
       context: ./api
     container_name: oficina-valor-api
     environment:
-      # Via porta publicada no host — evita falha de TCP container↔container em ambientes nested/vfs
-      DATABASE_URL: postgresql://oficina:oficina@host.docker.internal:5433/oficina_valor
+      # Rede Docker padrão (máquina local). Em Docker nested/vfs use:
+      # DATABASE_URL=postgresql://oficina:oficina@host.docker.internal:5433/oficina_valor
+      DATABASE_URL: ${DATABASE_URL:-postgresql://oficina:oficina@postgres:5432/oficina_valor}
       PORT: "3001"
-      JWT_SECRET: dev-oficina-valor-secret
-      AUTH_MODE: dev
-      CORS_ORIGIN: "*"
+      JWT_SECRET: ${JWT_SECRET:-dev-oficina-valor-secret}
+      AUTH_MODE: ${AUTH_MODE:-dev}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3080,http://127.0.0.1:3080}
       UPLOAD_DIR: /app/uploads
-      NAO_SYNC_URL: http://host.docker.internal:8788/sync
-      NAO_URL: http://localhost:5006
+      NAO_SYNC_URL: ${NAO_SYNC_URL:-http://sync-api:8787/sync}
+      NAO_URL: ${NAO_URL:-http://localhost:5006}
     ports:
       - "3001:3001"
     volumes:

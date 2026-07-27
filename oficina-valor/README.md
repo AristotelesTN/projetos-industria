@@ -1,47 +1,60 @@
 # Gestão Oficina de Valor (VMO)
 
-Plataforma high-code de value tracking e governança de portfólio (Stage-Gate G1–G5), com analytics conversacional via Nao/DuckDB.
+Plataforma high-code de value tracking e governança de portfólio (Stage-Gate G1–G5), com analytics conversacional via motor nativo / DuckDB.
 
 ## Stack
 
 - **API:** NestJS + Prisma + PostgreSQL
 - **Web:** React (Vite) + TypeScript (pt-BR / BRL)
-- **Analytics:** Nao + DuckDB (snapshot CSV)
+- **Analytics:** Insights nativo (API) + snapshot CSV opcional
 
-## Deploy
+## Deploy local (sua máquina)
 
-- **Render (API + Postgres + static web):** blueprint em [`render.yaml`](render.yaml) — no dashboard Render → *New* → *Blueprint* → aponte para este repo / pasta `oficina-valor`.
-- **Vercel (web):** root `oficina-valor/web`, env `VITE_API_URL` = URL da API no Render.
-- Demo via túnel (efêmero, enquanto o agent estiver no ar): ver comentário no PR / mensagem do agent.
-
-## Subir localmente
+Requisitos: [Docker Desktop](https://www.docker.com/products/docker-desktop/) (ou Docker Engine + Compose v2).
 
 ```bash
-cp ../.env.example ../.env   # se ainda não existir; adicione ANTHROPIC_API_KEY para o Nao
+git clone https://github.com/AristotelesTN/projetos-industria.git
+cd projetos-industria
+git checkout cursor/oficina-valor-mvp-604b   # ou main, quando mergeado
+
 cd oficina-valor
 docker compose up -d --build
 ```
 
+Aguarde ~1–2 min na primeira vez (build + migrate + seed).
+
 | Serviço | URL |
 |---------|-----|
-| Web | http://localhost:3080 |
+| **App (web)** | http://localhost:3080 |
 | API | http://localhost:3001 |
-| Nao | http://localhost:5006 |
 | Postgres | localhost:5433 |
+
+**Login:** na tela inicial, use `gerente@oficina.local` (modo dev).
+
+### Comandos úteis
+
+```bash
+docker compose ps          # status
+docker compose logs -f api # logs da API
+docker compose down        # parar
+docker compose down -v     # parar e apagar dados do Postgres
+```
 
 ### Dev sem Docker (API + Web)
 
 ```bash
-# Postgres em docker
 docker compose up -d postgres
-
 cd api && npm install && npx prisma migrate deploy && npm run seed && npm run start:dev
 cd web && npm install && npm run dev
 ```
 
-## Login de desenvolvimento
+Web dev: http://localhost:5173 → API em http://localhost:3001.
 
-Único papel: **Gerente de Portfólio** (gerencia projetos, medições, homologação, gates e ROI).
+## Deploy nuvem (opcional)
+
+- **Render (API + Postgres + static web):** blueprint em [`render.yaml`](render.yaml) — dashboard Render → *New* → *Blueprint* → pasta `oficina-valor`. Depois defina `VITE_API_URL` (URL da API) no serviço web e `CORS_ORIGIN` na API.
+
+## Login de desenvolvimento
 
 | E-mail | Papel |
 |--------|-------|
@@ -51,10 +64,10 @@ Botão único na tela de login, ou header `X-Dev-User: gerente@oficina.local`.
 
 ## Fluxo piloto
 
-1. Login como PM → abrir projeto → registrar medição + evidência
-2. Login como Finanças → validar medição → importar custos
-3. Ver ROI / curva S no projeto e sumário na Diretoria
-4. Sincronizar Nao e perguntar no chat (aba Nao)
+1. Login → Portfólio → abrir projeto → memória / OPEX / avaliação
+2. Wizard de ganhos → homologar medições
+3. Analytics / Insights → Gerar Story
+4. Conferir ROI e BRR no drawer do projeto
 
 ## Testes
 
