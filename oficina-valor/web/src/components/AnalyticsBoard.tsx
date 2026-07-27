@@ -215,9 +215,6 @@ export function AnalyticsBoard({
   return (
     <div className="analytics">
       <div className="analytics-hero">
-        <div>
-          <h2>Analytics de valor</h2>
-        </div>
         <div className="top-actions">
           <button
             className="btn secondary agents-badge-btn"
