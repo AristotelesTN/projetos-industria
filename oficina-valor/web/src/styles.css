@@ -1419,18 +1419,6 @@ a {
   color: var(--ds-text);
 }
 
-.nao-auth-note {
-  margin-top: 12px;
-  padding: 10px;
-  border: 1px solid var(--ds-border);
-  border-radius: var(--ds-radius-md);
-  background: var(--ds-surface);
-}
-
-.nao-auth-note strong {
-  font-size: 12px;
-}
-
 .nao-onboard,
 .nao-tab-hero {
   display: grid;

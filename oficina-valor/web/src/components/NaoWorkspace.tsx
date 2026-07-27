@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { api, getUser } from '../lib/api';
+import { api } from '../lib/api';
 import { InsightsChart, type ChartSpec } from './InsightsChart';
 
 const PROMPTS = [
@@ -123,7 +123,6 @@ export function NaoWorkspace({
   ]);
   const [story, setStory] = useState<StoryDoc | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
-  const user = getUser();
 
   useEffect(() => {
     api
@@ -237,13 +236,6 @@ export function NaoWorkspace({
           <span className="muted">
             {duckReady ? 'Dados sincronizados' : 'Sincronize o snapshot'}
           </span>
-        </div>
-
-        <div className="nao-auth-note">
-          <strong>Sessão Oficina</strong>
-          <p className="muted" style={{ fontSize: 12, margin: '4px 0 0' }}>
-            {user?.nome || 'Gerente'} · sem login externo (getnao removido do app)
-          </p>
         </div>
 
         <div className="actions" style={{ marginTop: 10, flexWrap: 'wrap' }}>
