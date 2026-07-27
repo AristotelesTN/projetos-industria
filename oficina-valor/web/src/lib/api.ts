@@ -167,6 +167,7 @@ export const api = {
     body: {
       memoriaCalculoGanho?: string | null;
       comentarios?: string | null;
+      opexGerado?: number | null;
     },
   ) =>
     request<any>(`/projetos/${id}/anotacoes`, {

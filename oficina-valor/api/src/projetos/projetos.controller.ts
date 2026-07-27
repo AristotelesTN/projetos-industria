@@ -226,6 +226,11 @@ class AnotacoesDto {
   @IsOptional()
   @IsString()
   comentarios?: string | null;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  opexGerado?: number | null;
 }
 
 @Controller('projetos')

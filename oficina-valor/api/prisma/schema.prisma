@@ -186,6 +186,8 @@ model Projeto {
   /// Memória de cálculo do ganho (premissas, fórmula, fontes) + comentários livres.
   memoriaCalculoGanho    String?       @map("memoria_calculo_ganho") @db.Text
   comentarios            String?       @map("comentarios") @db.Text
+  /// OPEX gerado / impacto operacional informado no projeto (R$).
+  opexGerado             Decimal?      @map("opex_gerado") @db.Decimal(18, 2)
 
   createdAt              DateTime      @default(now()) @map("created_at")
   updatedAt              DateTime      @updatedAt @map("updated_at")

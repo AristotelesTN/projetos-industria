@@ -32,6 +32,7 @@ type ProjetoRow = {
   comentarioFapd?: string | null;
   memoriaCalculoGanho?: string | null;
   comentarios?: string | null;
+  opexGerado?: number | string | null;
 };
 
 type ViewTab = 'board' | 'lista' | 'saude';
@@ -190,6 +191,7 @@ export function PortfolioWorkspace({
   const [anotacoes, setAnotacoes] = useState({
     memoriaCalculoGanho: '',
     comentarios: '',
+    opexGerado: '',
   });
   const [form, setForm] = useState({
     nome: '',
@@ -210,6 +212,10 @@ export function PortfolioWorkspace({
     setAnotacoes({
       memoriaCalculoGanho: src?.memoriaCalculoGanho || '',
       comentarios: src?.comentarios || '',
+      opexGerado:
+        src?.opexGerado == null || src?.opexGerado === ''
+          ? ''
+          : String(src.opexGerado),
     });
   }, [detail, selected]);
 
@@ -340,17 +346,27 @@ export function PortfolioWorkspace({
     if (!selectedId) return;
     setBusy(true);
     try {
+      const opexRaw = anotacoes.opexGerado.trim().replace(',', '.');
+      const opexGerado =
+        opexRaw === '' ? null : Number(opexRaw);
+      if (opexGerado != null && Number.isNaN(opexGerado)) {
+        onError('OPEX Gerado inválido');
+        return;
+      }
       const updated = await api.atualizarAnotacoesProjeto(selectedId, {
         memoriaCalculoGanho: anotacoes.memoriaCalculoGanho.trim() || null,
         comentarios: anotacoes.comentarios.trim() || null,
+        opexGerado,
       });
       setDetail((prev: any) => ({ ...(prev || {}), ...updated }));
       setAnotacoes({
         memoriaCalculoGanho: updated.memoriaCalculoGanho || '',
         comentarios: updated.comentarios || '',
+        opexGerado:
+          updated.opexGerado == null ? '' : String(updated.opexGerado),
       });
       await onRefresh();
-      onMessage('Memória de cálculo e comentários salvos');
+      onMessage('Memória, OPEX e comentários salvos');
     } catch (err: any) {
       onError(err.message || String(err));
     } finally {
@@ -902,6 +918,28 @@ export function PortfolioWorkspace({
                 </strong>
               </div>
               <div className="detail-kv">
+                <span>ROI</span>
+                <strong>
+                  {detail?.analytics?.roiLabel ||
+                    selected?.analytics?.roiLabel ||
+                    '—'}
+                </strong>
+              </div>
+              <div className="detail-kv">
+                <span>OPEX Gerado</span>
+                <strong>
+                  {(() => {
+                    const v =
+                      detail?.opexGerado ??
+                      selected?.opexGerado ??
+                      anotacoes.opexGerado;
+                    if (v == null || v === '') return '—';
+                    const n = Number(v);
+                    return Number.isNaN(n) ? '—' : brl(n);
+                  })()}
+                </strong>
+              </div>
+              <div className="detail-kv">
                 <span>Investimento</span>
                 <strong>
                   {brl(
@@ -922,6 +960,23 @@ export function PortfolioWorkspace({
                   Descreva como o ganho é calculado (premissas, fórmula, fontes e
                   unidades) e registre comentários do projeto.
                 </p>
+                <label className="fapd-field">
+                  <span>OPEX Gerado (R$)</span>
+                  <input
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    disabled={busy}
+                    value={anotacoes.opexGerado}
+                    onChange={(e) =>
+                      setAnotacoes((a) => ({
+                        ...a,
+                        opexGerado: e.target.value,
+                      }))
+                    }
+                    placeholder="Ex.: 24300"
+                  />
+                </label>
                 <label className="fapd-field">
                   <span>Memória de cálculo</span>
                   <textarea

@@ -461,12 +461,13 @@ export class ProjetosService {
     return this.get(id, user);
   }
 
-  /** Memória de cálculo do ganho + comentários livres do projeto. */
+  /** Memória de cálculo do ganho + comentários + OPEX gerado. */
   async updateAnotacoes(
     id: string,
     input: {
       memoriaCalculoGanho?: string | null;
       comentarios?: string | null;
+      opexGerado?: number | null;
     },
     user: AuthUser,
   ) {
@@ -482,6 +483,12 @@ export class ProjetosService {
         input.comentarios === undefined
           ? before.comentarios
           : input.comentarios?.trim() || null,
+      opexGerado:
+        input.opexGerado === undefined
+          ? before.opexGerado
+          : input.opexGerado == null || Number.isNaN(Number(input.opexGerado))
+            ? null
+            : Number(input.opexGerado),
     };
 
     await this.prisma.projeto.update({ where: { id }, data });
@@ -493,6 +500,7 @@ export class ProjetosService {
       valorAnterior: {
         memoriaCalculoGanho: before.memoriaCalculoGanho,
         comentarios: before.comentarios,
+        opexGerado: before.opexGerado,
       },
       valorNovo: data,
     });
