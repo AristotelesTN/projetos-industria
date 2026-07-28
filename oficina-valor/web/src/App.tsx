@@ -376,7 +376,6 @@ export default function App() {
           {tab === 'projetos' && (
             <AnalyticsBoard
               portfolio={enrichedPortfolio}
-              onOpenWizard={() => setTab('wizard')}
               onOpenInsights={() => setTab('nao')}
               onOpenAgents={() => setTab('agents')}
               agentsPending={agentsPending}

@@ -128,13 +128,11 @@ function Donut({
 
 export function AnalyticsBoard({
   portfolio,
-  onOpenWizard,
   onOpenInsights,
   onOpenAgents,
   agentsPending = 0,
 }: {
   portfolio: any | null;
-  onOpenWizard: () => void;
   onOpenInsights: () => void;
   onOpenAgents: () => void;
   agentsPending?: number;
@@ -264,9 +262,6 @@ export function AnalyticsBoard({
           </button>
           <button className="btn secondary" onClick={onOpenInsights}>
             Insights
-          </button>
-          <button className="btn" onClick={onOpenWizard}>
-            + Registrar ganho
           </button>
         </div>
       </div>
