@@ -129,13 +129,9 @@ function Donut({
 export function AnalyticsBoard({
   portfolio,
   onOpenInsights,
-  onOpenAgents,
-  agentsPending = 0,
 }: {
   portfolio: any | null;
   onOpenInsights: () => void;
-  onOpenAgents: () => void;
-  agentsPending?: number;
 }) {
   const [view, setView] = useState<'overview' | 'ganhos' | 'risco' | 'areas'>(
     'overview',
@@ -251,15 +247,6 @@ export function AnalyticsBoard({
     <div className="analytics">
       <div className="analytics-hero">
         <div className="top-actions">
-          <button
-            className="btn secondary agents-badge-btn"
-            onClick={onOpenAgents}
-          >
-            <span className="orb sm blue" /> Agents
-            {agentsPending > 0 && (
-              <span className="badge-count">{agentsPending}</span>
-            )}
-          </button>
           <button className="btn secondary" onClick={onOpenInsights}>
             Insights
           </button>
