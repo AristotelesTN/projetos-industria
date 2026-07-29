@@ -20,6 +20,419 @@ function fmtOrDash(
   return format(n);
 }
 
+type PotencialKpiId =
+  | 'quantitativos'
+  | 'ganho_estimado'
+  | 'risco'
+  | 'negocio'
+  | 'horas'
+  | 'recorrentes'
+  | 'pontuais'
+  | 'horizonte3'
+  | 'qualitativos'
+  | 'capex'
+  | 'opex'
+  | 'capex_opex_pend'
+  | 'capex_opex_aplic';
+
+type RacionalRow = {
+  projetoId: string;
+  nome: string;
+  area: string;
+  status?: string;
+  valor: number;
+  detalhe?: string;
+  racional?: string | null;
+};
+
+type RacionalView = {
+  id: PotencialKpiId;
+  title: string;
+  formula: string;
+  total: number;
+  unit: 'brl' | 'hours' | 'count';
+  rows: RacionalRow[];
+};
+
+function nVal(v: unknown): number {
+  const x = Number(v);
+  return Number.isFinite(x) ? x : 0;
+}
+
+function monetarioProjeto(p: any): number {
+  return (
+    nVal(p.ganhoFinanceiroAnual) +
+    nVal(p.riscoFinanceiroMitigadoAnual) +
+    nVal(p.ganhoNegocioAnual)
+  );
+}
+
+function buildRacional(
+  id: PotencialKpiId,
+  projects: any[],
+): RacionalView {
+  const fmtStatus = (s?: string) => s || '—';
+
+  const base = (title: string, formula: string, unit: RacionalView['unit']) => ({
+    id,
+    title,
+    formula,
+    unit,
+  });
+
+  if (id === 'quantitativos') {
+    const rows = projects
+      .filter((p) => p.ganhoPrincipal && p.ganhoPrincipal !== 'qualitativo')
+      .map((p) => ({
+        projetoId: p.projetoId,
+        nome: p.nome,
+        area: p.area,
+        status: fmtStatus(p.status),
+        valor: 1,
+        detalhe: String(p.ganhoPrincipal),
+        racional: p.memoriaCalculoGanho,
+      }));
+    return {
+      ...base(
+        'Projetos quantitativos',
+        'Contagem de projetos com ganho principal quantitativo (financeiro, risco, negócio ou horas) — exclui qualitativos.',
+        'count',
+      ),
+      total: rows.length,
+      rows,
+    };
+  }
+
+  if (id === 'qualitativos') {
+    const rows = projects
+      .filter((p) => p.ganhoPrincipal === 'qualitativo')
+      .map((p) => ({
+        projetoId: p.projetoId,
+        nome: p.nome,
+        area: p.area,
+        status: fmtStatus(p.status),
+        valor: 1,
+        detalhe: p.categoriaQualitativa || 'qualitativo',
+        racional: p.memoriaCalculoGanho,
+      }));
+    return {
+      ...base(
+        'Projetos qualitativos',
+        'Contagem de projetos cujo ganho principal é qualitativo (ex.: estruturante).',
+        'count',
+      ),
+      total: rows.length,
+      rows,
+    };
+  }
+
+  if (id === 'ganho_estimado') {
+    const rows = projects
+      .filter((p) => nVal(p.ganhoFinanceiroAnual) > 0)
+      .map((p) => ({
+        projetoId: p.projetoId,
+        nome: p.nome,
+        area: p.area,
+        status: fmtStatus(p.status),
+        valor: nVal(p.ganhoFinanceiroAnual),
+        detalhe: p.economiaEstimadaAno
+          ? `Est. planilha ${brl(nVal(p.economiaEstimadaAno))}`
+          : undefined,
+        racional: p.memoriaCalculoGanho,
+      }))
+      .sort((a, b) => b.valor - a.valor);
+    return {
+      ...base(
+        'Ganho estimado',
+        'Soma de ganhoFinanceiroAnual (economia estimada/ano da ficha ou planilha) de todos os projetos.',
+        'brl',
+      ),
+      total: rows.reduce((s, r) => s + r.valor, 0),
+      rows,
+    };
+  }
+
+  if (id === 'risco') {
+    const rows = projects
+      .filter((p) => nVal(p.riscoFinanceiroMitigadoAnual) > 0)
+      .map((p) => ({
+        projetoId: p.projetoId,
+        nome: p.nome,
+        area: p.area,
+        status: fmtStatus(p.status),
+        valor: nVal(p.riscoFinanceiroMitigadoAnual),
+        racional: p.memoriaCalculoGanho,
+      }))
+      .sort((a, b) => b.valor - a.valor);
+    return {
+      ...base(
+        'Risco financeiro mitigado',
+        'Soma de riscoFinanceiroMitigadoAnual declarado na ficha (mitigação de risco financeiro/ano).',
+        'brl',
+      ),
+      total: rows.reduce((s, r) => s + r.valor, 0),
+      rows,
+    };
+  }
+
+  if (id === 'negocio') {
+    const rows = projects
+      .filter((p) => nVal(p.ganhoNegocioAnual) > 0)
+      .map((p) => ({
+        projetoId: p.projetoId,
+        nome: p.nome,
+        area: p.area,
+        status: fmtStatus(p.status),
+        valor: nVal(p.ganhoNegocioAnual),
+        racional: p.memoriaCalculoGanho,
+      }))
+      .sort((a, b) => b.valor - a.valor);
+    return {
+      ...base(
+        'Ganho do negócio',
+        'Soma de ganhoNegocioAnual declarado na ficha dos projetos.',
+        'brl',
+      ),
+      total: rows.reduce((s, r) => s + r.valor, 0),
+      rows,
+    };
+  }
+
+  if (id === 'horas') {
+    const rows = projects
+      .filter((p) => nVal(p.horasEconomizadasAno) > 0)
+      .map((p) => ({
+        projetoId: p.projetoId,
+        nome: p.nome,
+        area: p.area,
+        status: fmtStatus(p.status),
+        valor: nVal(p.horasEconomizadasAno),
+        racional: p.memoriaCalculoGanho,
+      }))
+      .sort((a, b) => b.valor - a.valor);
+    return {
+      ...base(
+        'Horas economizadas',
+        'Soma de horasEconomizadasAno (retorno HH/ano ou HH engenheiro+líder+analista da planilha).',
+        'hours',
+      ),
+      total: rows.reduce((s, r) => s + r.valor, 0),
+      rows,
+    };
+  }
+
+  if (id === 'recorrentes') {
+    const rows = projects
+      .filter((p) => {
+        const m = monetarioProjeto(p);
+        return (
+          p.ganhoRecorrente &&
+          (m > 0 || nVal(p.horasEconomizadasAno) > 0 || p.ganhoPrincipal)
+        );
+      })
+      .map((p) => ({
+        projetoId: p.projetoId,
+        nome: p.nome,
+        area: p.area,
+        status: fmtStatus(p.status),
+        valor: monetarioProjeto(p),
+        detalhe: 'Recorrente',
+        racional: p.memoriaCalculoGanho,
+      }))
+      .sort((a, b) => b.valor - a.valor);
+    const anual = rows.reduce((s, r) => s + r.valor, 0);
+    return {
+      ...base(
+        'Recorrentes (anual)',
+        'Soma monetária (financeiro + risco + negócio) dos projetos marcados como ganho recorrente. Horizonte 3 anos = anual × 3.',
+        'brl',
+      ),
+      total: anual,
+      rows,
+    };
+  }
+
+  if (id === 'pontuais') {
+    const rows = projects
+      .filter((p) => {
+        const m = monetarioProjeto(p);
+        return (
+          !p.ganhoRecorrente &&
+          (m > 0 || nVal(p.horasEconomizadasAno) > 0 || p.ganhoPrincipal)
+        );
+      })
+      .map((p) => ({
+        projetoId: p.projetoId,
+        nome: p.nome,
+        area: p.area,
+        status: fmtStatus(p.status),
+        valor: monetarioProjeto(p),
+        detalhe: 'Pontual',
+        racional: p.memoriaCalculoGanho,
+      }))
+      .sort((a, b) => b.valor - a.valor);
+    return {
+      ...base(
+        'Pontuais (uma vez)',
+        'Soma monetária (financeiro + risco + negócio) dos projetos com ganho pontual (não recorrente). Conta uma única vez no horizonte.',
+        'brl',
+      ),
+      total: rows.reduce((s, r) => s + r.valor, 0),
+      rows,
+    };
+  }
+
+  if (id === 'horizonte3') {
+    const rec = projects.filter((p) => p.ganhoRecorrente);
+    const pont = projects.filter((p) => !p.ganhoRecorrente);
+    const rows: RacionalRow[] = [
+      ...rec
+        .map((p) => ({
+          projetoId: p.projetoId,
+          nome: p.nome,
+          area: p.area,
+          status: fmtStatus(p.status),
+          valor: monetarioProjeto(p) * 3,
+          detalhe: `Recorrente ${brl(monetarioProjeto(p))} × 3`,
+          racional: p.memoriaCalculoGanho,
+        }))
+        .filter((r) => r.valor > 0),
+      ...pont
+        .map((p) => ({
+          projetoId: p.projetoId,
+          nome: p.nome,
+          area: p.area,
+          status: fmtStatus(p.status),
+          valor: monetarioProjeto(p),
+          detalhe: 'Pontual × 1',
+          racional: p.memoriaCalculoGanho,
+        }))
+        .filter((r) => r.valor > 0),
+    ].sort((a, b) => b.valor - a.valor);
+    return {
+      ...base(
+        'Horizonte 3 anos',
+        'Fórmula: (soma monetária recorrente × 3) + (soma monetária pontual × 1).',
+        'brl',
+      ),
+      total: rows.reduce((s, r) => s + r.valor, 0),
+      rows,
+    };
+  }
+
+  if (id === 'capex') {
+    const rows = projects
+      .filter((p) => nVal(p.investimentoCapex) > 0)
+      .map((p) => ({
+        projetoId: p.projetoId,
+        nome: p.nome,
+        area: p.area,
+        status: fmtStatus(p.status),
+        valor: nVal(p.investimentoCapex),
+        racional: p.memoriaCalculoGanho,
+      }))
+      .sort((a, b) => b.valor - a.valor);
+    return {
+      ...base(
+        'Investimento CAPEX',
+        'Soma de investimentoCapex (ou investimento aprovado) dos projetos.',
+        'brl',
+      ),
+      total: rows.reduce((s, r) => s + r.valor, 0),
+      rows,
+    };
+  }
+
+  if (id === 'opex') {
+    const rows = projects
+      .filter((p) => nVal(p.investimentoOpex) > 0)
+      .map((p) => ({
+        projetoId: p.projetoId,
+        nome: p.nome,
+        area: p.area,
+        status: fmtStatus(p.status),
+        valor: nVal(p.investimentoOpex),
+        racional: p.memoriaCalculoGanho,
+      }))
+      .sort((a, b) => b.valor - a.valor);
+    return {
+      ...base(
+        'Investimento OPEX',
+        'Soma de investimentoOpex (ou OPEX gerado) dos projetos.',
+        'brl',
+      ),
+      total: rows.reduce((s, r) => s + r.valor, 0),
+      rows,
+    };
+  }
+
+  if (id === 'capex_opex_pend') {
+    const rows = projects
+      .filter(
+        (p) =>
+          nVal(p.investimentoCapexParaOpex) > 0 && !p.capexParaOpexAplicadoEm,
+      )
+      .map((p) => ({
+        projetoId: p.projetoId,
+        nome: p.nome,
+        area: p.area,
+        status: fmtStatus(p.status),
+        valor: nVal(p.investimentoCapexParaOpex),
+        detalhe: 'Pendente de Encerrar/Sustentação',
+        racional: p.memoriaCalculoGanho,
+      }))
+      .sort((a, b) => b.valor - a.valor);
+    return {
+      ...base(
+        'CAPEX → OPEX pendente',
+        'Soma do valor planejado de CAPEX→OPEX ainda não aplicado (projeto não implementado).',
+        'brl',
+      ),
+      total: rows.reduce((s, r) => s + r.valor, 0),
+      rows,
+    };
+  }
+
+  // capex_opex_aplic
+  const rows = projects
+    .filter(
+      (p) =>
+        nVal(p.investimentoCapexParaOpex) > 0 && p.capexParaOpexAplicadoEm,
+    )
+    .map((p) => ({
+      projetoId: p.projetoId,
+      nome: p.nome,
+      area: p.area,
+      status: fmtStatus(p.status),
+      valor: nVal(p.investimentoCapexParaOpex),
+      detalhe: p.capexParaOpexAplicadoEm
+        ? `Aplicado em ${new Date(p.capexParaOpexAplicadoEm).toLocaleString('pt-BR')}`
+        : 'Aplicado',
+      racional: p.memoriaCalculoGanho,
+    }))
+    .sort((a, b) => b.valor - a.valor);
+  return {
+    ...base(
+      'CAPEX → OPEX aplicado',
+      'Soma do valor CAPEX→OPEX já migrado automaticamente ao Encerrar/Sustentação.',
+      'brl',
+    ),
+    total: rows.reduce((s, r) => s + r.valor, 0),
+    rows,
+  };
+}
+
+function formatRacionalValor(
+  unit: RacionalView['unit'],
+  valor: number,
+): string {
+  if (unit === 'brl') return brl(valor);
+  if (unit === 'hours') {
+    return `${new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(valor)} h`;
+  }
+  return new Intl.NumberFormat('pt-BR').format(valor);
+}
+
 function Sparkline({
   values,
   color = '#0c66e4',
@@ -152,6 +565,7 @@ export function AnalyticsBoard({
     'overview',
   );
   const [areaFilter, setAreaFilter] = useState('all');
+  const [racionalKpi, setRacionalKpi] = useState<PotencialKpiId | null>(null);
 
   const projects = useMemo(() => {
     return (portfolio?.porProjeto || []).map((p: any) => ({
@@ -171,6 +585,11 @@ export function AnalyticsBoard({
     if (areaFilter === 'all') return projects;
     return projects.filter((p: any) => p.area === areaFilter);
   }, [projects, areaFilter]);
+
+  const racional = useMemo(
+    () => (racionalKpi ? buildRacional(racionalKpi, projects) : null),
+    [racionalKpi, projects],
+  );
 
   if (!portfolio) {
     return (
@@ -367,10 +786,14 @@ export function AnalyticsBoard({
           </div>
           <p className="muted" style={{ marginTop: 0 }}>
             Valores informados na ficha — distintos do realizado homologado
-            acima. Recorrentes acumulam no horizonte; pontuais contam uma vez.
+            acima. Clique em um card para ver o racional do cálculo.
           </p>
           <div className="kpi-row potencial-row">
-            <article className="kpi-card">
+            <button
+              type="button"
+              className="kpi-card kpi-card-btn"
+              onClick={() => setRacionalKpi('quantitativos')}
+            >
               <div className="label">Projetos quantitativos</div>
               <div className="value">
                 {potencial?.projetosQuantitativos ?? '—'}
@@ -380,36 +803,56 @@ export function AnalyticsBoard({
                   ? '—'
                   : `${Number(potencial.pctQuantitativos).toFixed(0)}% do classificado`}
               </div>
-            </article>
-            <article className="kpi-card">
+            </button>
+            <button
+              type="button"
+              className="kpi-card kpi-card-btn"
+              onClick={() => setRacionalKpi('ganho_estimado')}
+            >
               <div className="label">Ganho estimado</div>
               <div className="value">
                 {fmtOrDash(potencial?.ganhoFinanceiroAnual, brl)}
               </div>
-            </article>
-            <article className="kpi-card">
+            </button>
+            <button
+              type="button"
+              className="kpi-card kpi-card-btn"
+              onClick={() => setRacionalKpi('risco')}
+            >
               <div className="label">Risco fin. mitigado</div>
               <div className="value">
                 {fmtOrDash(potencial?.riscoFinanceiroMitigadoAnual, brl)}
               </div>
-            </article>
-            <article className="kpi-card">
+            </button>
+            <button
+              type="button"
+              className="kpi-card kpi-card-btn"
+              onClick={() => setRacionalKpi('negocio')}
+            >
               <div className="label">Ganho do negócio</div>
               <div className="value">
                 {fmtOrDash(potencial?.ganhoNegocioAnual, brl)}
               </div>
-            </article>
-            <article className="kpi-card">
+            </button>
+            <button
+              type="button"
+              className="kpi-card kpi-card-btn"
+              onClick={() => setRacionalKpi('horas')}
+            >
               <div className="label">Horas economizadas</div>
               <div className="value">
                 {fmtOrDash(potencial?.horasEconomizadasAno, (n) =>
                   `${new Intl.NumberFormat('pt-BR').format(n)} h`,
                 )}
               </div>
-            </article>
+            </button>
           </div>
           <div className="kpi-row potencial-row" style={{ marginTop: 10 }}>
-            <article className="kpi-card">
+            <button
+              type="button"
+              className="kpi-card kpi-card-btn"
+              onClick={() => setRacionalKpi('recorrentes')}
+            >
               <div className="label">Recorrentes (anual)</div>
               <div className="value">
                 {fmtOrDash(potencial?.recorrente?.anual, brl)}
@@ -418,8 +861,12 @@ export function AnalyticsBoard({
                 {potencial?.recorrente?.projetos ?? 0} proj. · ×3 anos:{' '}
                 {fmtOrDash(potencial?.recorrente?.horizonte3Anos, brl)}
               </div>
-            </article>
-            <article className="kpi-card">
+            </button>
+            <button
+              type="button"
+              className="kpi-card kpi-card-btn"
+              onClick={() => setRacionalKpi('pontuais')}
+            >
               <div className="label">Pontuais (uma vez)</div>
               <div className="value">
                 {fmtOrDash(potencial?.pontual?.total, brl)}
@@ -427,15 +874,23 @@ export function AnalyticsBoard({
               <div className="trend">
                 {potencial?.pontual?.projetos ?? 0} projetos
               </div>
-            </article>
-            <article className="kpi-card">
+            </button>
+            <button
+              type="button"
+              className="kpi-card kpi-card-btn"
+              onClick={() => setRacionalKpi('horizonte3')}
+            >
               <div className="label">Horizonte 3 anos</div>
               <div className="value">
                 {fmtOrDash(potencial?.horizonte3Anos, brl)}
               </div>
               <div className="trend">recorrente×3 + pontual</div>
-            </article>
-            <article className="kpi-card">
+            </button>
+            <button
+              type="button"
+              className="kpi-card kpi-card-btn"
+              onClick={() => setRacionalKpi('qualitativos')}
+            >
               <div className="label">Projetos qualitativos</div>
               <div className="value">
                 {potencial?.projetosQualitativos ?? '—'}
@@ -445,32 +900,135 @@ export function AnalyticsBoard({
                   ? '—'
                   : `${Number(potencial.pctQualitativos).toFixed(0)}% do classificado`}
               </div>
-            </article>
+            </button>
           </div>
           <div className="kpi-row potencial-row" style={{ marginTop: 10 }}>
-            <article className="kpi-card">
+            <button
+              type="button"
+              className="kpi-card kpi-card-btn"
+              onClick={() => setRacionalKpi('capex')}
+            >
               <div className="label">Investimento CAPEX</div>
               <div className="value">{fmtOrDash(investimento?.capex, brl)}</div>
-            </article>
-            <article className="kpi-card">
+            </button>
+            <button
+              type="button"
+              className="kpi-card kpi-card-btn"
+              onClick={() => setRacionalKpi('opex')}
+            >
               <div className="label">Investimento OPEX</div>
               <div className="value">{fmtOrDash(investimento?.opex, brl)}</div>
-            </article>
-            <article className="kpi-card">
+            </button>
+            <button
+              type="button"
+              className="kpi-card kpi-card-btn"
+              onClick={() => setRacionalKpi('capex_opex_pend')}
+            >
               <div className="label">CAPEX → OPEX pendente</div>
               <div className="value">
                 {fmtOrDash(investimento?.capexParaOpexPendente, brl)}
               </div>
               <div className="trend">aplica ao Encerrar / Sustentação</div>
-            </article>
-            <article className="kpi-card">
+            </button>
+            <button
+              type="button"
+              className="kpi-card kpi-card-btn"
+              onClick={() => setRacionalKpi('capex_opex_aplic')}
+            >
               <div className="label">CAPEX → OPEX aplicado</div>
               <div className="value">
                 {fmtOrDash(investimento?.capexParaOpexAplicado, brl)}
               </div>
-            </article>
+            </button>
           </div>
         </section>
+      )}
+
+      {racional && (
+        <div
+          className="drawer-backdrop"
+          onClick={() => setRacionalKpi(null)}
+        >
+          <aside
+            className="project-detail-drawer racional-drawer"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="drawer-head">
+              <div>
+                <button
+                  type="button"
+                  className="linkish"
+                  onClick={() => setRacionalKpi(null)}
+                >
+                  ← Voltar ao potencial
+                </button>
+                <h2 style={{ margin: '8px 0 0' }}>Racional · {racional.title}</h2>
+                <p className="muted" style={{ margin: '6px 0 0' }}>
+                  {racional.formula}
+                </p>
+              </div>
+              <div className="racional-total">
+                <span className="label">Total</span>
+                <strong>
+                  {formatRacionalValor(racional.unit, racional.total)}
+                </strong>
+                <span className="muted">
+                  {racional.rows.length} projeto
+                  {racional.rows.length === 1 ? '' : 's'}
+                </span>
+              </div>
+            </div>
+            <div className="drawer-body">
+              {!racional.rows.length ? (
+                <p className="muted">Nenhum projeto contribui para este indicador.</p>
+              ) : (
+                <div className="rag-table-wrap">
+                  <table className="rag-table">
+                    <thead>
+                      <tr>
+                        <th>Projeto</th>
+                        <th>Área</th>
+                        <th>Status</th>
+                        <th>Detalhe</th>
+                        <th style={{ textAlign: 'right' }}>Valor</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {racional.rows.map((r) => (
+                        <tr key={r.projetoId}>
+                          <td>
+                            <strong>{r.nome}</strong>
+                            {r.racional ? (
+                              <div className="racional-memo muted">{r.racional}</div>
+                            ) : null}
+                          </td>
+                          <td>{r.area}</td>
+                          <td>{r.status || '—'}</td>
+                          <td>{r.detalhe || '—'}</td>
+                          <td style={{ textAlign: 'right' }}>
+                            {formatRacionalValor(racional.unit, r.valor)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colSpan={4}>
+                          <strong>Soma</strong>
+                        </td>
+                        <td style={{ textAlign: 'right' }}>
+                          <strong>
+                            {formatRacionalValor(racional.unit, racional.total)}
+                          </strong>
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              )}
+            </div>
+          </aside>
+        </div>
       )}
 
       {(view === 'overview' || view === 'ganhos') && (

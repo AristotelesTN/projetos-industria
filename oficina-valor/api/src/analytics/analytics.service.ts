@@ -184,6 +184,9 @@ export class AnalyticsService {
         capexParaOpexAplicadoEm: true,
         investimentoAprovado: true,
         opexGerado: true,
+        memoriaCalculoGanho: true,
+        economiaEstimadaAno: true,
+        economiaRealAno: true,
         updatedAt: true,
         area: { select: { nome: true } },
       },
@@ -331,6 +334,9 @@ export class AnalyticsService {
         investimentoOpex: p ? n(p.investimentoOpex ?? p.opexGerado) : null,
         investimentoCapexParaOpex: p ? n(p.investimentoCapexParaOpex) : null,
         capexParaOpexAplicadoEm: p?.capexParaOpexAplicadoEm?.toISOString() ?? null,
+        memoriaCalculoGanho: p?.memoriaCalculoGanho ?? null,
+        economiaEstimadaAno: p ? n(p.economiaEstimadaAno) : null,
+        economiaRealAno: p ? n(p.economiaRealAno) : null,
       };
     });
 

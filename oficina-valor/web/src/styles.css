@@ -1881,6 +1881,59 @@ a {
   padding: 18px 20px;
 }
 
+.kpi-card-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kpi-card-btn:hover,
+.kpi-card-btn:focus-visible {
+  border-color: color-mix(in srgb, #2f6fed 45%, var(--ds-border));
+  box-shadow: 0 0 0 3px color-mix(in srgb, #2f6fed 16%, transparent);
+  outline: none;
+}
+
+.racional-drawer {
+  width: min(920px, 96vw);
+  max-width: 96vw;
+}
+
+.racional-total {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-end;
+}
+
+.racional-total .label {
+  font-size: 12px;
+  color: var(--ds-text-subtlest);
+}
+
+.racional-total strong {
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+.racional-memo {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.35;
+  max-width: 420px;
+  white-space: pre-wrap;
+}
+
+.rag-table tfoot td {
+  border-top: 1px solid var(--ds-border);
+  padding-top: 10px;
+}
+
 .kpi-top {
   display: flex;
   align-items: center;
