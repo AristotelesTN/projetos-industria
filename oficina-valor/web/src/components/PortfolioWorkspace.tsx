@@ -34,9 +34,11 @@ type ProjetoRow = {
   comentarios?: string | null;
   opexGerado?: number | string | null;
   ganhoPrincipal?: string | null;
+  ganhoRecorrente?: boolean;
   investimentoCapex?: number | string | null;
   investimentoOpex?: number | string | null;
   investimentoCapexParaOpex?: number | string | null;
+  capexParaOpexAplicadoEm?: string | null;
   acompanhamentoPosPendente?: boolean;
   justificativaDecisao?: string | null;
 };
@@ -125,6 +127,7 @@ const EMPTY_VALOR = {
   investimentoCapex: '',
   investimentoOpex: '',
   investimentoCapexParaOpex: '',
+  capexParaOpexAplicadoEm: null as string | null,
   memoriaCalculoGanho: '',
   comentarios: '',
 };
@@ -144,6 +147,7 @@ function valorFromProjeto(src: any | null | undefined) {
     investimentoCapex: s(src.investimentoCapex ?? src.investimentoAprovado),
     investimentoOpex: s(src.investimentoOpex ?? src.opexGerado),
     investimentoCapexParaOpex: s(src.investimentoCapexParaOpex),
+    capexParaOpexAplicadoEm: src.capexParaOpexAplicadoEm || null,
     memoriaCalculoGanho: src.memoriaCalculoGanho || '',
     comentarios: src.comentarios || '',
   };
@@ -496,9 +500,21 @@ export function PortfolioWorkspace({
     if (!current || current.status === status) return;
     setBusy(true);
     try {
-      await api.atualizarStatusProjeto(projetoId, status);
+      const updated = await api.atualizarStatusProjeto(projetoId, status);
       await onRefresh();
-      onMessage(`${current.nome} → ${statusLabel(status)}`);
+      const applied =
+        !current.capexParaOpexAplicadoEm &&
+        updated?.capexParaOpexAplicadoEm &&
+        Number(current.investimentoCapexParaOpex) > 0;
+      onMessage(
+        applied
+          ? `${current.nome} → ${statusLabel(status)} · CAPEX → OPEX aplicado (${brl(Number(current.investimentoCapexParaOpex))})`
+          : `${current.nome} → ${statusLabel(status)}`,
+      );
+      if (detailOpen && detail?.id === projetoId) {
+        setDetail((d: any) => (d ? { ...d, ...updated } : d));
+        setValor(valorFromProjeto(updated));
+      }
     } catch (err: any) {
       onError(err.message || String(err));
     } finally {
@@ -734,6 +750,35 @@ export function PortfolioWorkspace({
                       <span>{p.area?.nome || 'Área'}</span>
                       <span>{p.analytics?.roiLabel ?? '—'}</span>
                     </div>
+                    {(p.ganhoPrincipal ||
+                      Number(p.investimentoCapexParaOpex) > 0 ||
+                      p.capexParaOpexAplicadoEm) && (
+                      <div className="kanban-card-tags">
+                        {p.ganhoPrincipal ? (
+                          <>
+                            <span className="pill-tag">
+                              {GANHO_PRINCIPAL_OPTIONS.find(
+                                (g) => g.id === p.ganhoPrincipal,
+                              )?.label || p.ganhoPrincipal}
+                            </span>
+                            <span
+                              className={`pill-tag ${p.ganhoRecorrente ? 'pill-recurrent' : 'pill-once'}`}
+                            >
+                              {p.ganhoRecorrente ? 'Recorrente' : 'Pontual'}
+                            </span>
+                          </>
+                        ) : null}
+                        {p.capexParaOpexAplicadoEm ? (
+                          <span className="pill-tag pill-capex">
+                            CAPEX→OPEX ok
+                          </span>
+                        ) : Number(p.investimentoCapexParaOpex) > 0 ? (
+                          <span className="pill-tag pill-capex-pending">
+                            CAPEX→OPEX pend.
+                          </span>
+                        ) : null}
+                      </div>
+                    )}
                     <div className="kanban-card-metrics">
                       <span>{brl(p.realizado)}</span>
                       <span>
@@ -1181,20 +1226,39 @@ export function PortfolioWorkspace({
                     </select>
                   </label>
                 </div>
-                <label className="fapd-na" style={{ marginBottom: 10 }}>
-                  <input
-                    type="checkbox"
-                    disabled={busy}
-                    checked={valor.ganhoRecorrente}
-                    onChange={(e) =>
-                      setValor((v) => ({
-                        ...v,
-                        ganhoRecorrente: e.target.checked,
-                      }))
-                    }
-                  />
-                  Ganho recorrente (anualizado nas projeções)
-                </label>
+                <fieldset className="ganho-principal">
+                  <legend>Natureza do ganho</legend>
+                  <label className="radio-row">
+                    <input
+                      type="radio"
+                      name="natureza-ganho"
+                      disabled={busy}
+                      checked={valor.ganhoRecorrente === true}
+                      onChange={() =>
+                        setValor((v) => ({ ...v, ganhoRecorrente: true }))
+                      }
+                    />
+                    <span>
+                      <strong>Recorrente</strong> — se repete nos anos
+                      seguintes e acumula no horizonte
+                    </span>
+                  </label>
+                  <label className="radio-row">
+                    <input
+                      type="radio"
+                      name="natureza-ganho"
+                      disabled={busy}
+                      checked={valor.ganhoRecorrente === false}
+                      onChange={() =>
+                        setValor((v) => ({ ...v, ganhoRecorrente: false }))
+                      }
+                    />
+                    <span>
+                      <strong>Pontual</strong> — ocorre uma única vez (não
+                      se repete)
+                    </span>
+                  </label>
+                </fieldset>
                 <label className="fapd-field">
                   <span>Racional / memória de cálculo</span>
                   <textarea
@@ -1226,6 +1290,11 @@ export function PortfolioWorkspace({
                 </label>
 
                 <h3 style={{ marginTop: 16 }}>Investimento</h3>
+                <p className="muted" style={{ marginTop: 0, marginBottom: 10 }}>
+                  Informe CAPEX e OPEX. O valor de <strong>CAPEX → OPEX</strong>{' '}
+                  é migrado automaticamente quando o projeto for para{' '}
+                  <em>Encerrado</em> ou <em>Sustentação</em> (pós-implementação).
+                </p>
                 <div className="form-grid">
                   <label className="fapd-field">
                     <span>CAPEX (R$)</span>
@@ -1260,12 +1329,12 @@ export function PortfolioWorkspace({
                     />
                   </label>
                   <label className="fapd-field">
-                    <span>CAPEX → OPEX (próx. ano)</span>
+                    <span>CAPEX → OPEX pós-implementação (R$)</span>
                     <input
                       type="number"
                       min={0}
                       step="0.01"
-                      disabled={busy}
+                      disabled={busy || !!valor.capexParaOpexAplicadoEm}
                       value={valor.investimentoCapexParaOpex}
                       onChange={(e) =>
                         setValor((v) => ({
@@ -1276,6 +1345,21 @@ export function PortfolioWorkspace({
                     />
                   </label>
                 </div>
+                {valor.capexParaOpexAplicadoEm ? (
+                  <p className="ok" style={{ marginTop: 0 }}>
+                    CAPEX → OPEX aplicado em{' '}
+                    {new Date(valor.capexParaOpexAplicadoEm).toLocaleString(
+                      'pt-BR',
+                    )}
+                    . CAPEX reduzido e OPEX aumentado no valor planejado.
+                  </p>
+                ) : Number(valor.investimentoCapexParaOpex) > 0 ? (
+                  <p className="muted" style={{ marginTop: 0 }}>
+                    Pendente: ao implementar (Encerrado / Sustentação),{' '}
+                    {brl(Number(valor.investimentoCapexParaOpex))} migram de
+                    CAPEX para OPEX.
+                  </p>
+                ) : null}
                 <button
                   type="button"
                   className="btn secondary"

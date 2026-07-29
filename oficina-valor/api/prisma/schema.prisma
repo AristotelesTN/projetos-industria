@@ -231,12 +231,16 @@ model Projeto {
   ganhoFinanceiroAnual        Decimal?            @map("ganho_financeiro_anual") @db.Decimal(18, 2)
   riscoFinanceiroMitigadoAnual Decimal?           @map("risco_financeiro_mitigado_anual") @db.Decimal(18, 2)
   ganhoNegocioAnual           Decimal?            @map("ganho_negocio_anual") @db.Decimal(18, 2)
+  /// true = recorrente (repete e acumula nos anos); false = pontual (uma vez).
   ganhoRecorrente             Boolean             @default(false) @map("ganho_recorrente")
 
   /// Investimento detalhado (substitui o uso isolado de investimentoAprovado no painel).
   investimentoCapex           Decimal?            @map("investimento_capex") @db.Decimal(18, 2)
   investimentoOpex            Decimal?            @map("investimento_opex") @db.Decimal(18, 2)
+  /// Valor planejado a migrar de CAPEX → OPEX após implementação (encerrado/sustentação).
   investimentoCapexParaOpex   Decimal?            @map("investimento_capex_para_opex") @db.Decimal(18, 2)
+  /// Quando a migração CAPEX→OPEX foi aplicada automaticamente.
+  capexParaOpexAplicadoEm     DateTime?           @map("capex_para_opex_aplicado_em")
 
   /// Após encerrar: dispara ciclo de acompanhamento de ganhos pós-projeto.
   acompanhamentoPosPendente Boolean    @default(false) @map("acompanhamento_pos_pendente")

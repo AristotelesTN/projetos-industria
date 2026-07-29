@@ -390,11 +390,27 @@ export class ProjetosService {
   async updateStatus(id: string, status: ProjetoStatus, user: AuthUser) {
     const before = await this.prisma.projeto.findUnique({ where: { id } });
     if (!before) throw new NotFoundException('Projeto não encontrado');
+
+    const n = (v: unknown) => {
+      if (v == null || v === '') return 0;
+      const x = Number(v);
+      return Number.isNaN(x) ? 0 : x;
+    };
+
+    const isImplementado = (s: ProjetoStatus) =>
+      s === ProjetoStatus.encerrado || s === ProjetoStatus.sustentacao;
+
     const data: {
       status: ProjetoStatus;
       acompanhamentoPosPendente?: boolean;
       finalizadoEm?: Date | null;
+      investimentoCapex?: number;
+      investimentoOpex?: number;
+      investimentoAprovado?: number;
+      opexGerado?: number;
+      capexParaOpexAplicadoEm?: Date;
     } = { status };
+
     if (status === ProjetoStatus.encerrado && before.status !== ProjetoStatus.encerrado) {
       data.acompanhamentoPosPendente = true;
       data.finalizadoEm = new Date();
@@ -406,6 +422,31 @@ export class ProjetosService {
       data.acompanhamentoPosPendente = false;
       data.finalizadoEm = null;
     }
+
+    // US: após implementação, valor planejado de CAPEX migra para OPEX (uma vez).
+    let capexOpexTransfer: number | null = null;
+    if (
+      isImplementado(status) &&
+      !isImplementado(before.status) &&
+      !before.capexParaOpexAplicadoEm
+    ) {
+      const planned = n(before.investimentoCapexParaOpex);
+      if (planned > 0) {
+        const capexAtual = n(
+          before.investimentoCapex ?? before.investimentoAprovado,
+        );
+        const opexAtual = n(before.investimentoOpex ?? before.opexGerado);
+        const novoCapex = Math.max(0, capexAtual - planned);
+        const novoOpex = opexAtual + planned;
+        data.investimentoCapex = novoCapex;
+        data.investimentoOpex = novoOpex;
+        data.investimentoAprovado = novoCapex;
+        data.opexGerado = novoOpex;
+        data.capexParaOpexAplicadoEm = new Date();
+        capexOpexTransfer = planned;
+      }
+    }
+
     const updated = await this.prisma.projeto.update({
       where: { id },
       data,
@@ -415,10 +456,19 @@ export class ProjetosService {
       entidadeId: id,
       acao: 'status_change',
       usuarioId: user.id,
-      valorAnterior: { status: before.status },
+      valorAnterior: {
+        status: before.status,
+        investimentoCapex: before.investimentoCapex,
+        investimentoOpex: before.investimentoOpex,
+        capexParaOpexAplicadoEm: before.capexParaOpexAplicadoEm,
+      },
       valorNovo: {
         status,
         acompanhamentoPosPendente: data.acompanhamentoPosPendente,
+        capexParaOpexTransferido: capexOpexTransfer,
+        investimentoCapex: data.investimentoCapex,
+        investimentoOpex: data.investimentoOpex,
+        capexParaOpexAplicadoEm: data.capexParaOpexAplicadoEm,
       },
     });
     return this.get(updated.id, user);

@@ -3425,6 +3425,43 @@ a {
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 }
 
+.kanban-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 6px 0 2px;
+}
+
+.pill-tag {
+  font-size: 10px;
+  line-height: 1.2;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--ds-border) 55%, transparent);
+  color: var(--ds-text-muted, #5c6570);
+  font-weight: 550;
+}
+
+.pill-recurrent {
+  background: color-mix(in srgb, #2f6fed 18%, transparent);
+  color: #1a4fb8;
+}
+
+.pill-once {
+  background: color-mix(in srgb, #c47a12 18%, transparent);
+  color: #8a5200;
+}
+
+.pill-capex {
+  background: color-mix(in srgb, #1f8a4c 18%, transparent);
+  color: #146338;
+}
+
+.pill-capex-pending {
+  background: color-mix(in srgb, #b45309 16%, transparent);
+  color: #9a3412;
+}
+
 .mark {
   background: radial-gradient(circle at 30% 30%, #828fff, #5e6ad2 70%);
 }

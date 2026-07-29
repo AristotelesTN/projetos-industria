@@ -366,8 +366,8 @@ export function AnalyticsBoard({
             </span>
           </div>
           <p className="muted" style={{ marginTop: 0 }}>
-            Valores anuais informados na ficha — distintos do realizado
-            homologado acima.
+            Valores informados na ficha — distintos do realizado homologado
+            acima. Recorrentes acumulam no horizonte; pontuais contam uma vez.
           </p>
           <div className="kpi-row potencial-row">
             <article className="kpi-card">
@@ -410,18 +410,30 @@ export function AnalyticsBoard({
           </div>
           <div className="kpi-row potencial-row" style={{ marginTop: 10 }}>
             <article className="kpi-card">
-              <div className="label">Investimento CAPEX</div>
-              <div className="value">{fmtOrDash(investimento?.capex, brl)}</div>
-            </article>
-            <article className="kpi-card">
-              <div className="label">Investimento OPEX</div>
-              <div className="value">{fmtOrDash(investimento?.opex, brl)}</div>
-            </article>
-            <article className="kpi-card">
-              <div className="label">CAPEX → OPEX (próx. ano)</div>
+              <div className="label">Recorrentes (anual)</div>
               <div className="value">
-                {fmtOrDash(investimento?.capexParaOpex, brl)}
+                {fmtOrDash(potencial?.recorrente?.anual, brl)}
               </div>
+              <div className="trend">
+                {potencial?.recorrente?.projetos ?? 0} proj. · ×3 anos:{' '}
+                {fmtOrDash(potencial?.recorrente?.horizonte3Anos, brl)}
+              </div>
+            </article>
+            <article className="kpi-card">
+              <div className="label">Pontuais (uma vez)</div>
+              <div className="value">
+                {fmtOrDash(potencial?.pontual?.total, brl)}
+              </div>
+              <div className="trend">
+                {potencial?.pontual?.projetos ?? 0} projetos
+              </div>
+            </article>
+            <article className="kpi-card">
+              <div className="label">Horizonte 3 anos</div>
+              <div className="value">
+                {fmtOrDash(potencial?.horizonte3Anos, brl)}
+              </div>
+              <div className="trend">recorrente×3 + pontual</div>
             </article>
             <article className="kpi-card">
               <div className="label">Projetos qualitativos</div>
@@ -432,6 +444,29 @@ export function AnalyticsBoard({
                 {potencial?.pctQualitativos == null
                   ? '—'
                   : `${Number(potencial.pctQualitativos).toFixed(0)}% do classificado`}
+              </div>
+            </article>
+          </div>
+          <div className="kpi-row potencial-row" style={{ marginTop: 10 }}>
+            <article className="kpi-card">
+              <div className="label">Investimento CAPEX</div>
+              <div className="value">{fmtOrDash(investimento?.capex, brl)}</div>
+            </article>
+            <article className="kpi-card">
+              <div className="label">Investimento OPEX</div>
+              <div className="value">{fmtOrDash(investimento?.opex, brl)}</div>
+            </article>
+            <article className="kpi-card">
+              <div className="label">CAPEX → OPEX pendente</div>
+              <div className="value">
+                {fmtOrDash(investimento?.capexParaOpexPendente, brl)}
+              </div>
+              <div className="trend">aplica ao Encerrar / Sustentação</div>
+            </article>
+            <article className="kpi-card">
+              <div className="label">CAPEX → OPEX aplicado</div>
+              <div className="value">
+                {fmtOrDash(investimento?.capexParaOpexAplicado, brl)}
               </div>
             </article>
           </div>

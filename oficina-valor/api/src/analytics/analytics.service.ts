@@ -160,6 +160,7 @@ export class AnalyticsService {
         investimentoCapex: true,
         investimentoOpex: true,
         investimentoCapexParaOpex: true,
+        capexParaOpexAplicadoEm: true,
         investimentoAprovado: true,
         opexGerado: true,
         updatedAt: true,
@@ -191,9 +192,15 @@ export class AnalyticsService {
     let potencialRisco = 0;
     let potencialNegocio = 0;
     let potencialHoras = 0;
+    let potencialRecorrenteAnual = 0;
+    let potencialPontual = 0;
+    let qtdeRecorrentes = 0;
+    let qtdePontuais = 0;
     let capex = 0;
     let opex = 0;
     let capexParaOpex = 0;
+    let capexParaOpexPendente = 0;
+    let capexParaOpexAplicado = 0;
     let qtdeQuantitativos = 0;
     let qtdeQualitativos = 0;
     const qualitativosPorCategoria: Record<string, number> = {};
@@ -203,13 +210,37 @@ export class AnalyticsService {
       if (!ultimaAtualizacao || p.updatedAt > ultimaAtualizacao) {
         ultimaAtualizacao = p.updatedAt;
       }
-      potencialFinanceiro += n(p.ganhoFinanceiroAnual);
-      potencialRisco += n(p.riscoFinanceiroMitigadoAnual);
-      potencialNegocio += n(p.ganhoNegocioAnual);
-      potencialHoras += n(p.horasEconomizadasAno);
+      const fin = n(p.ganhoFinanceiroAnual);
+      const risco = n(p.riscoFinanceiroMitigadoAnual);
+      const negocio = n(p.ganhoNegocioAnual);
+      const horas = n(p.horasEconomizadasAno);
+      potencialFinanceiro += fin;
+      potencialRisco += risco;
+      potencialNegocio += negocio;
+      potencialHoras += horas;
+
+      const monetario = fin + risco + negocio;
+      const temGanhoDeclarado =
+        monetario > 0 || horas > 0 || p.ganhoPrincipal != null;
+      if (temGanhoDeclarado) {
+        if (p.ganhoRecorrente) {
+          qtdeRecorrentes += 1;
+          potencialRecorrenteAnual += monetario;
+        } else {
+          qtdePontuais += 1;
+          potencialPontual += monetario;
+        }
+      }
+
       capex += n(p.investimentoCapex ?? p.investimentoAprovado);
       opex += n(p.investimentoOpex ?? p.opexGerado);
-      capexParaOpex += n(p.investimentoCapexParaOpex);
+      const planejadoCapexOpex = n(p.investimentoCapexParaOpex);
+      capexParaOpex += planejadoCapexOpex;
+      if (p.capexParaOpexAplicadoEm) {
+        capexParaOpexAplicado += planejadoCapexOpex;
+      } else {
+        capexParaOpexPendente += planejadoCapexOpex;
+      }
 
       const principal = p.ganhoPrincipal;
       if (principal === 'qualitativo') {
@@ -268,11 +299,13 @@ export class AnalyticsService {
           : null,
         ganhoNegocioAnual: p ? n(p.ganhoNegocioAnual) : null,
         horasEconomizadasAno: p ? n(p.horasEconomizadasAno) : null,
+        ganhoRecorrente: p?.ganhoRecorrente ?? false,
         investimentoCapex: p
           ? n(p.investimentoCapex ?? p.investimentoAprovado)
           : null,
         investimentoOpex: p ? n(p.investimentoOpex ?? p.opexGerado) : null,
         investimentoCapexParaOpex: p ? n(p.investimentoCapexParaOpex) : null,
+        capexParaOpexAplicadoEm: p?.capexParaOpexAplicadoEm?.toISOString() ?? null,
       };
     });
 
@@ -307,11 +340,24 @@ export class AnalyticsService {
         ganhoNegocioAnual: potencialNegocio,
         horasEconomizadasAno: potencialHoras,
         qualitativosPorCategoria,
+        recorrente: {
+          projetos: qtdeRecorrentes,
+          anual: potencialRecorrenteAnual,
+          horizonte3Anos: potencialRecorrenteAnual * 3,
+        },
+        pontual: {
+          projetos: qtdePontuais,
+          total: potencialPontual,
+        },
+        horizonte3Anos:
+          potencialRecorrenteAnual * 3 + potencialPontual,
       },
       investimento: {
         capex,
         opex,
         capexParaOpex,
+        capexParaOpexPendente,
+        capexParaOpexAplicado,
       },
       atualizadoEm: ultimaAtualizacao?.toISOString() ?? new Date().toISOString(),
     };
