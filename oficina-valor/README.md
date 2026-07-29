@@ -64,10 +64,11 @@ Botão único na tela de login, ou header `X-Dev-User: gerente@oficina.local`.
 
 ## Fluxo piloto
 
-1. Login → Portfólio → abrir projeto → memória / OPEX / avaliação
-2. Wizard de ganhos → homologar medições
-3. Analytics / Insights → Gerar Story
-4. Conferir ROI e BRR no drawer do projeto
+1. **Demandas** → registrar oportunidade → entrevista de ganhos → priorizar → go/no-go → criar projeto
+2. **Portfólio** → abrir projeto → decisão go/no-go, memória/OPEX, avaliação
+3. Wizard de ganhos → homologar medições
+4. Encerrar projeto → acompanhamento pós (Wizard realização)
+5. Analytics / Insights → Gerar Story
 
 ## Testes
 
