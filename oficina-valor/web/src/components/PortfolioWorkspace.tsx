@@ -193,6 +193,7 @@ export function PortfolioWorkspace({
     comentarios: '',
     opexGerado: '',
   });
+  const [goNoGoJustificativa, setGoNoGoJustificativa] = useState('');
   const [form, setForm] = useState({
     nome: '',
     areaNome: 'Produção',
@@ -367,6 +368,48 @@ export function PortfolioWorkspace({
       });
       await onRefresh();
       onMessage('Memória, OPEX e comentários salvos');
+    } catch (err: any) {
+      onError(err.message || String(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function decidirProjeto(decisao: 'aprovado' | 'reprovado') {
+    if (!selectedId) return;
+    if (decisao === 'reprovado' && !goNoGoJustificativa.trim()) {
+      onError('Informe a justificativa da reprovação');
+      return;
+    }
+    setBusy(true);
+    try {
+      const updated = await api.decidirProjeto(selectedId, {
+        decisao,
+        justificativa: goNoGoJustificativa.trim() || undefined,
+      });
+      setDetail((prev: any) => ({ ...(prev || {}), ...updated }));
+      setGoNoGoJustificativa('');
+      await onRefresh();
+      onMessage(
+        decisao === 'aprovado'
+          ? 'Projeto aprovado (go)'
+          : 'Projeto reprovado (arquivado)',
+      );
+    } catch (err: any) {
+      onError(err.message || String(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function marcarPosFeito() {
+    if (!selectedId) return;
+    setBusy(true);
+    try {
+      const updated = await api.acompanhamentoPosFeito(selectedId);
+      setDetail((prev: any) => ({ ...(prev || {}), ...updated }));
+      await onRefresh();
+      onMessage('Acompanhamento pós-projeto marcado');
     } catch (err: any) {
       onError(err.message || String(err));
     } finally {
@@ -1113,6 +1156,78 @@ export function PortfolioWorkspace({
                   Salvar avaliação
                 </button>
               </div>
+
+              <div className="fapd-block">
+                <h3>Decisão go / no-go</h3>
+                <p className="muted fapd-lead">
+                  Aprova para execução no portfólio ou reprova com justificativa
+                  (projeto permanece no histórico como arquivado).
+                </p>
+                <label className="fapd-field">
+                  <span>Justificativa</span>
+                  <textarea
+                    rows={2}
+                    disabled={busy}
+                    value={goNoGoJustificativa}
+                    onChange={(e) => setGoNoGoJustificativa(e.target.value)}
+                    placeholder="Obrigatória na reprovação"
+                  />
+                </label>
+                <div className="actions">
+                  <button
+                    type="button"
+                    className="btn"
+                    disabled={busy || !selectedId}
+                    onClick={() => void decidirProjeto('aprovado')}
+                  >
+                    Aprovar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn secondary"
+                    disabled={busy || !selectedId}
+                    onClick={() => void decidirProjeto('reprovado')}
+                  >
+                    Reprovar
+                  </button>
+                </div>
+                {detail?.justificativaDecisao && (
+                  <p className="muted" style={{ marginTop: 8 }}>
+                    Última justificativa: {detail.justificativaDecisao}
+                  </p>
+                )}
+              </div>
+
+              {(detail?.acompanhamentoPosPendente ||
+                selected?.status === 'encerrado') && (
+                <div className="fapd-block">
+                  <h3>Pós-projeto · ganhos</h3>
+                  <p className="muted fapd-lead">
+                    Projeto encerrado. Rode o Wizard de realização e acompanhe
+                    os ganhos na janela pós-implantação.
+                  </p>
+                  <div className="actions">
+                    <button
+                      type="button"
+                      className="btn"
+                      disabled={!selectedId}
+                      onClick={() => selectedId && onOpenWizard(selectedId)}
+                    >
+                      Wizard pós-entrega
+                    </button>
+                    {detail?.acompanhamentoPosPendente && (
+                      <button
+                        type="button"
+                        className="btn secondary"
+                        disabled={busy || !selectedId}
+                        onClick={() => void marcarPosFeito()}
+                      >
+                        Marcar acompanhamento iniciado
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
             <div className="drawer-foot">
               {!detail?.premissasOkFinancas && (

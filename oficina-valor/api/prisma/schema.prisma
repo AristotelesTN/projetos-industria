@@ -75,6 +75,21 @@ enum OrigemCusto {
   manual
 }
 
+enum DemandaOrigem {
+  interna
+  aevo
+}
+
+enum DemandaStatus {
+  recebida
+  entrevista
+  ficha
+  priorizacao
+  decisao
+  aprovada
+  reprovada
+}
+
 model Usuario {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -188,6 +203,10 @@ model Projeto {
   comentarios            String?       @map("comentarios") @db.Text
   /// OPEX gerado / impacto operacional informado no projeto (R$).
   opexGerado             Decimal?      @map("opex_gerado") @db.Decimal(18, 2)
+  /// Após encerrar: dispara ciclo de acompanhamento de ganhos pós-projeto.
+  acompanhamentoPosPendente Boolean    @default(false) @map("acompanhamento_pos_pendente")
+  finalizadoEm           DateTime?     @map("finalizado_em")
+  justificativaDecisao   String?       @map("justificativa_decisao") @db.Text
 
   createdAt              DateTime      @default(now()) @map("created_at")
   updatedAt              DateTime      @updatedAt @map("updated_at")
@@ -202,8 +221,47 @@ model Projeto {
   historicosResp HistoricoResponsavel[]
   wizards        WizardSessao[]
   agentRecs      AgentRecommendation[]
+  demandaOrigem  Demanda?
 
   @@map("projetos")
+}
+
+/// Funil de captação/triagem (US-82..89) antes da execução com ganhos.
+model Demanda {
+  id                String        @id @default(uuid())
+  titulo            String
+  descricao         String        @db.Text
+  solicitanteNome   String        @map("solicitante_nome")
+  areaNome          String        @map("area_nome")
+  origem            DemandaOrigem @default(interna)
+  idAevo            String?       @map("id_aevo")
+  status            DemandaStatus @default(recebida)
+
+  entrevistaConcluida              Boolean @default(false) @map("entrevista_concluida")
+  entrevistaDispensaJustificativa  String? @map("entrevista_dispensa_justificativa") @db.Text
+  ganhosEstimadosResumo            String? @map("ganhos_estimados_resumo") @db.Text
+
+  scoreImpacto       Int?     @map("score_impacto")
+  scoreAlinhamento   Int?     @map("score_alinhamento")
+  scoreEsforco       Int?     @map("score_esforco")
+  scoreRisco         Int?     @map("score_risco")
+  scoreTotal         Decimal? @map("score_total") @db.Decimal(8, 2)
+  justificativaPriorizacao String? @map("justificativa_priorizacao") @db.Text
+
+  desenvolvimentoInterno Boolean? @map("desenvolvimento_interno")
+  investimentoEstimado   Decimal? @map("investimento_estimado") @db.Decimal(18, 2)
+  decisaoGoNoGo          String?  @map("decisao_go_nogo")
+  justificativaDecisao   String?  @map("justificativa_decisao") @db.Text
+
+  projetoId String?  @unique @map("projeto_id")
+  projeto   Projeto? @relation(fields: [projetoId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([origem])
+  @@map("demandas")
 }
 
 enum WizardTipo {

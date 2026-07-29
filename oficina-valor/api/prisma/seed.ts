@@ -233,7 +233,55 @@ async function main() {
   console.log('Seed OK: 10 projetos · usuário gerente@oficina.local');
 }
 
+async function seedDemandas() {
+  const count = await prisma.demanda.count();
+  if (count > 0) {
+    console.log('Demandas já seedadas (%d)', count);
+    return;
+  }
+  const samples = [
+    {
+      titulo: 'Reduzir setup troca de ferramenta',
+      descricao:
+        'Dor: setups longos na linha B geram ociosidade. Oportunidade de SMED digital.',
+      solicitanteNome: 'Ana Produção',
+      areaNome: 'Produção',
+      origem: 'interna' as const,
+      status: 'recebida' as const,
+    },
+    {
+      titulo: 'Portal de solicitações de manutenção',
+      descricao: 'Solicitação AEVO para digitalizar abertura de OS.',
+      solicitanteNome: 'Carlos Manutenção',
+      areaNome: 'Manutenção',
+      origem: 'aevo' as const,
+      idAevo: 'AEVO-2026-0142',
+      status: 'entrevista' as const,
+    },
+    {
+      titulo: 'Otimização de roteirização de frete',
+      descricao: 'Ganho estimado em frete Spot e OTIF.',
+      solicitanteNome: 'Marina Supply',
+      areaNome: 'Supply Chain',
+      origem: 'interna' as const,
+      status: 'priorizacao' as const,
+      entrevistaConcluida: true,
+      ganhosEstimadosResumo: 'Hard ~R$ 18k/mês em frete; soft em OTIF.',
+      scoreImpacto: 5,
+      scoreAlinhamento: 4,
+      scoreEsforco: 3,
+      scoreRisco: 2,
+      scoreTotal: 4.25,
+    },
+  ];
+  for (const s of samples) {
+    await prisma.demanda.create({ data: s });
+  }
+  console.log('Seed demandas OK: %d', samples.length);
+}
+
 main()
+  .then(() => seedDemandas())
   .catch((e) => {
     console.error(e);
     process.exit(1);

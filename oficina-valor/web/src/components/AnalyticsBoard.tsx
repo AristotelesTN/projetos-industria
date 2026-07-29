@@ -129,9 +129,13 @@ function Donut({
 export function AnalyticsBoard({
   portfolio,
   onOpenInsights,
+  onOpenAgents,
+  agentsPending = 0,
 }: {
   portfolio: any | null;
   onOpenInsights: () => void;
+  onOpenAgents: () => void;
+  agentsPending?: number;
 }) {
   const [view, setView] = useState<'overview' | 'ganhos' | 'risco' | 'areas'>(
     'overview',

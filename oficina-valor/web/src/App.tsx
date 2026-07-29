@@ -14,10 +14,12 @@ import { AnalyticsBoard } from './components/AnalyticsBoard';
 import { AgentsWorkspace } from './components/AgentsWorkspace';
 import { PortfolioWorkspace } from './components/PortfolioWorkspace';
 import { HomologacaoWorkspace } from './components/HomologacaoWorkspace';
+import { DemandasWorkspace } from './components/DemandasWorkspace';
 
 type Tab =
   | 'diretoria'
   | 'projetos'
+  | 'demandas'
   | 'nao'
   | 'wizard'
   | 'agents'
@@ -34,6 +36,7 @@ const NAV: { section: string; items: { id: Tab; label: string; icon: string }[] 
       items: [
         { id: 'projetos', label: 'Analytics', icon: '▦' },
         { id: 'diretoria', label: 'Portfólio', icon: '◫' },
+        { id: 'demandas', label: 'Demandas', icon: '▤' },
       ],
     },
     {
@@ -57,6 +60,7 @@ const NAV: { section: string; items: { id: Tab; label: string; icon: string }[] 
 const TITLES: Record<Tab, string> = {
   projetos: 'Analytics',
   diretoria: 'Portfólio',
+  demandas: 'Demandas',
   nao: 'Insights',
   wizard: 'Wizard de ganhos',
   agents: 'Agents',
@@ -362,6 +366,7 @@ export default function App() {
           className={`content ${
             tab === 'projetos' ||
             tab === 'diretoria' ||
+            tab === 'demandas' ||
             tab === 'wizard' ||
             tab === 'nao' ||
             tab === 'agents' ||
@@ -379,6 +384,22 @@ export default function App() {
               onOpenInsights={() => setTab('nao')}
               onOpenAgents={() => setTab('agents')}
               agentsPending={agentsPending}
+            />
+          )}
+
+          {tab === 'demandas' && (
+            <DemandasWorkspace
+              onMessage={(m) => {
+                setMsg(m);
+                setError('');
+              }}
+              onError={setError}
+              onOpenWizard={() => setTab('wizard')}
+              onOpenProjeto={(id) => {
+                setSelectedId(id);
+                setTab('diretoria');
+                void refreshList();
+              }}
             />
           )}
 

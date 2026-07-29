@@ -141,6 +141,83 @@ export const api = {
       method: 'PATCH',
       body: JSON.stringify({ status }),
     }),
+  decidirProjeto: (
+    id: string,
+    body: { decisao: 'aprovado' | 'reprovado'; justificativa?: string },
+  ) =>
+    request<any>(`/projetos/${id}/decidir`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  acompanhamentoPosFeito: (id: string) =>
+    request<any>(`/projetos/${id}/acompanhamento-pos/feito`, {
+      method: 'POST',
+      body: '{}',
+    }),
+  demandas: (origem?: string) =>
+    request<any[]>(
+      origem ? `/demandas?origem=${encodeURIComponent(origem)}` : '/demandas',
+    ),
+  criarDemanda: (body: {
+    titulo: string;
+    descricao: string;
+    solicitanteNome: string;
+    areaNome: string;
+    origem?: 'interna' | 'aevo';
+    idAevo?: string | null;
+  }) =>
+    request<any>('/demandas', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  atualizarStatusDemanda: (id: string, status: string) =>
+    request<any>(`/demandas/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    }),
+  entrevistaDemanda: (
+    id: string,
+    body: {
+      ganhosEstimadosResumo?: string | null;
+      dispensaJustificativa?: string | null;
+    },
+  ) =>
+    request<any>(`/demandas/${id}/entrevista`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  priorizarDemanda: (
+    id: string,
+    body: {
+      scoreImpacto?: number | null;
+      scoreAlinhamento?: number | null;
+      scoreEsforco?: number | null;
+      scoreRisco?: number | null;
+      justificativaPriorizacao?: string | null;
+    },
+  ) =>
+    request<any>(`/demandas/${id}/priorizar`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  decidirDemanda: (
+    id: string,
+    body: {
+      decisao: 'aprovado' | 'reprovado';
+      justificativa?: string | null;
+      desenvolvimentoInterno?: boolean | null;
+      investimentoEstimado?: number | null;
+    },
+  ) =>
+    request<any>(`/demandas/${id}/decidir`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+  criarProjetoDaDemanda: (id: string) =>
+    request<any>(`/demandas/${id}/criar-projeto`, {
+      method: 'POST',
+      body: '{}',
+    }),
   atualizarAvaliacaoFapd: (
     id: string,
     body: {

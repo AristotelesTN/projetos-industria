@@ -3329,6 +3329,72 @@ a {
   resize: none;
 }
 
+.demandas-board {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(140px, 1fr));
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.demandas-col {
+  background: var(--ds-background-neutral-subtle);
+  border: 1px solid var(--ds-border);
+  border-radius: 8px;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.demandas-col header {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--ds-border);
+  font-size: 12px;
+}
+
+.demandas-cards {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  overflow: auto;
+}
+
+.demanda-card {
+  text-align: left;
+  border: 1px solid var(--ds-border);
+  background: var(--ds-surface);
+  border-radius: 8px;
+  padding: 10px;
+  display: grid;
+  gap: 4px;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.demanda-card strong {
+  font-size: 13px;
+}
+
+.demanda-card.active {
+  border-color: var(--ds-brand, #5e6ad2);
+  box-shadow: 0 0 0 1px var(--ds-brand, #5e6ad2);
+}
+
+.demandas-detail {
+  margin-top: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
 .mark {
   background: radial-gradient(circle at 30% 30%, #828fff, #5e6ad2 70%);
 }
@@ -3337,8 +3403,17 @@ a {
   background: radial-gradient(circle at 30% 30%, #828fff, #5e6ad2 70%);
 }
 
+@media (max-width: 1100px) {
+  .demandas-board {
+    grid-template-columns: repeat(4, minmax(160px, 1fr));
+  }
+}
+
 @media (max-width: 900px) {
   .homolog-layout {
     grid-template-columns: 1fr;
+  }
+  .demandas-board {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
   }
 }

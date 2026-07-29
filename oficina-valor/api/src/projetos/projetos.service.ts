@@ -1,10 +1,13 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import {
   BeneficioCategoria,
+  GateDecisaoTipo,
+  GateTipo,
   PapelEstrategicoFapd,
   ProjetoStatus,
 } from '@prisma/client';
@@ -385,9 +388,25 @@ export class ProjetosService {
   async updateStatus(id: string, status: ProjetoStatus, user: AuthUser) {
     const before = await this.prisma.projeto.findUnique({ where: { id } });
     if (!before) throw new NotFoundException('Projeto não encontrado');
+    const data: {
+      status: ProjetoStatus;
+      acompanhamentoPosPendente?: boolean;
+      finalizadoEm?: Date | null;
+    } = { status };
+    if (status === ProjetoStatus.encerrado && before.status !== ProjetoStatus.encerrado) {
+      data.acompanhamentoPosPendente = true;
+      data.finalizadoEm = new Date();
+    }
+    if (
+      status !== ProjetoStatus.encerrado &&
+      before.status === ProjetoStatus.encerrado
+    ) {
+      data.acompanhamentoPosPendente = false;
+      data.finalizadoEm = null;
+    }
     const updated = await this.prisma.projeto.update({
       where: { id },
-      data: { status },
+      data,
     });
     await this.auditoria.log({
       entidade: 'Projeto',
@@ -395,7 +414,78 @@ export class ProjetosService {
       acao: 'status_change',
       usuarioId: user.id,
       valorAnterior: { status: before.status },
-      valorNovo: { status },
+      valorNovo: {
+        status,
+        acompanhamentoPosPendente: data.acompanhamentoPosPendente,
+      },
+    });
+    return this.get(updated.id, user);
+  }
+
+  /** Decisão go/no-go leve no projeto (US-89) — sem exigir G2 completo. */
+  async decidirGoNoGo(
+    id: string,
+    input: {
+      decisao: 'aprovado' | 'reprovado';
+      justificativa?: string | null;
+    },
+    user: AuthUser,
+  ) {
+    const before = await this.prisma.projeto.findUnique({ where: { id } });
+    if (!before) throw new NotFoundException('Projeto não encontrado');
+    if (input.decisao === 'reprovado' && !input.justificativa?.trim()) {
+      throw new BadRequestException(
+        'Justificativa obrigatória para reprovação',
+      );
+    }
+    const status =
+      input.decisao === 'aprovado'
+        ? ProjetoStatus.aprovado
+        : ProjetoStatus.morto;
+    const updated = await this.prisma.projeto.update({
+      where: { id },
+      data: {
+        status,
+        justificativaDecisao: input.justificativa?.trim() || null,
+      },
+    });
+    await this.prisma.gateDecisao.create({
+      data: {
+        projetoId: id,
+        gate: GateTipo.G2,
+        decisao:
+          input.decisao === 'aprovado'
+            ? GateDecisaoTipo.go
+            : GateDecisaoTipo.kill,
+        decididaPorId: user.id,
+        comentario: input.justificativa?.trim() || null,
+      },
+    });
+    await this.auditoria.log({
+      entidade: 'Projeto',
+      entidadeId: id,
+      acao: 'decidir_go_nogo',
+      usuarioId: user.id,
+      valorAnterior: { status: before.status },
+      valorNovo: { status, decisao: input.decisao },
+    });
+    return this.get(updated.id, user);
+  }
+
+  async marcarAcompanhamentoPosFeito(id: string, user: AuthUser) {
+    const before = await this.prisma.projeto.findUnique({ where: { id } });
+    if (!before) throw new NotFoundException('Projeto não encontrado');
+    const updated = await this.prisma.projeto.update({
+      where: { id },
+      data: { acompanhamentoPosPendente: false },
+    });
+    await this.auditoria.log({
+      entidade: 'Projeto',
+      entidadeId: id,
+      acao: 'acompanhamento_pos_feito',
+      usuarioId: user.id,
+      valorAnterior: { acompanhamentoPosPendente: before.acompanhamentoPosPendente },
+      valorNovo: { acompanhamentoPosPendente: false },
     });
     return this.get(updated.id, user);
   }

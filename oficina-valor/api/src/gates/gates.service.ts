@@ -82,7 +82,15 @@ export class GatesService {
 
         await tx.projeto.update({
           where: { id: projetoId },
-          data: { status },
+          data: {
+            status,
+            ...(input.gate === GateTipo.G4
+              ? {
+                  acompanhamentoPosPendente: true,
+                  finalizadoEm: new Date(),
+                }
+              : {}),
+          },
         });
 
         if (input.gate === GateTipo.G2) {

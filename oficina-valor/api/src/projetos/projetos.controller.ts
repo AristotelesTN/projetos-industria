@@ -17,6 +17,7 @@ import {
   IsArray,
   IsBoolean,
   IsEnum,
+  IsIn,
   IsInt,
   IsNumber,
   IsOptional,
@@ -233,6 +234,15 @@ class AnotacoesDto {
   opexGerado?: number | null;
 }
 
+class DecidirGoNoGoDto {
+  @IsIn(['aprovado', 'reprovado'])
+  decisao!: 'aprovado' | 'reprovado';
+
+  @IsOptional()
+  @IsString()
+  justificativa?: string | null;
+}
+
 @Controller('projetos')
 @UseGuards(DevAuthGuard, RolesGuard)
 export class ProjetosController {
@@ -311,6 +321,23 @@ export class ProjetosController {
     @CurrentUser() user: AuthUser,
   ) {
     return this.projetos.updateAnotacoes(id, dto, user);
+  }
+
+  @Post(':id/decidir')
+  decidir(
+    @Param('id') id: string,
+    @Body() dto: DecidirGoNoGoDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.projetos.decidirGoNoGo(id, dto, user);
+  }
+
+  @Post(':id/acompanhamento-pos/feito')
+  acompanhamentoPosFeito(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.projetos.marcarAcompanhamentoPosFeito(id, user);
   }
 
   @Delete(':id')
