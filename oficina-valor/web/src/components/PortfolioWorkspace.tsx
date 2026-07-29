@@ -304,6 +304,8 @@ export function PortfolioWorkspace({
   onRefresh,
   onMessage,
   onError,
+  pendingDetailId = null,
+  onPendingDetailConsumed,
 }: {
   portfolio: any | null;
   projetos: ProjetoRow[];
@@ -314,6 +316,8 @@ export function PortfolioWorkspace({
   onRefresh: () => Promise<void>;
   onMessage: (m: string) => void;
   onError: (m: string) => void;
+  pendingDetailId?: string | null;
+  onPendingDetailConsumed?: () => void;
 }) {
   const [view, setView] = useState<ViewTab>('board');
   const [busy, setBusy] = useState(false);
@@ -413,6 +417,14 @@ export function PortfolioWorkspace({
       setBusy(false);
     }
   }
+
+  useEffect(() => {
+    if (!pendingDetailId) return;
+    void openDetail(pendingDetailId).finally(() => {
+      onPendingDetailConsumed?.();
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- open once per pending id
+  }, [pendingDetailId]);
 
   async function setPremissas(ok: boolean) {
     if (!selectedId) return;
@@ -1363,52 +1375,67 @@ export function PortfolioWorkspace({
                 return (
                   <div className="fapd-block">
                     <h3>Custos PEP (SAP)</h3>
-                    <table className="pep-table">
-                      <thead>
-                        <tr>
-                          <th>PEP</th>
-                          <th>Carteira</th>
-                          <th className="num">Orçamento</th>
-                          <th className="num">Disposto</th>
-                          <th className="num">Real</th>
-                          <th className="num">Comprom.</th>
-                          <th className="num">Disponível</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {peps.map((p: PepRow) => (
-                          <tr key={p.id}>
-                            <td>{p.codigoPep}</td>
-                            <td>{p.carteira}</td>
-                            <td className="num">{brl(Number(p.orcamento))}</td>
-                            <td className="num">{brl(Number(p.disposto))}</td>
-                            <td className="num">{brl(Number(p.real))}</td>
-                            <td className="num">
-                              {brl(Number(p.comprometido))}
-                            </td>
-                            <td className="num">
-                              {brl(Number(p.disponivel))}
-                            </td>
-                          </tr>
-                        ))}
-                        {peps.length > 1 && (
-                          <tr className="pep-total">
-                            <td colSpan={2}>Total</td>
-                            <td className="num">
-                              {brl(pepTotal.orcamento)}
-                            </td>
-                            <td className="num">{brl(pepTotal.disposto)}</td>
-                            <td className="num">{brl(pepTotal.real)}</td>
-                            <td className="num">
-                              {brl(pepTotal.comprometido)}
-                            </td>
-                            <td className="num">
-                              {brl(pepTotal.disponivel)}
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
+                    <div className="pep-list">
+                      {peps.map((p: PepRow) => (
+                        <div key={p.id} className="pep-card">
+                          <div className="pep-card-head">
+                            <span>{p.codigoPep}</span>
+                            <span className="muted">{p.carteira}</span>
+                          </div>
+                          <div className="pep-card-grid">
+                            <div className="pep-metric">
+                              <span>Orçamento</span>
+                              <strong>{brl(Number(p.orcamento))}</strong>
+                            </div>
+                            <div className="pep-metric">
+                              <span>Disposto</span>
+                              <strong>{brl(Number(p.disposto))}</strong>
+                            </div>
+                            <div className="pep-metric">
+                              <span>Real</span>
+                              <strong>{brl(Number(p.real))}</strong>
+                            </div>
+                            <div className="pep-metric">
+                              <span>Comprometido</span>
+                              <strong>{brl(Number(p.comprometido))}</strong>
+                            </div>
+                            <div className="pep-metric">
+                              <span>Disponível</span>
+                              <strong>{brl(Number(p.disponivel))}</strong>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {peps.length > 1 && (
+                        <div className="pep-card pep-totals">
+                          <div className="pep-card-head">
+                            <span>Total</span>
+                          </div>
+                          <div className="pep-card-grid">
+                            <div className="pep-metric">
+                              <span>Orçamento</span>
+                              <strong>{brl(pepTotal.orcamento)}</strong>
+                            </div>
+                            <div className="pep-metric">
+                              <span>Disposto</span>
+                              <strong>{brl(pepTotal.disposto)}</strong>
+                            </div>
+                            <div className="pep-metric">
+                              <span>Real</span>
+                              <strong>{brl(pepTotal.real)}</strong>
+                            </div>
+                            <div className="pep-metric">
+                              <span>Comprometido</span>
+                              <strong>{brl(pepTotal.comprometido)}</strong>
+                            </div>
+                            <div className="pep-metric">
+                              <span>Disponível</span>
+                              <strong>{brl(pepTotal.disponivel)}</strong>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 );
               })()}

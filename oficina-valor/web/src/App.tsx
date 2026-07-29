@@ -83,6 +83,7 @@ export default function App() {
   const [error, setError] = useState('');
   const [projetos, setProjetos] = useState<any[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [pendingDetailId, setPendingDetailId] = useState<string | null>(null);
   const [portfolio, setPortfolio] = useState<any | null>(null);
   const [auditoria, setAuditoria] = useState<any[]>([]);
   const [busy, setBusy] = useState(false);
@@ -206,6 +207,12 @@ export default function App() {
       };
     });
   }, [projetos, analyticsById]);
+
+  function openProjetoDetail(id: string) {
+    setSelectedId(id);
+    setPendingDetailId(id);
+    setTab('diretoria');
+  }
 
   async function entrar() {
     setBusy(true);
@@ -387,6 +394,7 @@ export default function App() {
               portfolio={enrichedPortfolio}
               onOpenInsights={() => setTab('nao')}
               onOpenAgents={() => setTab('agents')}
+              onOpenProjeto={openProjetoDetail}
               agentsPending={agentsPending}
             />
           )}
@@ -400,8 +408,7 @@ export default function App() {
               onError={setError}
               onOpenWizard={() => setTab('wizard')}
               onOpenProjeto={(id) => {
-                setSelectedId(id);
-                setTab('diretoria');
+                openProjetoDetail(id);
                 void refreshList();
               }}
             />
@@ -420,8 +427,10 @@ export default function App() {
                 if (nav.prompt) setInsightsPrompt(String(nav.prompt));
                 if (nav.tab === 'wizard') setTab('wizard');
                 else if (nav.tab === 'nao') setTab('nao');
-                else if (nav.tab === 'diretoria') setTab('diretoria');
-                else setTab('agents');
+                else if (nav.tab === 'diretoria') {
+                  if (nav.projetoId) openProjetoDetail(String(nav.projetoId));
+                  else setTab('diretoria');
+                } else setTab('agents');
                 void api
                   .agentsOverview()
                   .then((o) => setAgentsPending(o?.kpis?.awaiting ?? 0))
@@ -453,6 +462,8 @@ export default function App() {
               projetos={enriched}
               selectedId={selectedId}
               onSelect={setSelectedId}
+              pendingDetailId={pendingDetailId}
+              onPendingDetailConsumed={() => setPendingDetailId(null)}
               onOpenWizard={(id) => {
                 setSelectedId(id);
                 setTab('wizard');

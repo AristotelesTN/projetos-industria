@@ -2334,6 +2334,18 @@ a {
   background: #fafbfc;
 }
 
+.attention-card-btn {
+  cursor: pointer;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.attention-card-btn:hover,
+.attention-card-btn:focus-visible {
+  border-color: var(--ds-border-focused);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ds-border-focused) 25%, transparent);
+  outline: none;
+}
+
 .attention-head {
   display: flex;
   justify-content: space-between;
@@ -3546,7 +3558,7 @@ a {
 
 /* Project detail drawer */
 .project-detail-drawer {
-  width: min(420px, 100%);
+  width: min(560px, 100%);
   height: 100%;
   background: var(--ds-surface);
   border-left: 1px solid var(--ds-border);
@@ -3578,6 +3590,14 @@ a {
   justify-content: flex-end;
   padding: 12px 18px;
   border-top: 1px solid var(--ds-border);
+}
+
+.project-detail-drawer .detail-kv {
+  grid-template-columns: minmax(120px, 42%) 1fr;
+}
+
+.project-detail-drawer .detail-kv span {
+  word-break: break-word;
 }
 
 .fapd-block {
@@ -3896,34 +3916,60 @@ a {
   background: radial-gradient(circle at 30% 30%, #828fff, #5e6ad2 70%);
 }
 
-/* PEP table in project detail */
-.pep-table {
-  width: 100%;
-  border-collapse: collapse;
+/* PEP costs in project detail — stacked for drawer width */
+.pep-list {
+  display: grid;
+  gap: 10px;
+}
+
+.pep-card {
+  border: 1px solid var(--ds-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: grid;
+  gap: 6px;
+  background: var(--ds-background-neutral-subtle);
+}
+
+.pep-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 12px;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.pep-card-head .muted {
+  font-weight: 500;
+}
+
+.pep-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+}
+
+.pep-metric {
+  display: grid;
+  gap: 2px;
   font-size: 11px;
 }
 
-.pep-table th,
-.pep-table td {
-  padding: 5px 8px;
-  text-align: left;
-  border-bottom: 1px solid var(--ds-border);
+.pep-metric span {
+  color: var(--ds-text-subtlest);
+  font-weight: 500;
 }
 
-.pep-table th {
-  font-weight: 600;
-  color: var(--ds-text-subtle);
-  background: var(--ds-background-neutral);
-}
-
-.pep-table .num {
-  text-align: right;
+.pep-metric strong {
+  font-weight: 650;
   font-variant-numeric: tabular-nums;
 }
 
-.pep-table .pep-total td {
-  font-weight: 650;
-  border-top: 2px solid var(--ds-border-bold);
+.pep-totals {
+  border-top: 1px dashed var(--ds-border);
+  padding-top: 8px;
+  margin-top: 2px;
 }
 
 @media (max-width: 1100px) {

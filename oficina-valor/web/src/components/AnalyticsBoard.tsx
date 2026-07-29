@@ -567,11 +567,13 @@ export function AnalyticsBoard({
   portfolio,
   onOpenInsights,
   onOpenAgents,
+  onOpenProjeto,
   agentsPending = 0,
 }: {
   portfolio: any | null;
   onOpenInsights: () => void;
   onOpenAgents: () => void;
+  onOpenProjeto?: (id: string) => void;
   agentsPending?: number;
 }) {
   const [view, setView] = useState<'overview' | 'ganhos' | 'risco' | 'areas'>(
@@ -761,7 +763,20 @@ export function AnalyticsBoard({
             <h2>Maiores contribuições</h2>
             <div className="racional-top-grid">
               {racionalTop.top.map((r, i) => (
-                <article key={r.projetoId} className="racional-top-card">
+                <article
+                  key={r.projetoId}
+                  className={`racional-top-card${onOpenProjeto ? ' attention-card-btn' : ''}`}
+                  role={onOpenProjeto ? 'button' : undefined}
+                  tabIndex={onOpenProjeto ? 0 : undefined}
+                  onClick={() => onOpenProjeto?.(r.projetoId)}
+                  onKeyDown={(e) => {
+                    if (!onOpenProjeto) return;
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onOpenProjeto(r.projetoId);
+                    }
+                  }}
+                >
                   <span className="racional-rank">{i + 1}</span>
                   <div>
                     <strong>{r.nome}</strong>
@@ -819,7 +834,17 @@ export function AnalyticsBoard({
                         <tr className={aberto ? 'is-open' : undefined}>
                           <td className="col-rank">{idx + 1}</td>
                           <td>
-                            <strong className="racional-proj-name">{r.nome}</strong>
+                            {onOpenProjeto ? (
+                              <button
+                                type="button"
+                                className="linkish racional-proj-name"
+                                onClick={() => onOpenProjeto(r.projetoId)}
+                              >
+                                {r.nome}
+                              </button>
+                            ) : (
+                              <strong className="racional-proj-name">{r.nome}</strong>
+                            )}
                           </td>
                           <td className="col-area">{r.area}</td>
                           <td className="col-status">{r.status || '—'}</td>
@@ -1284,7 +1309,20 @@ export function AnalyticsBoard({
                   ? (Number(p.realizado) / Number(p.prometido)) * 100
                   : 0;
               return (
-                <article className="attention-card" key={p.projetoId}>
+                <article
+                  className={`attention-card${onOpenProjeto ? ' attention-card-btn' : ''}`}
+                  key={p.projetoId}
+                  role={onOpenProjeto ? 'button' : undefined}
+                  tabIndex={onOpenProjeto ? 0 : undefined}
+                  onClick={() => onOpenProjeto?.(p.projetoId)}
+                  onKeyDown={(e) => {
+                    if (!onOpenProjeto) return;
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onOpenProjeto(p.projetoId);
+                    }
+                  }}
+                >
                   <div className="attention-head">
                     <span className="muted">{idx + 1}. {p.area || 'Área'}</span>
                     <span className={`badge ${p.health === 'green' ? 'done' : p.health === 'yellow' ? 'warning' : 'danger'}`}>
