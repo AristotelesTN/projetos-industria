@@ -145,11 +145,31 @@ export class AnalyticsService {
 
   async portfolioResumo() {
     const projetos = await this.prisma.projeto.findMany({
-      select: { id: true, nome: true, status: true },
+      select: {
+        id: true,
+        nome: true,
+        status: true,
+        ganhoPrincipal: true,
+        ganhoQualitativoEscala: true,
+        categoriaQualitativa: true,
+        horasEconomizadasAno: true,
+        ganhoFinanceiroAnual: true,
+        riscoFinanceiroMitigadoAnual: true,
+        ganhoNegocioAnual: true,
+        ganhoRecorrente: true,
+        investimentoCapex: true,
+        investimentoOpex: true,
+        investimentoCapexParaOpex: true,
+        investimentoAprovado: true,
+        opexGerado: true,
+        updatedAt: true,
+        area: { select: { nome: true } },
+      },
     });
     const analytics = await Promise.all(
       projetos.map((p) => this.projetoAnalytics(p.id)),
     );
+    const byId = new Map(projetos.map((p) => [p.id, p]));
     const prometido = analytics.reduce((s, a) => s + a.prometido, 0);
     const realizado = analytics.reduce((s, a) => s + a.realizado, 0);
     const custo = analytics.reduce((s, a) => s + a.custoRealizado, 0);
@@ -160,6 +180,49 @@ export class AnalyticsService {
     const emRisco = analytics.filter(
       (a) => a.brr !== null && a.brr < 0.7,
     ).length;
+
+    const n = (v: unknown) => {
+      if (v == null) return 0;
+      const x = Number(v);
+      return Number.isNaN(x) ? 0 : x;
+    };
+
+    let potencialFinanceiro = 0;
+    let potencialRisco = 0;
+    let potencialNegocio = 0;
+    let potencialHoras = 0;
+    let capex = 0;
+    let opex = 0;
+    let capexParaOpex = 0;
+    let qtdeQuantitativos = 0;
+    let qtdeQualitativos = 0;
+    const qualitativosPorCategoria: Record<string, number> = {};
+    let ultimaAtualizacao: Date | null = null;
+
+    for (const p of projetos) {
+      if (!ultimaAtualizacao || p.updatedAt > ultimaAtualizacao) {
+        ultimaAtualizacao = p.updatedAt;
+      }
+      potencialFinanceiro += n(p.ganhoFinanceiroAnual);
+      potencialRisco += n(p.riscoFinanceiroMitigadoAnual);
+      potencialNegocio += n(p.ganhoNegocioAnual);
+      potencialHoras += n(p.horasEconomizadasAno);
+      capex += n(p.investimentoCapex ?? p.investimentoAprovado);
+      opex += n(p.investimentoOpex ?? p.opexGerado);
+      capexParaOpex += n(p.investimentoCapexParaOpex);
+
+      const principal = p.ganhoPrincipal;
+      if (principal === 'qualitativo') {
+        qtdeQualitativos += 1;
+        const cat = p.categoriaQualitativa || 'indefinido';
+        qualitativosPorCategoria[cat] =
+          (qualitativosPorCategoria[cat] ?? 0) + 1;
+      } else if (principal) {
+        qtdeQuantitativos += 1;
+      }
+    }
+
+    const totalClassificados = qtdeQuantitativos + qtdeQualitativos;
 
     // curva S consolidada
     const mapPlan = new Map<string, number>();
@@ -192,6 +255,27 @@ export class AnalyticsService {
       };
     });
 
+    const porProjeto = analytics.map((a) => {
+      const p = byId.get(a.projetoId);
+      return {
+        ...a,
+        area: p?.area?.nome || 'Área',
+        status: p?.status,
+        ganhoPrincipal: p?.ganhoPrincipal ?? null,
+        ganhoFinanceiroAnual: p ? n(p.ganhoFinanceiroAnual) : null,
+        riscoFinanceiroMitigadoAnual: p
+          ? n(p.riscoFinanceiroMitigadoAnual)
+          : null,
+        ganhoNegocioAnual: p ? n(p.ganhoNegocioAnual) : null,
+        horasEconomizadasAno: p ? n(p.horasEconomizadasAno) : null,
+        investimentoCapex: p
+          ? n(p.investimentoCapex ?? p.investimentoAprovado)
+          : null,
+        investimentoOpex: p ? n(p.investimentoOpex ?? p.opexGerado) : null,
+        investimentoCapexParaOpex: p ? n(p.investimentoCapexParaOpex) : null,
+      };
+    });
+
     return {
       prometido,
       realizado,
@@ -204,8 +288,32 @@ export class AnalyticsService {
       hard,
       soft,
       projetosEmRisco: emRisco,
-      porProjeto: analytics,
+      porProjeto,
       curvaS,
+      potencial: {
+        projetosQuantitativos: qtdeQuantitativos,
+        projetosQualitativos: qtdeQualitativos,
+        totalClassificados,
+        pctQuantitativos:
+          totalClassificados === 0
+            ? null
+            : (qtdeQuantitativos / totalClassificados) * 100,
+        pctQualitativos:
+          totalClassificados === 0
+            ? null
+            : (qtdeQualitativos / totalClassificados) * 100,
+        ganhoFinanceiroAnual: potencialFinanceiro,
+        riscoFinanceiroMitigadoAnual: potencialRisco,
+        ganhoNegocioAnual: potencialNegocio,
+        horasEconomizadasAno: potencialHoras,
+        qualitativosPorCategoria,
+      },
+      investimento: {
+        capex,
+        opex,
+        capexParaOpex,
+      },
+      atualizadoEm: ultimaAtualizacao?.toISOString() ?? new Date().toISOString(),
     };
   }
 }

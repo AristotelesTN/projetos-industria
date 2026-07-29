@@ -10,6 +10,16 @@ function healthFromBrr(brr: number | null | undefined): Health {
   return 'red';
 }
 
+function fmtOrDash(
+  value: unknown,
+  format: (n: number) => string,
+): string {
+  if (value == null || value === '') return '—';
+  const n = Number(value);
+  if (Number.isNaN(n) || n === 0) return '—';
+  return format(n);
+}
+
 function Sparkline({
   values,
   color = '#0c66e4',
@@ -174,6 +184,8 @@ export function AnalyticsBoard({
   const custo = Number(portfolio.custo || 0);
   const hard = Number(portfolio.hard || 0);
   const soft = Number(portfolio.soft || 0);
+  const potencial = portfolio.potencial;
+  const investimento = portfolio.investimento;
   const capturePct = prometido > 0 ? (realizado / prometido) * 100 : 0;
   const roiPct =
     portfolio.roi == null ? null : Number(portfolio.roi) * 100;
@@ -341,6 +353,89 @@ export function AnalyticsBoard({
           </div>
         </article>
       </div>
+
+      {(view === 'overview' || view === 'ganhos') && (
+        <section className="panel potencial-panel">
+          <div className="panel-head">
+            <h2>Potencial de ganhos (declarado)</h2>
+            <span className="meta">
+              {portfolio.atualizadoEm
+                ? `Atualizado ${new Date(portfolio.atualizadoEm).toLocaleString('pt-BR')}`
+                : '—'}
+            </span>
+          </div>
+          <p className="muted" style={{ marginTop: 0 }}>
+            Valores anuais informados na ficha — distintos do realizado
+            homologado acima.
+          </p>
+          <div className="kpi-row potencial-row">
+            <article className="kpi-card">
+              <div className="label">Projetos quantitativos</div>
+              <div className="value">
+                {potencial?.projetosQuantitativos ?? '—'}
+              </div>
+              <div className="trend">
+                {potencial?.pctQuantitativos == null
+                  ? '—'
+                  : `${Number(potencial.pctQuantitativos).toFixed(0)}% do classificado`}
+              </div>
+            </article>
+            <article className="kpi-card">
+              <div className="label">Ganho financeiro</div>
+              <div className="value">
+                {fmtOrDash(potencial?.ganhoFinanceiroAnual, brl)}
+              </div>
+            </article>
+            <article className="kpi-card">
+              <div className="label">Risco fin. mitigado</div>
+              <div className="value">
+                {fmtOrDash(potencial?.riscoFinanceiroMitigadoAnual, brl)}
+              </div>
+            </article>
+            <article className="kpi-card">
+              <div className="label">Ganho do negócio</div>
+              <div className="value">
+                {fmtOrDash(potencial?.ganhoNegocioAnual, brl)}
+              </div>
+            </article>
+            <article className="kpi-card">
+              <div className="label">Horas economizadas</div>
+              <div className="value">
+                {fmtOrDash(potencial?.horasEconomizadasAno, (n) =>
+                  `${new Intl.NumberFormat('pt-BR').format(n)} h`,
+                )}
+              </div>
+            </article>
+          </div>
+          <div className="kpi-row potencial-row" style={{ marginTop: 10 }}>
+            <article className="kpi-card">
+              <div className="label">Investimento CAPEX</div>
+              <div className="value">{fmtOrDash(investimento?.capex, brl)}</div>
+            </article>
+            <article className="kpi-card">
+              <div className="label">Investimento OPEX</div>
+              <div className="value">{fmtOrDash(investimento?.opex, brl)}</div>
+            </article>
+            <article className="kpi-card">
+              <div className="label">CAPEX → OPEX (próx. ano)</div>
+              <div className="value">
+                {fmtOrDash(investimento?.capexParaOpex, brl)}
+              </div>
+            </article>
+            <article className="kpi-card">
+              <div className="label">Projetos qualitativos</div>
+              <div className="value">
+                {potencial?.projetosQualitativos ?? '—'}
+              </div>
+              <div className="trend">
+                {potencial?.pctQualitativos == null
+                  ? '—'
+                  : `${Number(potencial.pctQualitativos).toFixed(0)}% do classificado`}
+              </div>
+            </article>
+          </div>
+        </section>
+      )}
 
       {(view === 'overview' || view === 'ganhos') && (
         <div className="dash-grid">

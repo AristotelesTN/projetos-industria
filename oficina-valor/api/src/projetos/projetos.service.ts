@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import {
   BeneficioCategoria,
+  CategoriaQualitativaGanho,
+  GanhoPrincipalTipo,
   GateDecisaoTipo,
   GateTipo,
   PapelEstrategicoFapd,
@@ -551,6 +553,172 @@ export class ProjetosService {
     return this.get(id, user);
   }
 
+  /** Potencial de ganhos + investimento + memória (painel de valor). */
+  async updateValorPotencial(
+    id: string,
+    input: {
+      memoriaCalculoGanho?: string | null;
+      comentarios?: string | null;
+      opexGerado?: number | null;
+      ganhoPrincipal?: GanhoPrincipalTipo | null;
+      ganhoQualitativoEscala?: number | null;
+      categoriaQualitativa?: CategoriaQualitativaGanho | null;
+      horasEconomizadasAno?: number | null;
+      ganhoFinanceiroAnual?: number | null;
+      riscoFinanceiroMitigadoAnual?: number | null;
+      ganhoNegocioAnual?: number | null;
+      ganhoRecorrente?: boolean;
+      investimentoCapex?: number | null;
+      investimentoOpex?: number | null;
+      investimentoCapexParaOpex?: number | null;
+    },
+    user: AuthUser,
+  ) {
+    const before = await this.prisma.projeto.findUnique({ where: { id } });
+    if (!before) throw new NotFoundException('Projeto não encontrado');
+
+    const money = (v: unknown, fallback: unknown) => {
+      if (v === undefined) return fallback;
+      if (v == null || v === '') return null;
+      const n = Number(v);
+      return Number.isNaN(n) ? null : Math.max(0, n);
+    };
+
+    const ganhoFinanceiroAnual = money(
+      input.ganhoFinanceiroAnual,
+      before.ganhoFinanceiroAnual,
+    ) as number | null;
+    const riscoFinanceiroMitigadoAnual = money(
+      input.riscoFinanceiroMitigadoAnual,
+      before.riscoFinanceiroMitigadoAnual,
+    ) as number | null;
+    const ganhoNegocioAnual = money(
+      input.ganhoNegocioAnual,
+      before.ganhoNegocioAnual,
+    ) as number | null;
+    const horasEconomizadasAno = money(
+      input.horasEconomizadasAno,
+      before.horasEconomizadasAno,
+    ) as number | null;
+    const opexGerado = money(input.opexGerado, before.opexGerado) as
+      | number
+      | null;
+    const investimentoCapex = money(
+      input.investimentoCapex,
+      before.investimentoCapex,
+    ) as number | null;
+    const investimentoOpex = money(
+      input.investimentoOpex,
+      before.investimentoOpex,
+    ) as number | null;
+    const investimentoCapexParaOpex = money(
+      input.investimentoCapexParaOpex,
+      before.investimentoCapexParaOpex,
+    ) as number | null;
+
+    let ganhoQualitativoEscala =
+      input.ganhoQualitativoEscala === undefined
+        ? before.ganhoQualitativoEscala
+        : input.ganhoQualitativoEscala == null
+          ? null
+          : Math.round(Number(input.ganhoQualitativoEscala));
+    if (ganhoQualitativoEscala != null) {
+      if (ganhoQualitativoEscala < 1 || ganhoQualitativoEscala > 7) {
+        throw new BadRequestException(
+          'Escala qualitativa deve estar entre 1 e 7',
+        );
+      }
+    }
+
+    const ganhoPrincipal =
+      input.ganhoPrincipal === undefined
+        ? before.ganhoPrincipal
+        : input.ganhoPrincipal;
+    const categoriaQualitativa =
+      input.categoriaQualitativa === undefined
+        ? before.categoriaQualitativa
+        : input.categoriaQualitativa;
+    const memoriaCalculoGanho =
+      input.memoriaCalculoGanho === undefined
+        ? before.memoriaCalculoGanho
+        : input.memoriaCalculoGanho?.trim() || null;
+
+    const temGanhoDeclarado =
+      (ganhoFinanceiroAnual ?? 0) > 0 ||
+      (riscoFinanceiroMitigadoAnual ?? 0) > 0 ||
+      (ganhoNegocioAnual ?? 0) > 0 ||
+      (horasEconomizadasAno ?? 0) > 0 ||
+      ganhoQualitativoEscala != null;
+
+    if (temGanhoDeclarado && !memoriaCalculoGanho?.trim()) {
+      throw new BadRequestException(
+        'Informe o racional / memória de cálculo quando houver ganhos declarados',
+      );
+    }
+
+    if (ganhoPrincipal === GanhoPrincipalTipo.qualitativo) {
+      if (ganhoQualitativoEscala == null) {
+        throw new BadRequestException(
+          'Informe a escala 1–7 para ganho qualitativo principal',
+        );
+      }
+      if (!categoriaQualitativa) {
+        throw new BadRequestException(
+          'Informe a categoria do ganho qualitativo',
+        );
+      }
+    }
+
+    const data = {
+      memoriaCalculoGanho,
+      comentarios:
+        input.comentarios === undefined
+          ? before.comentarios
+          : input.comentarios?.trim() || null,
+      opexGerado,
+      ganhoPrincipal,
+      ganhoQualitativoEscala,
+      categoriaQualitativa,
+      horasEconomizadasAno,
+      ganhoFinanceiroAnual,
+      riscoFinanceiroMitigadoAnual,
+      ganhoNegocioAnual,
+      ganhoRecorrente:
+        input.ganhoRecorrente === undefined
+          ? before.ganhoRecorrente
+          : Boolean(input.ganhoRecorrente),
+      investimentoCapex,
+      investimentoOpex,
+      investimentoCapexParaOpex,
+      // Mantém investimentoAprovado alinhado ao CAPEX quando informado
+      investimentoAprovado:
+        investimentoCapex != null
+          ? investimentoCapex
+          : before.investimentoAprovado,
+    };
+
+    await this.prisma.projeto.update({ where: { id }, data });
+    await this.auditoria.log({
+      entidade: 'Projeto',
+      entidadeId: id,
+      acao: 'valor_potencial',
+      usuarioId: user.id,
+      valorAnterior: {
+        ganhoPrincipal: before.ganhoPrincipal,
+        ganhoFinanceiroAnual: before.ganhoFinanceiroAnual,
+        investimentoCapex: before.investimentoCapex,
+        memoriaCalculoGanho: before.memoriaCalculoGanho,
+      },
+      valorNovo: {
+        ganhoPrincipal: data.ganhoPrincipal,
+        ganhoFinanceiroAnual: data.ganhoFinanceiroAnual,
+        investimentoCapex: data.investimentoCapex,
+        memoriaCalculoGanho: data.memoriaCalculoGanho,
+      },
+    });
+    return this.get(id, user);
+  }
+
   /** Memória de cálculo do ganho + comentários + OPEX gerado. */
   async updateAnotacoes(
     id: string,
@@ -561,40 +729,7 @@ export class ProjetosService {
     },
     user: AuthUser,
   ) {
-    const before = await this.prisma.projeto.findUnique({ where: { id } });
-    if (!before) throw new NotFoundException('Projeto não encontrado');
-
-    const data = {
-      memoriaCalculoGanho:
-        input.memoriaCalculoGanho === undefined
-          ? before.memoriaCalculoGanho
-          : input.memoriaCalculoGanho?.trim() || null,
-      comentarios:
-        input.comentarios === undefined
-          ? before.comentarios
-          : input.comentarios?.trim() || null,
-      opexGerado:
-        input.opexGerado === undefined
-          ? before.opexGerado
-          : input.opexGerado == null || Number.isNaN(Number(input.opexGerado))
-            ? null
-            : Number(input.opexGerado),
-    };
-
-    await this.prisma.projeto.update({ where: { id }, data });
-    await this.auditoria.log({
-      entidade: 'Projeto',
-      entidadeId: id,
-      acao: 'anotacoes',
-      usuarioId: user.id,
-      valorAnterior: {
-        memoriaCalculoGanho: before.memoriaCalculoGanho,
-        comentarios: before.comentarios,
-        opexGerado: before.opexGerado,
-      },
-      valorNovo: data,
-    });
-    return this.get(id, user);
+    return this.updateValorPotencial(id, input, user);
   }
 
   async remove(id: string, user: AuthUser) {
@@ -616,6 +751,10 @@ export class ProjetosService {
     if (!projeto) throw new NotFoundException('Projeto não encontrado');
 
     await this.prisma.$transaction(async (tx) => {
+      await tx.demanda.updateMany({
+        where: { projetoId: id },
+        data: { projetoId: null },
+      });
       await tx.agentRecommendation.deleteMany({ where: { projetoId: id } });
       await tx.wizardSessao.deleteMany({ where: { projetoId: id } });
       await tx.gateDecisao.deleteMany({ where: { projetoId: id } });

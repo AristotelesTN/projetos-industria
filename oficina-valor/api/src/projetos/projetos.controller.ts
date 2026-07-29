@@ -10,6 +10,8 @@ import {
 } from '@nestjs/common';
 import {
   BeneficioCategoria,
+  CategoriaQualitativaGanho,
+  GanhoPrincipalTipo,
   PapelEstrategicoFapd,
   ProjetoStatus,
 } from '@prisma/client';
@@ -234,6 +236,75 @@ class AnotacoesDto {
   opexGerado?: number | null;
 }
 
+class ValorPotencialDto {
+  @IsOptional()
+  @IsString()
+  memoriaCalculoGanho?: string | null;
+
+  @IsOptional()
+  @IsString()
+  comentarios?: string | null;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  opexGerado?: number | null;
+
+  @IsOptional()
+  @IsEnum(GanhoPrincipalTipo)
+  ganhoPrincipal?: GanhoPrincipalTipo | null;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(7)
+  ganhoQualitativoEscala?: number | null;
+
+  @IsOptional()
+  @IsEnum(CategoriaQualitativaGanho)
+  categoriaQualitativa?: CategoriaQualitativaGanho | null;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  horasEconomizadasAno?: number | null;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  ganhoFinanceiroAnual?: number | null;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  riscoFinanceiroMitigadoAnual?: number | null;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  ganhoNegocioAnual?: number | null;
+
+  @IsOptional()
+  @IsBoolean()
+  ganhoRecorrente?: boolean;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  investimentoCapex?: number | null;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  investimentoOpex?: number | null;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  investimentoCapexParaOpex?: number | null;
+}
+
 class DecidirGoNoGoDto {
   @IsIn(['aprovado', 'reprovado'])
   decisao!: 'aprovado' | 'reprovado';
@@ -321,6 +392,15 @@ export class ProjetosController {
     @CurrentUser() user: AuthUser,
   ) {
     return this.projetos.updateAnotacoes(id, dto, user);
+  }
+
+  @Patch(':id/valor-potencial')
+  valorPotencial(
+    @Param('id') id: string,
+    @Body() dto: ValorPotencialDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.projetos.updateValorPotencial(id, dto, user);
   }
 
   @Post(':id/decidir')

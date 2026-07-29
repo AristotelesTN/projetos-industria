@@ -3395,6 +3395,36 @@ a {
   margin-bottom: 12px;
 }
 
+.ganho-principal {
+  border: 1px solid var(--ds-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 0 0 12px;
+}
+
+.ganho-principal legend {
+  padding: 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.radio-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 450;
+  margin: 4px 0;
+}
+
+.potencial-panel {
+  margin-bottom: 16px;
+}
+
+.potencial-row {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
 .mark {
   background: radial-gradient(circle at 30% 30%, #828fff, #5e6ad2 70%);
 }

@@ -251,6 +251,14 @@ export const api = {
       method: 'PATCH',
       body: JSON.stringify(body),
     }),
+  atualizarValorPotencial: (
+    id: string,
+    body: Record<string, unknown>,
+  ) =>
+    request<any>(`/projetos/${id}/valor-potencial`, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    }),
   removerProjeto: (id: string) =>
     request<{ ok: boolean; id: string; nome: string }>(`/projetos/${id}`, {
       method: 'DELETE',

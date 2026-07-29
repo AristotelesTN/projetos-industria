@@ -90,6 +90,25 @@ enum DemandaStatus {
   reprovada
 }
 
+/// Tipo do ganho principal declarado no projeto (painel de valor).
+enum GanhoPrincipalTipo {
+  qualitativo
+  horas_economizadas
+  financeiro
+  risco_mitigado
+  negocio
+}
+
+enum CategoriaQualitativaGanho {
+  estruturante
+  prover_informacoes
+  capacitacao
+  exploracao
+  auditoria
+  obrigacao_legal
+  indefinido
+}
+
 model Usuario {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -203,6 +222,22 @@ model Projeto {
   comentarios            String?       @map("comentarios") @db.Text
   /// OPEX gerado / impacto operacional informado no projeto (R$).
   opexGerado             Decimal?      @map("opex_gerado") @db.Decimal(18, 2)
+
+  /// Potencial de ganhos declarado (painel de valor — distinto do realizado homologado).
+  ganhoPrincipal              GanhoPrincipalTipo? @map("ganho_principal")
+  ganhoQualitativoEscala      Int?                @map("ganho_qualitativo_escala")
+  categoriaQualitativa        CategoriaQualitativaGanho? @map("categoria_qualitativa")
+  horasEconomizadasAno        Decimal?            @map("horas_economizadas_ano") @db.Decimal(18, 2)
+  ganhoFinanceiroAnual        Decimal?            @map("ganho_financeiro_anual") @db.Decimal(18, 2)
+  riscoFinanceiroMitigadoAnual Decimal?           @map("risco_financeiro_mitigado_anual") @db.Decimal(18, 2)
+  ganhoNegocioAnual           Decimal?            @map("ganho_negocio_anual") @db.Decimal(18, 2)
+  ganhoRecorrente             Boolean             @default(false) @map("ganho_recorrente")
+
+  /// Investimento detalhado (substitui o uso isolado de investimentoAprovado no painel).
+  investimentoCapex           Decimal?            @map("investimento_capex") @db.Decimal(18, 2)
+  investimentoOpex            Decimal?            @map("investimento_opex") @db.Decimal(18, 2)
+  investimentoCapexParaOpex   Decimal?            @map("investimento_capex_para_opex") @db.Decimal(18, 2)
+
   /// Após encerrar: dispara ciclo de acompanhamento de ganhos pós-projeto.
   acompanhamentoPosPendente Boolean    @default(false) @map("acompanhamento_pos_pendente")
   finalizadoEm           DateTime?     @map("finalizado_em")

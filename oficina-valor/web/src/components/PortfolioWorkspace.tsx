@@ -33,6 +33,12 @@ type ProjetoRow = {
   memoriaCalculoGanho?: string | null;
   comentarios?: string | null;
   opexGerado?: number | string | null;
+  ganhoPrincipal?: string | null;
+  investimentoCapex?: number | string | null;
+  investimentoOpex?: number | string | null;
+  investimentoCapexParaOpex?: number | string | null;
+  acompanhamentoPosPendente?: boolean;
+  justificativaDecisao?: string | null;
 };
 
 type ViewTab = 'board' | 'lista' | 'saude';
@@ -88,6 +94,60 @@ const OE_FIELDS: {
   { key: 'Oe5Sust', label: 'OE5 Sust.', hint: 'Sustentação' },
   { key: 'Oe5Tech', label: 'OE5 Tech', hint: 'Tecnologia' },
 ];
+
+const GANHO_PRINCIPAL_OPTIONS: { id: string; label: string }[] = [
+  { id: 'financeiro', label: 'Ganho financeiro' },
+  { id: 'risco_mitigado', label: 'Risco financeiro mitigado' },
+  { id: 'negocio', label: 'Ganhos do negócio' },
+  { id: 'horas_economizadas', label: 'Horas economizadas' },
+  { id: 'qualitativo', label: 'Ganho qualitativo' },
+];
+
+const CATEGORIA_QUALITATIVA_OPTIONS: { id: string; label: string }[] = [
+  { id: 'estruturante', label: 'Estruturante' },
+  { id: 'prover_informacoes', label: 'Prover informações' },
+  { id: 'capacitacao', label: 'Capacitação' },
+  { id: 'exploracao', label: 'Exploração' },
+  { id: 'auditoria', label: 'Auditoria' },
+  { id: 'obrigacao_legal', label: 'Obrigação legal' },
+  { id: 'indefinido', label: 'Indefinido' },
+];
+
+const EMPTY_VALOR = {
+  ganhoPrincipal: '' as string,
+  ganhoQualitativoEscala: '',
+  categoriaQualitativa: '',
+  horasEconomizadasAno: '',
+  ganhoFinanceiroAnual: '',
+  riscoFinanceiroMitigadoAnual: '',
+  ganhoNegocioAnual: '',
+  ganhoRecorrente: false,
+  investimentoCapex: '',
+  investimentoOpex: '',
+  investimentoCapexParaOpex: '',
+  memoriaCalculoGanho: '',
+  comentarios: '',
+};
+
+function valorFromProjeto(src: any | null | undefined) {
+  if (!src) return { ...EMPTY_VALOR };
+  const s = (v: unknown) => (v == null || v === '' ? '' : String(v));
+  return {
+    ganhoPrincipal: src.ganhoPrincipal || '',
+    ganhoQualitativoEscala: s(src.ganhoQualitativoEscala),
+    categoriaQualitativa: src.categoriaQualitativa || '',
+    horasEconomizadasAno: s(src.horasEconomizadasAno),
+    ganhoFinanceiroAnual: s(src.ganhoFinanceiroAnual),
+    riscoFinanceiroMitigadoAnual: s(src.riscoFinanceiroMitigadoAnual),
+    ganhoNegocioAnual: s(src.ganhoNegocioAnual),
+    ganhoRecorrente: Boolean(src.ganhoRecorrente),
+    investimentoCapex: s(src.investimentoCapex ?? src.investimentoAprovado),
+    investimentoOpex: s(src.investimentoOpex ?? src.opexGerado),
+    investimentoCapexParaOpex: s(src.investimentoCapexParaOpex),
+    memoriaCalculoGanho: src.memoriaCalculoGanho || '',
+    comentarios: src.comentarios || '',
+  };
+}
 
 const EMPTY_FAPD: FapdForm = {
   notaOe1: '',
@@ -188,11 +248,7 @@ export function PortfolioWorkspace({
   const [detailOpen, setDetailOpen] = useState(false);
   const [detail, setDetail] = useState<any | null>(null);
   const [fapd, setFapd] = useState<FapdForm>({ ...EMPTY_FAPD });
-  const [anotacoes, setAnotacoes] = useState({
-    memoriaCalculoGanho: '',
-    comentarios: '',
-    opexGerado: '',
-  });
+  const [valor, setValor] = useState({ ...EMPTY_VALOR });
   const [goNoGoJustificativa, setGoNoGoJustificativa] = useState('');
   const [form, setForm] = useState({
     nome: '',
@@ -210,14 +266,7 @@ export function PortfolioWorkspace({
   useEffect(() => {
     const src = detail || selected;
     setFapd(fapdFromProjeto(src));
-    setAnotacoes({
-      memoriaCalculoGanho: src?.memoriaCalculoGanho || '',
-      comentarios: src?.comentarios || '',
-      opexGerado:
-        src?.opexGerado == null || src?.opexGerado === ''
-          ? ''
-          : String(src.opexGerado),
-    });
+    setValor(valorFromProjeto(src));
   }, [detail, selected]);
 
   const byStatus = useMemo(() => {
@@ -343,31 +392,36 @@ export function PortfolioWorkspace({
     }
   }
 
-  async function saveAnotacoes() {
+  async function saveValorPotencial() {
     if (!selectedId) return;
     setBusy(true);
     try {
-      const opexRaw = anotacoes.opexGerado.trim().replace(',', '.');
-      const opexGerado =
-        opexRaw === '' ? null : Number(opexRaw);
-      if (opexGerado != null && Number.isNaN(opexGerado)) {
-        onError('OPEX Gerado inválido');
-        return;
-      }
-      const updated = await api.atualizarAnotacoesProjeto(selectedId, {
-        memoriaCalculoGanho: anotacoes.memoriaCalculoGanho.trim() || null,
-        comentarios: anotacoes.comentarios.trim() || null,
-        opexGerado,
+      const num = (raw: string) => {
+        const t = raw.trim().replace(',', '.');
+        if (!t) return null;
+        const n = Number(t);
+        return Number.isNaN(n) ? null : n;
+      };
+      const updated = await api.atualizarValorPotencial(selectedId, {
+        ganhoPrincipal: valor.ganhoPrincipal || null,
+        ganhoQualitativoEscala: num(valor.ganhoQualitativoEscala),
+        categoriaQualitativa: valor.categoriaQualitativa || null,
+        horasEconomizadasAno: num(valor.horasEconomizadasAno),
+        ganhoFinanceiroAnual: num(valor.ganhoFinanceiroAnual),
+        riscoFinanceiroMitigadoAnual: num(valor.riscoFinanceiroMitigadoAnual),
+        ganhoNegocioAnual: num(valor.ganhoNegocioAnual),
+        ganhoRecorrente: valor.ganhoRecorrente,
+        investimentoCapex: num(valor.investimentoCapex),
+        investimentoOpex: num(valor.investimentoOpex),
+        investimentoCapexParaOpex: num(valor.investimentoCapexParaOpex),
+        memoriaCalculoGanho: valor.memoriaCalculoGanho.trim() || null,
+        comentarios: valor.comentarios.trim() || null,
+        opexGerado: num(valor.investimentoOpex),
       });
       setDetail((prev: any) => ({ ...(prev || {}), ...updated }));
-      setAnotacoes({
-        memoriaCalculoGanho: updated.memoriaCalculoGanho || '',
-        comentarios: updated.comentarios || '',
-        opexGerado:
-          updated.opexGerado == null ? '' : String(updated.opexGerado),
-      });
+      setValor(valorFromProjeto(updated));
       await onRefresh();
-      onMessage('Memória, OPEX e comentários salvos');
+      onMessage('Ganhos e investimentos salvos');
     } catch (err: any) {
       onError(err.message || String(err));
     } finally {
@@ -969,13 +1023,14 @@ export function PortfolioWorkspace({
                 </strong>
               </div>
               <div className="detail-kv">
-                <span>OPEX Gerado</span>
+                <span>OPEX</span>
                 <strong>
                   {(() => {
                     const v =
+                      detail?.investimentoOpex ??
                       detail?.opexGerado ??
-                      selected?.opexGerado ??
-                      anotacoes.opexGerado;
+                      selected?.investimentoOpex ??
+                      valor.investimentoOpex;
                     if (v == null || v === '') return '—';
                     const n = Number(v);
                     return Number.isNaN(n) ? '—' : brl(n);
@@ -983,12 +1038,15 @@ export function PortfolioWorkspace({
                 </strong>
               </div>
               <div className="detail-kv">
-                <span>Investimento</span>
+                <span>Investimento (CAPEX)</span>
                 <strong>
                   {brl(
-                    detail?.investimentoAprovado ??
-                      selected?.investimentoAprovado ??
-                      0,
+                    Number(
+                      detail?.investimentoCapex ??
+                        detail?.investimentoAprovado ??
+                        selected?.investimentoAprovado ??
+                        0,
+                    ) || 0,
                   )}
                 </strong>
               </div>
@@ -998,65 +1056,233 @@ export function PortfolioWorkspace({
               </div>
 
               <div className="fapd-block">
-                <h3>Ganho · memória de cálculo</h3>
+                <h3>Ganhos · potencial declarado</h3>
                 <p className="muted fapd-lead">
-                  Descreva como o ganho é calculado (premissas, fórmula, fontes e
-                  unidades) e registre comentários do projeto.
+                  Potencial anual do projeto (diferente do realizado homologado).
+                  Racional obrigatório se houver valor &gt; 0.
                 </p>
-                <label className="fapd-field">
-                  <span>OPEX Gerado (R$)</span>
+                <fieldset className="ganho-principal">
+                  <legend>Ganho principal</legend>
+                  {GANHO_PRINCIPAL_OPTIONS.map((opt) => (
+                    <label key={opt.id} className="radio-row">
+                      <input
+                        type="radio"
+                        name="ganhoPrincipal"
+                        disabled={busy}
+                        checked={valor.ganhoPrincipal === opt.id}
+                        onChange={() =>
+                          setValor((v) => ({ ...v, ganhoPrincipal: opt.id }))
+                        }
+                      />
+                      {opt.label}
+                    </label>
+                  ))}
+                </fieldset>
+                <div className="form-grid">
+                  <label className="fapd-field">
+                    <span>Ganho financeiro (R$/ano)</span>
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      disabled={busy}
+                      value={valor.ganhoFinanceiroAnual}
+                      onChange={(e) =>
+                        setValor((v) => ({
+                          ...v,
+                          ganhoFinanceiroAnual: e.target.value,
+                        }))
+                      }
+                    />
+                  </label>
+                  <label className="fapd-field">
+                    <span>Risco mitigado (R$/ano)</span>
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      disabled={busy}
+                      value={valor.riscoFinanceiroMitigadoAnual}
+                      onChange={(e) =>
+                        setValor((v) => ({
+                          ...v,
+                          riscoFinanceiroMitigadoAnual: e.target.value,
+                        }))
+                      }
+                    />
+                  </label>
+                  <label className="fapd-field">
+                    <span>Ganho do negócio (R$/ano)</span>
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      disabled={busy}
+                      value={valor.ganhoNegocioAnual}
+                      onChange={(e) =>
+                        setValor((v) => ({
+                          ...v,
+                          ganhoNegocioAnual: e.target.value,
+                        }))
+                      }
+                    />
+                  </label>
+                  <label className="fapd-field">
+                    <span>Horas economizadas (h/ano)</span>
+                    <input
+                      type="number"
+                      min={0}
+                      step="1"
+                      disabled={busy}
+                      value={valor.horasEconomizadasAno}
+                      onChange={(e) =>
+                        setValor((v) => ({
+                          ...v,
+                          horasEconomizadasAno: e.target.value,
+                        }))
+                      }
+                    />
+                  </label>
+                  <label className="fapd-field">
+                    <span>Qualitativo (1–7)</span>
+                    <input
+                      type="number"
+                      min={1}
+                      max={7}
+                      step={1}
+                      disabled={busy}
+                      value={valor.ganhoQualitativoEscala}
+                      onChange={(e) =>
+                        setValor((v) => ({
+                          ...v,
+                          ganhoQualitativoEscala: e.target.value,
+                        }))
+                      }
+                    />
+                  </label>
+                  <label className="fapd-field">
+                    <span>Categoria qualitativa</span>
+                    <select
+                      disabled={busy}
+                      value={valor.categoriaQualitativa}
+                      onChange={(e) =>
+                        setValor((v) => ({
+                          ...v,
+                          categoriaQualitativa: e.target.value,
+                        }))
+                      }
+                    >
+                      <option value="">—</option>
+                      {CATEGORIA_QUALITATIVA_OPTIONS.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+                <label className="fapd-na" style={{ marginBottom: 10 }}>
                   <input
-                    type="number"
-                    min={0}
-                    step="0.01"
+                    type="checkbox"
                     disabled={busy}
-                    value={anotacoes.opexGerado}
+                    checked={valor.ganhoRecorrente}
                     onChange={(e) =>
-                      setAnotacoes((a) => ({
-                        ...a,
-                        opexGerado: e.target.value,
+                      setValor((v) => ({
+                        ...v,
+                        ganhoRecorrente: e.target.checked,
                       }))
                     }
-                    placeholder="Ex.: 24300"
                   />
+                  Ganho recorrente (anualizado nas projeções)
                 </label>
                 <label className="fapd-field">
-                  <span>Memória de cálculo</span>
+                  <span>Racional / memória de cálculo</span>
                   <textarea
-                    rows={5}
+                    rows={4}
                     disabled={busy}
-                    value={anotacoes.memoriaCalculoGanho}
+                    value={valor.memoriaCalculoGanho}
                     onChange={(e) =>
-                      setAnotacoes((a) => ({
-                        ...a,
+                      setValor((v) => ({
+                        ...v,
                         memoriaCalculoGanho: e.target.value,
                       }))
                     }
-                    placeholder="Ex.: Ganho mensal = (horas poupadas × custo/hora) − custo operacional; fonte ERP CC-120…"
+                    placeholder="Premissas, fórmula, fontes…"
                   />
                 </label>
                 <label className="fapd-field">
                   <span>Comentários</span>
                   <textarea
-                    rows={4}
+                    rows={3}
                     disabled={busy}
-                    value={anotacoes.comentarios}
+                    value={valor.comentarios}
                     onChange={(e) =>
-                      setAnotacoes((a) => ({
-                        ...a,
+                      setValor((v) => ({
+                        ...v,
                         comentarios: e.target.value,
                       }))
                     }
-                    placeholder="Acompanhamento, riscos, alinhamentos com o sponsor…"
                   />
                 </label>
+
+                <h3 style={{ marginTop: 16 }}>Investimento</h3>
+                <div className="form-grid">
+                  <label className="fapd-field">
+                    <span>CAPEX (R$)</span>
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      disabled={busy}
+                      value={valor.investimentoCapex}
+                      onChange={(e) =>
+                        setValor((v) => ({
+                          ...v,
+                          investimentoCapex: e.target.value,
+                        }))
+                      }
+                    />
+                  </label>
+                  <label className="fapd-field">
+                    <span>OPEX (R$)</span>
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      disabled={busy}
+                      value={valor.investimentoOpex}
+                      onChange={(e) =>
+                        setValor((v) => ({
+                          ...v,
+                          investimentoOpex: e.target.value,
+                        }))
+                      }
+                    />
+                  </label>
+                  <label className="fapd-field">
+                    <span>CAPEX → OPEX (próx. ano)</span>
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      disabled={busy}
+                      value={valor.investimentoCapexParaOpex}
+                      onChange={(e) =>
+                        setValor((v) => ({
+                          ...v,
+                          investimentoCapexParaOpex: e.target.value,
+                        }))
+                      }
+                    />
+                  </label>
+                </div>
                 <button
                   type="button"
                   className="btn secondary"
                   disabled={busy || !selectedId}
-                  onClick={() => void saveAnotacoes()}
+                  onClick={() => void saveValorPotencial()}
                 >
-                  Salvar memória e comentários
+                  Salvar ganhos e investimento
                 </button>
               </div>
 
