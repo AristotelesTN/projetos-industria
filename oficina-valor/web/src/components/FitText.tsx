@@ -33,8 +33,10 @@ export function FitText({
       let lo = minFontSize;
       let hi = maxFontSize;
       let best = minFontSize;
-      while (lo <= hi) {
-        const mid = Math.round((lo + hi) * 4) / 4;
+      // Quarter-px binary search — mid must be (lo+hi)/2, not (lo+hi).
+      let steps = 0;
+      while (lo <= hi && steps++ < 64) {
+        const mid = Math.round(((lo + hi) / 2) * 4) / 4;
         el.style.fontSize = `${mid}px`;
         if (el.scrollWidth <= maxW + 0.5) {
           best = mid;

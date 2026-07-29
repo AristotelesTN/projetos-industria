@@ -90,8 +90,9 @@ function Donut({
       let best = lo;
       el.style.fontSize = `${hi}px`;
       // Binary search font size that fits width and height
-      while (lo <= hi) {
-        const mid = (lo + hi) / 2;
+      let steps = 0;
+      while (lo <= hi && steps++ < 64) {
+        const mid = Math.round(((lo + hi) / 2) * 4) / 4;
         el.style.fontSize = `${mid}px`;
         const fits =
           el.scrollWidth <= maxW + 0.5 && el.scrollHeight <= maxH + 0.5;
