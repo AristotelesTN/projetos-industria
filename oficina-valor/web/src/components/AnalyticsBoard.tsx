@@ -659,23 +659,12 @@ export function AnalyticsBoard({
   const capturePct = prometido > 0 ? (realizado / prometido) * 100 : 0;
   const roiPct =
     portfolio.roi == null ? null : Number(portfolio.roi) * 100;
-  const brrAvg =
-    filtered.length === 0
-      ? 0
-      : (filtered.reduce(
-          (s: number, p: any) => s + (p.brr == null ? 0 : p.brr),
-          0,
-        ) /
-          filtered.length) *
-        100;
-
   const sparkRealizado = (portfolio.curvaS || []).map(
     (c: any) => Number(c.realizadoAcumulado) || 0,
   );
   const sparkPlanejado = (portfolio.curvaS || []).map(
     (c: any) => Number(c.planejadoAcumulado) || 0,
   );
-
   const healthCounts = {
     green: filtered.filter((p: any) => p.health === 'green').length,
     yellow: filtered.filter((p: any) => p.health === 'yellow').length,
@@ -697,7 +686,7 @@ export function AnalyticsBoard({
   const prescriptions = [
     healthCounts.red > 0 && {
       tone: 'danger',
-      title: `${healthCounts.red} projeto(s) delayed (BRR < 40%)`,
+      title: `${healthCounts.red} projeto(s) em situação crítica`,
       text: 'Priorize wizard de realização e revisão de baseline nos cards críticos.',
     },
     capturePct < 40 && {
@@ -972,14 +961,16 @@ export function AnalyticsBoard({
         <article className="kpi-card">
           <div className="kpi-top">
             <div>
-              <div className="label">BRR médio</div>
-              <div className="value">{brrAvg.toFixed(0)}%</div>
-              <div className={`trend ${brrAvg >= 70 ? 'up' : 'down'}`}>
-                Meta 70% · {healthCounts.red} delayed
+              <div className="label">Projetos em risco</div>
+              <div className="value">{healthCounts.red + healthCounts.yellow}</div>
+              <div className={`trend ${(healthCounts.red + healthCounts.yellow) === 0 ? 'up' : 'down'}`}>
+                {healthCounts.red} crítico(s) · {healthCounts.yellow} atenção
               </div>
             </div>
             <Sparkline
-              values={filtered.map((p: any) => (p.brr ?? 0) * 100)}
+              values={filtered.map((p: any) =>
+                p.health === 'green' ? 100 : p.health === 'yellow' ? 50 : 15,
+              )}
               color="#e56910"
             />
           </div>
@@ -1284,11 +1275,14 @@ export function AnalyticsBoard({
         <section className="panel">
           <div className="panel-head">
             <h2>Programas que precisam de atenção</h2>
-            <span className="meta">Prescrições por BRR / ROI</span>
+            <span className="meta">Prioridade por saúde / ROI</span>
           </div>
           <div className="attention-grid">
             {attention.slice(0, 3).map((p: any, idx: number) => {
-              const brrPct = p.brr == null ? 0 : p.brr * 100;
+              const capturaPct =
+                Number(p.prometido) > 0
+                  ? (Number(p.realizado) / Number(p.prometido)) * 100
+                  : 0;
               return (
                 <article className="attention-card" key={p.projetoId}>
                   <div className="attention-head">
@@ -1299,13 +1293,13 @@ export function AnalyticsBoard({
                   </div>
                   <h3>{p.nome}</h3>
                   <div className="attention-metric">
-                    {(p.brr == null ? 0 : p.brr * 100).toFixed(0)}% BRR
+                    {capturaPct.toFixed(0)}% capturado
                   </div>
                   <div className="progress-track">
                     <i
                       className={p.health === 'green' ? 'done' : 'progress'}
                       style={{
-                        width: `${Math.min(100, brrPct)}%`,
+                        width: `${Math.min(100, capturaPct)}%`,
                         background:
                           p.health === 'green'
                             ? '#22a06b'

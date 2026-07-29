@@ -3,7 +3,7 @@ import { api } from '../lib/api';
 import { InsightsChart, type ChartSpec } from './InsightsChart';
 
 const PROMPTS = [
-  'Quais projetos têm BRR abaixo de 70%?',
+  'Quais projetos estão com captura abaixo da baseline?',
   'Compare hard vs soft savings validados no portfólio',
   'Mostre a curva S planejado vs realizado',
   'Liste medições pendentes na fila de homologação',

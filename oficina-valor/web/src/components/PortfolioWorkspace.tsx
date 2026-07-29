@@ -593,7 +593,7 @@ export function PortfolioWorkspace({
             <FitText className="value tone-orange">
               {portfolio.projetosEmRisco}
             </FitText>
-            <div className="label">Em risco (BRR &lt; 70%)</div>
+            <div className="label">Projetos em risco</div>
           </div>
         </div>
         <div className="metric-card">
@@ -815,7 +815,11 @@ export function PortfolioWorkspace({
                     <div className="kanban-card-metrics">
                       <span>{brl(p.realizado)}</span>
                       <span>
-                        {p.brr == null ? '—' : `${Math.round(p.brr * 100)}% BRR`}
+                        {p.health === 'green'
+                          ? 'Saudável'
+                          : p.health === 'yellow'
+                            ? 'Atenção'
+                            : 'Crítico'}
                       </span>
                     </div>
                     <div className="kanban-card-actions">
@@ -886,7 +890,11 @@ export function PortfolioWorkspace({
                     <div className="kanban-card-metrics">
                       <span>{brl(p.realizado)}</span>
                       <span>
-                        {p.brr == null ? '—' : `${Math.round(p.brr * 100)}% BRR`}
+                        {p.health === 'green'
+                          ? 'Saudável'
+                          : p.health === 'yellow'
+                            ? 'Atenção'
+                            : 'Crítico'}
                       </span>
                     </div>
                     <div className="kanban-card-actions">
@@ -947,17 +955,22 @@ export function PortfolioWorkspace({
                   <th>Memória</th>
                   <th>Investimento</th>
                   <th>Realizado</th>
-                  <th>BRR</th>
+                  <th>Saúde</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
                 {projetos.map((p) => {
-                  const brrPct = p.brr == null ? null : Math.round(p.brr * 100);
                   const papel = papelLabel(p.papelEstrategico);
                   const temMemoria = Boolean(
                     p.memoriaCalculoGanho?.trim() || p.comentarios?.trim(),
                   );
+                  const saudeLabel =
+                    p.health === 'green'
+                      ? 'Saudável'
+                      : p.health === 'yellow'
+                        ? 'Atenção'
+                        : 'Crítico';
                   return (
                     <tr
                       key={p.id}
@@ -1002,7 +1015,19 @@ export function PortfolioWorkspace({
                       </td>
                       <td>{brl(p.investimentoAprovado ?? 0)}</td>
                       <td>{brl(p.realizado)}</td>
-                      <td>{brrPct == null ? '—' : `${brrPct}%`}</td>
+                      <td>
+                        <span
+                          className={`badge ${
+                            p.health === 'green'
+                              ? 'success'
+                              : p.health === 'yellow'
+                                ? 'warning'
+                                : 'danger'
+                          }`}
+                        >
+                          {saudeLabel}
+                        </span>
+                      </td>
                       <td>
                         <div className="lista-actions">
                           <button
@@ -1075,7 +1100,7 @@ export function PortfolioWorkspace({
               </div>
               <span
                 className={`rag-dot ${selected?.health || 'yellow'}`}
-                title="Saúde BRR"
+                title="Saúde do projeto"
               />
             </div>
             <div className="drawer-body">
@@ -1109,11 +1134,15 @@ export function PortfolioWorkspace({
                 </strong>
               </div>
               <div className="detail-kv">
-                <span>BRR</span>
+                <span>Saúde</span>
                 <strong>
-                  {selected?.brr == null
-                    ? '—'
-                    : `${Math.round(selected.brr * 100)}%`}
+                  {selected?.health === 'green'
+                    ? 'Saudável'
+                    : selected?.health === 'yellow'
+                      ? 'Atenção'
+                      : selected?.health === 'red'
+                        ? 'Crítico'
+                        : '—'}
                 </strong>
               </div>
 
