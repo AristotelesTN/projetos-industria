@@ -290,6 +290,10 @@ class ValorPotencialDto {
   ganhoRecorrente?: boolean;
 
   @IsOptional()
+  @IsBoolean()
+  excluirDoPotencialEstimado?: boolean;
+
+  @IsOptional()
   @Type(() => Number)
   @IsNumber()
   investimentoCapex?: number | null;

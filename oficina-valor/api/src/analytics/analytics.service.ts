@@ -178,6 +178,7 @@ export class AnalyticsService {
         riscoFinanceiroMitigadoAnual: true,
         ganhoNegocioAnual: true,
         ganhoRecorrente: true,
+        excluirDoPotencialEstimado: true,
         investimentoCapex: true,
         investimentoOpex: true,
         investimentoCapexParaOpex: true,
@@ -234,10 +235,18 @@ export class AnalyticsService {
     const qualitativosPorCategoria: Record<string, number> = {};
     let ultimaAtualizacao: Date | null = null;
 
+    let excluidosDoPotencial = 0;
+
     for (const p of projetos) {
       if (!ultimaAtualizacao || p.updatedAt > ultimaAtualizacao) {
         ultimaAtualizacao = p.updatedAt;
       }
+
+      if (p.excluirDoPotencialEstimado) {
+        excluidosDoPotencial += 1;
+        continue;
+      }
+
       const fin = n(p.ganhoFinanceiroAnual);
       const risco = n(p.riscoFinanceiroMitigadoAnual);
       const negocio = n(p.ganhoNegocioAnual);
@@ -328,6 +337,7 @@ export class AnalyticsService {
         ganhoNegocioAnual: p ? n(p.ganhoNegocioAnual) : null,
         horasEconomizadasAno: p ? n(p.horasEconomizadasAno) : null,
         ganhoRecorrente: p?.ganhoRecorrente ?? false,
+        excluirDoPotencialEstimado: p?.excluirDoPotencialEstimado ?? false,
         investimentoCapex: p
           ? n(p.investimentoCapex ?? p.investimentoAprovado)
           : null,
@@ -382,6 +392,7 @@ export class AnalyticsService {
         },
         horizonte3Anos:
           potencialRecorrenteAnual * 3 + potencialPontual,
+        excluidos: excluidosDoPotencial,
       },
       investimento: {
         capex,

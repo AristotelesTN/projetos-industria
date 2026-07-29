@@ -83,6 +83,9 @@ function buildRacional(
   const fmtStatus = (s?: string) =>
     (s && statusLabel[s]) || s || '—';
 
+  // Suspensos/cancelados (ou marcados) não entram no racional estimado.
+  projects = projects.filter((p) => !p.excluirDoPotencialEstimado);
+
   const base = (title: string, formula: string, unit: RacionalView['unit']) => ({
     id,
     title,
@@ -996,6 +999,9 @@ export function AnalyticsBoard({
           <p className="muted" style={{ marginTop: 0 }}>
             Valores informados na ficha — distintos do realizado homologado
             acima. Clique em um card para ver o racional do cálculo.
+            {potencial?.excluidos
+              ? ` ${potencial.excluidos} projeto(s) excluído(s) do potencial (suspenso/cancelado).`
+              : ''}
           </p>
           <div className="kpi-row potencial-row">
             <button

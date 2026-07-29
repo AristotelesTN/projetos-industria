@@ -35,6 +35,7 @@ type ProjetoRow = {
   opexGerado?: number | string | null;
   ganhoPrincipal?: string | null;
   ganhoRecorrente?: boolean;
+  excluirDoPotencialEstimado?: boolean;
   investimentoCapex?: number | string | null;
   investimentoOpex?: number | string | null;
   investimentoCapexParaOpex?: number | string | null;
@@ -148,6 +149,7 @@ const EMPTY_VALOR = {
   riscoFinanceiroMitigadoAnual: '',
   ganhoNegocioAnual: '',
   ganhoRecorrente: false,
+  excluirDoPotencialEstimado: false,
   investimentoCapex: '',
   investimentoOpex: '',
   investimentoCapexParaOpex: '',
@@ -168,6 +170,7 @@ function valorFromProjeto(src: any | null | undefined) {
     riscoFinanceiroMitigadoAnual: s(src.riscoFinanceiroMitigadoAnual),
     ganhoNegocioAnual: s(src.ganhoNegocioAnual),
     ganhoRecorrente: Boolean(src.ganhoRecorrente),
+    excluirDoPotencialEstimado: Boolean(src.excluirDoPotencialEstimado),
     investimentoCapex: s(src.investimentoCapex ?? src.investimentoAprovado),
     investimentoOpex: s(src.investimentoOpex ?? src.opexGerado),
     investimentoCapexParaOpex: s(src.investimentoCapexParaOpex),
@@ -439,6 +442,7 @@ export function PortfolioWorkspace({
         riscoFinanceiroMitigadoAnual: num(valor.riscoFinanceiroMitigadoAnual),
         ganhoNegocioAnual: num(valor.ganhoNegocioAnual),
         ganhoRecorrente: valor.ganhoRecorrente,
+        excluirDoPotencialEstimado: valor.excluirDoPotencialEstimado,
         investimentoCapex: num(valor.investimentoCapex),
         investimentoOpex: num(valor.investimentoOpex),
         investimentoCapexParaOpex: num(valor.investimentoCapexParaOpex),
@@ -790,6 +794,11 @@ export function PortfolioWorkspace({
                             >
                               {p.ganhoRecorrente ? 'Recorrente' : 'Pontual'}
                             </span>
+                            {p.excluirDoPotencialEstimado ? (
+                              <span className="pill-tag pill-excluded">
+                                Fora do potencial
+                              </span>
+                            ) : null}
                           </>
                         ) : null}
                         {p.capexParaOpexAplicadoEm ? (
@@ -1394,6 +1403,21 @@ export function PortfolioWorkspace({
                     </span>
                   </label>
                 </fieldset>
+                <label className="fapd-na" style={{ marginBottom: 12 }}>
+                  <input
+                    type="checkbox"
+                    disabled={busy}
+                    checked={valor.excluirDoPotencialEstimado}
+                    onChange={(e) =>
+                      setValor((v) => ({
+                        ...v,
+                        excluirDoPotencialEstimado: e.target.checked,
+                      }))
+                    }
+                  />
+                  Excluir do potencial estimado (suspenso / cancelado / fora do
+                  cálculo)
+                </label>
                 <label className="fapd-field">
                   <span>Racional / memória de cálculo</span>
                   <textarea

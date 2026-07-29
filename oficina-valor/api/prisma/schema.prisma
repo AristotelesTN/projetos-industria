@@ -280,6 +280,8 @@ model Projeto {
   ganhoNegocioAnual           Decimal?            @map("ganho_negocio_anual") @db.Decimal(18, 2)
   /// true = recorrente (repete e acumula nos anos); false = pontual (uma vez).
   ganhoRecorrente             Boolean             @default(false) @map("ganho_recorrente")
+  /// Se true, o projeto não entra no painel de potencial estimado.
+  excluirDoPotencialEstimado  Boolean             @default(false) @map("excluir_do_potencial_estimado")
 
   /// Investimento detalhado (substitui o uso isolado de investimentoAprovado no painel).
   investimentoCapex           Decimal?            @map("investimento_capex") @db.Decimal(18, 2)

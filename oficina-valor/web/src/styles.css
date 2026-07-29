@@ -3806,6 +3806,11 @@ a {
   color: #9a3412;
 }
 
+.pill-excluded {
+  background: color-mix(in srgb, #626f86 18%, transparent);
+  color: #44546f;
+}
+
 .planilha-grid {
   display: grid;
   grid-template-columns: 1fr;

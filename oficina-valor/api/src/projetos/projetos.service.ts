@@ -409,7 +409,18 @@ export class ProjetosService {
       investimentoAprovado?: number;
       opexGerado?: number;
       capexParaOpexAplicadoEm?: Date;
+      excluirDoPotencialEstimado?: boolean;
     } = { status };
+
+    const isForaDoPotencial = (s: ProjetoStatus) =>
+      s === ProjetoStatus.hold || s === ProjetoStatus.morto;
+
+    // Suspenso / cancelado: sai do potencial estimado automaticamente.
+    if (isForaDoPotencial(status) && !isForaDoPotencial(before.status)) {
+      data.excluirDoPotencialEstimado = true;
+    } else if (!isForaDoPotencial(status) && isForaDoPotencial(before.status)) {
+      data.excluirDoPotencialEstimado = false;
+    }
 
     if (status === ProjetoStatus.encerrado && before.status !== ProjetoStatus.encerrado) {
       data.acompanhamentoPosPendente = true;
@@ -618,6 +629,7 @@ export class ProjetosService {
       riscoFinanceiroMitigadoAnual?: number | null;
       ganhoNegocioAnual?: number | null;
       ganhoRecorrente?: boolean;
+      excluirDoPotencialEstimado?: boolean;
       investimentoCapex?: number | null;
       investimentoOpex?: number | null;
       investimentoCapexParaOpex?: number | null;
@@ -701,9 +713,15 @@ export class ProjetosService {
       ganhoQualitativoEscala != null;
 
     if (temGanhoDeclarado && !memoriaCalculoGanho?.trim()) {
-      throw new BadRequestException(
-        'Informe o racional / memória de cálculo quando houver ganhos declarados',
-      );
+      const excluindo =
+        input.excluirDoPotencialEstimado === undefined
+          ? before.excluirDoPotencialEstimado
+          : Boolean(input.excluirDoPotencialEstimado);
+      if (!excluindo) {
+        throw new BadRequestException(
+          'Informe o racional / memória de cálculo quando houver ganhos declarados',
+        );
+      }
     }
 
     if (ganhoPrincipal === GanhoPrincipalTipo.qualitativo) {
@@ -737,6 +755,10 @@ export class ProjetosService {
         input.ganhoRecorrente === undefined
           ? before.ganhoRecorrente
           : Boolean(input.ganhoRecorrente),
+      excluirDoPotencialEstimado:
+        input.excluirDoPotencialEstimado === undefined
+          ? before.excluirDoPotencialEstimado
+          : Boolean(input.excluirDoPotencialEstimado),
       investimentoCapex,
       investimentoOpex,
       investimentoCapexParaOpex,

@@ -422,6 +422,8 @@ async function main() {
           ganhoPrincipal === GanhoPrincipalTipo.financeiro ||
             ganhoPrincipal === GanhoPrincipalTipo.horas_economizadas,
         ),
+        excluirDoPotencialEstimado:
+          status === ProjetoStatus.hold || status === ProjetoStatus.morto,
         investimentoCapex,
         investimentoOpex,
         finalizadoEm:
