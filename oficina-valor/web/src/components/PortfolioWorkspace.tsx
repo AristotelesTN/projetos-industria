@@ -41,6 +41,30 @@ type ProjetoRow = {
   capexParaOpexAplicadoEm?: string | null;
   acompanhamentoPosPendente?: boolean;
   justificativaDecisao?: string | null;
+  portfolio?: { nome?: string };
+  tipoInvestimento?: string | null;
+  facilitador?: string | null;
+  responsavelNome?: string | null;
+  fornecedor?: string | null;
+  setor?: string | null;
+  diretoria?: string | null;
+  classificacao?: string | null;
+  emUso?: boolean | null;
+  ragComunicacao?: string | null;
+  ragCusto?: string | null;
+  ragPrazo?: string | null;
+  ragEscopo?: string | null;
+  ganhoQuantitativoTexto?: string | null;
+  economiaEstimadaAno?: number | string | null;
+  economiaRealAno?: number | string | null;
+  hhEngenheiro?: number | string | null;
+  hhLider?: number | string | null;
+  hhAnalista?: number | string | null;
+  retornoHhAno?: number | string | null;
+  inicioReal?: string | null;
+  fimReal?: string | null;
+  inicioPrevisto?: string | null;
+  fimPrevisto?: string | null;
 };
 
 type ViewTab = 'board' | 'lista' | 'saude';
@@ -61,12 +85,12 @@ type FapdForm = {
 };
 
 const STATUS_COLUMNS: { id: string; label: string }[] = [
-  { id: 'conceito', label: 'Conceito' },
+  { id: 'conceito', label: 'A iniciar' },
   { id: 'aprovado', label: 'Aprovado' },
-  { id: 'execucao', label: 'Execução' },
-  { id: 'hold', label: 'Hold' },
+  { id: 'execucao', label: 'Em andamento' },
+  { id: 'hold', label: 'Suspenso' },
   { id: 'sustentacao', label: 'Sustentação' },
-  { id: 'encerrado', label: 'Encerrado' },
+  { id: 'encerrado', label: 'Concluído' },
   { id: 'morto', label: 'Arquivado' },
 ];
 
@@ -748,7 +772,7 @@ export function PortfolioWorkspace({
                     </div>
                     <div className="kanban-card-meta">
                       <span>{p.area?.nome || 'Área'}</span>
-                      <span>{p.analytics?.roiLabel ?? '—'}</span>
+                      <span>{p.portfolio?.nome || p.analytics?.roiLabel || '—'}</span>
                     </div>
                     {(p.ganhoPrincipal ||
                       Number(p.investimentoCapexParaOpex) > 0 ||
@@ -1035,6 +1059,9 @@ export function PortfolioWorkspace({
                 <p className="muted" style={{ margin: '4px 0 0' }}>
                   {statusLabel(detail?.status || selected?.status || '')} ·{' '}
                   {detail?.area?.nome || selected?.area?.nome || 'Área'}
+                  {detail?.portfolio?.nome || selected?.portfolio?.nome
+                    ? ` · ${detail?.portfolio?.nome || selected?.portfolio?.nome}`
+                    : ''}
                 </p>
               </div>
               <span
@@ -1044,12 +1071,33 @@ export function PortfolioWorkspace({
             </div>
             <div className="drawer-body">
               <div className="detail-kv">
-                <span>Prometido</span>
-                <strong>{brl(selected?.prometido ?? 0)}</strong>
+                <span>Economia estimada (ano)</span>
+                <strong>
+                  {brl(
+                    Number(
+                      detail?.economiaEstimadaAno ??
+                        selected?.economiaEstimadaAno ??
+                        0,
+                    ),
+                  )}
+                </strong>
               </div>
               <div className="detail-kv">
-                <span>Realizado</span>
-                <strong>{brl(selected?.realizado ?? 0)}</strong>
+                <span>Economia real (ano)</span>
+                <strong>
+                  {brl(
+                    Number(
+                      detail?.economiaRealAno ?? selected?.economiaRealAno ?? 0,
+                    ),
+                  )}
+                </strong>
+              </div>
+              <div className="detail-kv">
+                <span>Prometido / Realizado (analytics)</span>
+                <strong>
+                  {brl(selected?.prometido ?? 0)} /{' '}
+                  {brl(selected?.realizado ?? 0)}
+                </strong>
               </div>
               <div className="detail-kv">
                 <span>BRR</span>
@@ -1059,6 +1107,93 @@ export function PortfolioWorkspace({
                     : `${Math.round(selected.brr * 100)}%`}
                 </strong>
               </div>
+
+              <h3>Dados do planejamento</h3>
+              <div className="planilha-grid">
+                <div className="detail-kv">
+                  <span>Tipo</span>
+                  <strong>
+                    {(detail?.tipoInvestimento || selected?.tipoInvestimento || '—')
+                      .toString()
+                      .toUpperCase()}
+                  </strong>
+                </div>
+                <div className="detail-kv">
+                  <span>Classificação</span>
+                  <strong>
+                    {detail?.classificacao || selected?.classificacao || '—'}
+                  </strong>
+                </div>
+                <div className="detail-kv">
+                  <span>Facilitador</span>
+                  <strong>
+                    {detail?.facilitador || selected?.facilitador || '—'}
+                  </strong>
+                </div>
+                <div className="detail-kv">
+                  <span>Responsável</span>
+                  <strong>
+                    {detail?.responsavelNome ||
+                      selected?.responsavelNome ||
+                      '—'}
+                  </strong>
+                </div>
+                <div className="detail-kv">
+                  <span>Fornecedor</span>
+                  <strong>
+                    {detail?.fornecedor || selected?.fornecedor || '—'}
+                  </strong>
+                </div>
+                <div className="detail-kv">
+                  <span>Em uso?</span>
+                  <strong>
+                    {detail?.emUso == null && selected?.emUso == null
+                      ? '—'
+                      : (detail?.emUso ?? selected?.emUso)
+                        ? 'Sim'
+                        : 'Não'}
+                  </strong>
+                </div>
+                <div className="detail-kv">
+                  <span>Setor</span>
+                  <strong>{detail?.setor || selected?.setor || '—'}</strong>
+                </div>
+                <div className="detail-kv">
+                  <span>Diretoria</span>
+                  <strong>
+                    {detail?.diretoria || selected?.diretoria || '—'}
+                  </strong>
+                </div>
+                <div className="detail-kv">
+                  <span>RAG Com. / Custo / Prazo / Escopo</span>
+                  <strong>
+                    {[
+                      detail?.ragComunicacao || selected?.ragComunicacao,
+                      detail?.ragCusto || selected?.ragCusto,
+                      detail?.ragPrazo || selected?.ragPrazo,
+                      detail?.ragEscopo || selected?.ragEscopo,
+                    ]
+                      .map((x) => (x ? String(x).toUpperCase() : '—'))
+                      .join(' · ')}
+                  </strong>
+                </div>
+                <div className="detail-kv">
+                  <span>Retorno HH/ano</span>
+                  <strong>
+                    {detail?.retornoHhAno ?? selected?.retornoHhAno ?? '—'}
+                  </strong>
+                </div>
+              </div>
+              {(detail?.ganhoQuantitativoTexto ||
+                selected?.ganhoQuantitativoTexto) && (
+                <div className="detail-block">
+                  <span className="muted">Ganho quantitativo</span>
+                  <p>
+                    {detail?.ganhoQuantitativoTexto ||
+                      selected?.ganhoQuantitativoTexto}
+                  </p>
+                </div>
+              )}
               <div className="detail-kv">
                 <span>ROI</span>
                 <strong>

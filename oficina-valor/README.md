@@ -54,6 +54,16 @@ Web dev: http://localhost:5173 → API em http://localhost:3001.
 
 - **Render (API + Postgres + static web):** blueprint em [`render.yaml`](render.yaml) — dashboard Render → *New* → *Blueprint* → pasta `oficina-valor`. Depois defina `VITE_API_URL` (URL da API) no serviço web e `CORS_ORIGIN` na API.
 
+## Dados
+
+O seed importa a planilha `api/prisma/data/Planejamento_Estruturado.xlsx` (184 projetos reais).
+Dados mockados são removidos na importação.
+
+```bash
+# reimportar do zero
+FORCE_SEED_REIMPORT=1 npm run seed
+```
+
 ## Login de desenvolvimento
 
 | E-mail | Papel |

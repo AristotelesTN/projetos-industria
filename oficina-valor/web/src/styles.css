@@ -3462,6 +3462,24 @@ a {
   color: #9a3412;
 }
 
+.planilha-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.detail-block {
+  margin: 8px 0 14px;
+}
+
+.detail-block p {
+  margin: 4px 0 0;
+  white-space: pre-wrap;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
 .mark {
   background: radial-gradient(circle at 30% 30%, #828fff, #5e6ad2 70%);
 }

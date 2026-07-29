@@ -45,19 +45,34 @@ export class AnalyticsService {
         b.categoria === BeneficioCategoria.soft
       );
     });
-    const beneficioValidado = hardSoft.reduce(
+    const beneficioValidadoMedicoes = hardSoft.reduce(
       (s, m) => s + Number(m.valorRealizado),
       0,
     );
+    const economiaReal = Number(projeto.economiaRealAno ?? 0) || 0;
+    const economiaEstimada = Number(projeto.economiaEstimadaAno ?? 0) || 0;
+    const beneficioValidado =
+      beneficioValidadoMedicoes > 0
+        ? beneficioValidadoMedicoes
+        : economiaReal;
     const custoRealizado = projeto.custos.reduce(
       (s, c) => s + Number(c.valor),
       0,
     );
+    const investimentoRef =
+      Number(
+        projeto.investimentoCapex ??
+          projeto.investimentoOpex ??
+          projeto.investimentoAprovado ??
+          0,
+      ) || 0;
+    const custoParaRoi =
+      custoRealizado > 0 ? custoRealizado : investimentoRef;
 
     const roi =
-      custoRealizado === 0
+      custoParaRoi === 0
         ? null
-        : (beneficioValidado - custoRealizado) / custoRealizado;
+        : (beneficioValidado - custoParaRoi) / custoParaRoi;
 
     const plannedMap = new Map<string, number>();
     for (const b of beneficios) {
@@ -111,7 +126,7 @@ export class AnalyticsService {
         (porCategoria[b.categoria] ?? 0) + Number(m.valorRealizado);
     }
 
-    const prometido = beneficios
+    const prometidoMedicoes = beneficios
       .filter(
         (b) =>
           b.categoria === BeneficioCategoria.hard ||
@@ -122,6 +137,12 @@ export class AnalyticsService {
           s + Number(b.baselines[0]?.valorTotalBaseline ?? 0),
         0,
       );
+    const prometido =
+      prometidoMedicoes > 0
+        ? prometidoMedicoes
+        : economiaEstimada ||
+          Number(projeto.ganhoFinanceiroAnual ?? 0) ||
+          0;
 
     const brr = prometido === 0 ? null : beneficioValidado / prometido;
 
@@ -129,7 +150,7 @@ export class AnalyticsService {
       projetoId,
       nome: projeto.nome,
       beneficioValidado,
-      custoRealizado,
+      custoRealizado: custoParaRoi,
       roi,
       roiLabel:
         roi === null
@@ -174,8 +195,12 @@ export class AnalyticsService {
     const prometido = analytics.reduce((s, a) => s + a.prometido, 0);
     const realizado = analytics.reduce((s, a) => s + a.realizado, 0);
     const custo = analytics.reduce((s, a) => s + a.custoRealizado, 0);
-    const hard = analytics.reduce((s, a) => s + a.porCategoria.hard, 0);
+    const hardMed = analytics.reduce((s, a) => s + a.porCategoria.hard, 0);
     const soft = analytics.reduce((s, a) => s + a.porCategoria.soft, 0);
+    const hard =
+      hardMed > 0
+        ? hardMed
+        : analytics.reduce((s, a) => s + Number(a.realizado || 0), 0);
     const roi =
       custo === 0 ? null : (realizado - custo) / custo;
     const emRisco = analytics.filter(

@@ -21,6 +21,25 @@ enum ProjetoStatus {
   hold
 }
 
+/// Tipo de investimento informado na planilha de planejamento.
+enum TipoProjetoInvestimento {
+  capex
+  opex
+  demanda
+}
+
+/// Semáforo OK/NOK da planilha (comunicação, custo, prazo, escopo).
+enum SemaforoRag {
+  ok
+  nok
+}
+
+/// Classificação operacional da planilha.
+enum ClassificacaoProjeto {
+  inovacao
+  melhoria
+}
+
 /// Papel estratégico na matriz FAPD (avaliação de projetos digitais).
 enum PapelEstrategicoFapd {
   estruturante
@@ -197,11 +216,39 @@ model Projeto {
   investimentoAprovado   Decimal       @default(0) @map("investimento_aprovado") @db.Decimal(18, 2)
   inicioPrevisto         DateTime?     @map("inicio_previsto") @db.Date
   fimPrevisto            DateTime?     @map("fim_previsto") @db.Date
+  /// Datas reais de execução (planilha DT. Início / DT. Fim).
+  inicioReal             DateTime?     @map("inicio_real") @db.Date
+  fimReal                DateTime?     @map("fim_real") @db.Date
   premissasOkFinancas    Boolean       @default(false) @map("premissas_ok_financas")
   wizardBaselineCompleto Boolean       @default(false) @map("wizard_baseline_completo")
   semGanhos              Boolean       @default(false) @map("sem_ganhos")
   naoAdotado             Boolean       @default(false) @map("nao_adotado")
   causaNaoAdocao         String?       @map("causa_nao_adocao")
+
+  /// Origem / chave de importação (ex.: planejamento_estruturado).
+  fonteImportacao        String?       @map("fonte_importacao")
+  codigoExterno          String?       @map("codigo_externo")
+
+  /// Campos da planilha Planejamento Estruturado.
+  tipoInvestimento       TipoProjetoInvestimento? @map("tipo_investimento")
+  facilitador            String?
+  responsavelNome        String?       @map("responsavel_nome")
+  fornecedor             String?
+  setor                  String?
+  diretoria              String?
+  classificacao          ClassificacaoProjeto? @map("classificacao")
+  emUso                  Boolean?      @map("em_uso")
+  ragComunicacao         SemaforoRag?  @map("rag_comunicacao")
+  ragCusto               SemaforoRag?  @map("rag_custo")
+  ragPrazo               SemaforoRag?  @map("rag_prazo")
+  ragEscopo              SemaforoRag?  @map("rag_escopo")
+  ganhoQuantitativoTexto String?       @map("ganho_quantitativo_texto") @db.Text
+  economiaEstimadaAno    Decimal?      @map("economia_estimada_ano") @db.Decimal(18, 2)
+  economiaRealAno        Decimal?      @map("economia_real_ano") @db.Decimal(18, 2)
+  hhEngenheiro           Decimal?      @map("hh_engenheiro") @db.Decimal(18, 2)
+  hhLider                Decimal?      @map("hh_lider") @db.Decimal(18, 2)
+  hhAnalista             Decimal?      @map("hh_analista") @db.Decimal(18, 2)
+  retornoHhAno           Decimal?      @map("retorno_hh_ano") @db.Decimal(18, 2)
 
   /// Avaliação FAPD (MVP): notas OE 0–5 ou N/A + papel estratégico.
   notaOe1                Int?          @map("nota_oe1")
@@ -262,6 +309,8 @@ model Projeto {
   agentRecs      AgentRecommendation[]
   demandaOrigem  Demanda?
 
+  @@index([fonteImportacao])
+  @@index([status])
   @@map("projetos")
 }
 
