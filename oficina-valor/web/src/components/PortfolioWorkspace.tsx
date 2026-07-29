@@ -1234,16 +1234,33 @@ export function PortfolioWorkspace({
                   </strong>
                 </div>
                 <div className="detail-kv">
-                  <span>RAG Com. / Custo / Prazo / Escopo</span>
+                  <span>RAG Comunicação</span>
                   <strong>
-                    {[
-                      detail?.ragComunicacao || selected?.ragComunicacao,
-                      detail?.ragCusto || selected?.ragCusto,
-                      detail?.ragPrazo || selected?.ragPrazo,
-                      detail?.ragEscopo || selected?.ragEscopo,
-                    ]
-                      .map((x) => (x ? String(x).toUpperCase() : '—'))
-                      .join(' · ')}
+                    {(
+                      detail?.ragComunicacao || selected?.ragComunicacao
+                    )?.toUpperCase() || '—'}
+                  </strong>
+                </div>
+                <div className="detail-kv">
+                  <span>RAG Custo</span>
+                  <strong>
+                    {(detail?.ragCusto || selected?.ragCusto)?.toUpperCase() ||
+                      '—'}
+                  </strong>
+                </div>
+                <div className="detail-kv">
+                  <span>RAG Prazo</span>
+                  <strong>
+                    {(detail?.ragPrazo || selected?.ragPrazo)?.toUpperCase() ||
+                      '—'}
+                  </strong>
+                </div>
+                <div className="detail-kv">
+                  <span>RAG Escopo</span>
+                  <strong>
+                    {(
+                      detail?.ragEscopo || selected?.ragEscopo
+                    )?.toUpperCase() || '—'}
                   </strong>
                 </div>
                 <div className="detail-kv">
