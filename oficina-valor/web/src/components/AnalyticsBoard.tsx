@@ -382,7 +382,7 @@ export function AnalyticsBoard({
               </div>
             </article>
             <article className="kpi-card">
-              <div className="label">Ganho financeiro</div>
+              <div className="label">Ganho estimado</div>
               <div className="value">
                 {fmtOrDash(potencial?.ganhoFinanceiroAnual, brl)}
               </div>
