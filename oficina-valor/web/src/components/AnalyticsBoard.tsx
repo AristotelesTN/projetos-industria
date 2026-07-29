@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { brl } from '../lib/api';
 
 type Health = 'green' | 'yellow' | 'red';
@@ -726,6 +726,168 @@ export function AnalyticsBoard({
     .slice(0, 6);
   const maxRoi = Math.max(0.01, ...roiBars.map((p: any) => Math.abs(Number(p.roi))));
 
+  if (racional) {
+    const somaFiltrada =
+      racional.unit === 'count'
+        ? racionalRowsFiltradas.length
+        : racionalRowsFiltradas.reduce((s, r) => s + r.valor, 0);
+
+    return (
+      <div className="analytics racional-page">
+        <header className="racional-page-header">
+          <div className="racional-page-title">
+            <button type="button" className="btn secondary" onClick={fecharRacional}>
+              ← Voltar ao potencial
+            </button>
+            <div>
+              <p className="eyebrow">Racional do cálculo</p>
+              <h1>{racional.title}</h1>
+              <p className="racional-formula">{racional.formula}</p>
+            </div>
+          </div>
+          <div className="racional-page-kpis">
+            <div className="racional-stat">
+              <span className="label">Total</span>
+              <strong>{formatRacionalValor(racional.unit, racional.total)}</strong>
+            </div>
+            <div className="racional-stat">
+              <span className="label">Projetos</span>
+              <strong>{racional.rows.length}</strong>
+            </div>
+            {racionalTop ? (
+              <div className="racional-stat">
+                <span className="label">Top 3</span>
+                <strong>{racionalTop.pct}%</strong>
+                <span className="muted">do total</span>
+              </div>
+            ) : null}
+          </div>
+        </header>
+
+        {racionalTop ? (
+          <section className="racional-summary">
+            <h2>Maiores contribuições</h2>
+            <div className="racional-top-grid">
+              {racionalTop.top.map((r, i) => (
+                <article key={r.projetoId} className="racional-top-card">
+                  <span className="racional-rank">{i + 1}</span>
+                  <div>
+                    <strong>{r.nome}</strong>
+                    <span className="muted">
+                      {r.area}
+                      {r.status ? ` · ${r.status}` : ''}
+                    </span>
+                  </div>
+                  <em>{formatRacionalValor(racional.unit, r.valor)}</em>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        <section className="panel racional-table-panel">
+          <div className="racional-toolbar">
+            <input
+              type="search"
+              className="racional-search"
+              placeholder="Buscar projeto, área ou status…"
+              value={racionalQuery}
+              onChange={(e) => setRacionalQuery(e.target.value)}
+              autoFocus
+            />
+            <span className="muted">
+              {racionalRowsFiltradas.length} de {racional.rows.length}
+            </span>
+          </div>
+
+          {!racional.rows.length ? (
+            <p className="muted">Nenhum projeto contribui para este indicador.</p>
+          ) : !racionalRowsFiltradas.length ? (
+            <p className="muted">Nenhum resultado para a busca.</p>
+          ) : (
+            <div className="racional-table-wrap">
+              <table className="racional-table">
+                <thead>
+                  <tr>
+                    <th className="col-rank">#</th>
+                    <th>Projeto</th>
+                    <th className="col-area">Área</th>
+                    <th className="col-status">Status</th>
+                    <th className="col-detail">Detalhe</th>
+                    <th className="col-value">Valor</th>
+                    <th className="col-memo">Memória</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {racionalRowsFiltradas.map((r, idx) => {
+                    const aberto = racionalExpandido === r.projetoId;
+                    const temMemo = Boolean(r.racional?.trim());
+                    return (
+                      <Fragment key={r.projetoId}>
+                        <tr className={aberto ? 'is-open' : undefined}>
+                          <td className="col-rank">{idx + 1}</td>
+                          <td>
+                            <strong className="racional-proj-name">{r.nome}</strong>
+                          </td>
+                          <td className="col-area">{r.area}</td>
+                          <td className="col-status">{r.status || '—'}</td>
+                          <td className="col-detail">{r.detalhe || '—'}</td>
+                          <td className="col-value">
+                            {formatRacionalValor(racional.unit, r.valor)}
+                          </td>
+                          <td className="col-memo">
+                            {temMemo ? (
+                              <button
+                                type="button"
+                                className="linkish"
+                                onClick={() =>
+                                  setRacionalExpandido(
+                                    aberto ? null : r.projetoId,
+                                  )
+                                }
+                              >
+                                {aberto ? 'Ocultar' : 'Ver'}
+                              </button>
+                            ) : (
+                              <span className="muted">—</span>
+                            )}
+                          </td>
+                        </tr>
+                        {aberto && temMemo ? (
+                          <tr className="racional-memo-row">
+                            <td colSpan={7}>
+                              <div className="racional-detail-label">
+                                Memória / racional · {r.nome}
+                              </div>
+                              <pre className="racional-detail-text">{r.racional}</pre>
+                            </td>
+                          </tr>
+                        ) : null}
+                      </Fragment>
+                    );
+                  })}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colSpan={5}>
+                      <strong>Soma filtrada</strong>
+                    </td>
+                    <td className="col-value">
+                      <strong>
+                        {formatRacionalValor(racional.unit, somaFiltrada)}
+                      </strong>
+                    </td>
+                    <td />
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          )}
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="analytics">
       <div className="analytics-hero">
@@ -989,158 +1151,6 @@ export function AnalyticsBoard({
             </button>
           </div>
         </section>
-      )}
-
-      {racional && (
-        <div className="drawer-backdrop" onClick={fecharRacional}>
-          <aside
-            className="project-detail-drawer racional-drawer"
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-label={`Racional de ${racional.title}`}
-          >
-            <div className="drawer-head racional-head">
-              <div className="racional-head-main">
-                <button
-                  type="button"
-                  className="linkish"
-                  onClick={fecharRacional}
-                >
-                  ← Voltar
-                </button>
-                <h2>{racional.title}</h2>
-                <p className="racional-formula">{racional.formula}</p>
-              </div>
-              <div className="racional-total">
-                <span className="label">Total</span>
-                <strong>
-                  {formatRacionalValor(racional.unit, racional.total)}
-                </strong>
-                <span className="muted">
-                  {racional.rows.length} projeto
-                  {racional.rows.length === 1 ? '' : 's'}
-                </span>
-              </div>
-            </div>
-
-            <div className="drawer-body racional-body">
-              {racionalTop && (
-                <div className="racional-summary">
-                  <span>
-                    Top 3 concentram <strong>{racionalTop.pct}%</strong> do
-                    total
-                  </span>
-                  <div className="racional-chips">
-                    {racionalTop.top.map((r) => (
-                      <span key={r.projetoId} className="racional-chip">
-                        {r.nome.length > 28
-                          ? `${r.nome.slice(0, 28)}…`
-                          : r.nome}
-                        <em>{formatRacionalValor(racional.unit, r.valor)}</em>
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {!racional.rows.length ? (
-                <p className="muted">
-                  Nenhum projeto contribui para este indicador.
-                </p>
-              ) : (
-                <>
-                  <div className="racional-toolbar">
-                    <input
-                      type="search"
-                      className="racional-search"
-                      placeholder="Buscar projeto, área ou status…"
-                      value={racionalQuery}
-                      onChange={(e) => setRacionalQuery(e.target.value)}
-                    />
-                    <span className="muted">
-                      {racionalRowsFiltradas.length} de {racional.rows.length}
-                    </span>
-                  </div>
-
-                  <div className="racional-list">
-                    {racionalRowsFiltradas.map((r, idx) => {
-                      const aberto = racionalExpandido === r.projetoId;
-                      const temMemo = Boolean(r.racional?.trim());
-                      return (
-                        <div
-                          key={r.projetoId}
-                          className={`racional-item ${aberto ? 'is-open' : ''}`}
-                        >
-                          <button
-                            type="button"
-                            className="racional-item-main"
-                            onClick={() =>
-                              setRacionalExpandido(
-                                aberto ? null : r.projetoId,
-                              )
-                            }
-                            disabled={!temMemo && !r.detalhe}
-                          >
-                            <span className="racional-rank">{idx + 1}</span>
-                            <span className="racional-item-info">
-                              <strong>{r.nome}</strong>
-                              <span className="racional-item-meta">
-                                {r.area}
-                                {r.status ? ` · ${r.status}` : ''}
-                                {r.detalhe ? ` · ${r.detalhe}` : ''}
-                              </span>
-                            </span>
-                            <span className="racional-item-value">
-                              {formatRacionalValor(racional.unit, r.valor)}
-                            </span>
-                            {temMemo ? (
-                              <span
-                                className="racional-chevron"
-                                aria-hidden
-                              >
-                                {aberto ? '▾' : '▸'}
-                              </span>
-                            ) : (
-                              <span className="racional-chevron is-empty" />
-                            )}
-                          </button>
-                          {aberto && temMemo && (
-                            <div className="racional-item-detail">
-                              <div className="racional-detail-label">
-                                Memória / racional do projeto
-                              </div>
-                              <pre className="racional-detail-text">
-                                {r.racional}
-                              </pre>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                    {!racionalRowsFiltradas.length && (
-                      <p className="muted">Nenhum resultado para a busca.</p>
-                    )}
-                  </div>
-
-                  <div className="racional-foot">
-                    <span>Soma filtrada</span>
-                    <strong>
-                      {formatRacionalValor(
-                        racional.unit,
-                        racional.unit === 'count'
-                          ? racionalRowsFiltradas.length
-                          : racionalRowsFiltradas.reduce(
-                              (s, r) => s + r.valor,
-                              0,
-                            ),
-                      )}
-                    </strong>
-                  </div>
-                </>
-              )}
-            </div>
-          </aside>
-        </div>
       )}
 
       {(view === 'overview' || view === 'ganhos') && (
