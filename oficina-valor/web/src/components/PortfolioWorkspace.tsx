@@ -1234,7 +1234,7 @@ export function PortfolioWorkspace({
                   </strong>
                 </div>
                 <div className="detail-kv">
-                  <span>RAG Comunicação</span>
+                  <span>Comunicação</span>
                   <strong>
                     {(
                       detail?.ragComunicacao || selected?.ragComunicacao
@@ -1242,21 +1242,21 @@ export function PortfolioWorkspace({
                   </strong>
                 </div>
                 <div className="detail-kv">
-                  <span>RAG Custo</span>
+                  <span>Custo</span>
                   <strong>
                     {(detail?.ragCusto || selected?.ragCusto)?.toUpperCase() ||
                       '—'}
                   </strong>
                 </div>
                 <div className="detail-kv">
-                  <span>RAG Prazo</span>
+                  <span>Prazo</span>
                   <strong>
                     {(detail?.ragPrazo || selected?.ragPrazo)?.toUpperCase() ||
                       '—'}
                   </strong>
                 </div>
                 <div className="detail-kv">
-                  <span>RAG Escopo</span>
+                  <span>Escopo</span>
                   <strong>
                     {(
                       detail?.ragEscopo || selected?.ragEscopo
