@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { brl } from '../lib/api';
 
 type Health = 'green' | 'yellow' | 'red';
@@ -71,7 +71,17 @@ function buildRacional(
   id: PotencialKpiId,
   projects: any[],
 ): RacionalView {
-  const fmtStatus = (s?: string) => s || '—';
+  const statusLabel: Record<string, string> = {
+    conceito: 'A iniciar',
+    aprovado: 'Aprovado',
+    execucao: 'Em andamento',
+    hold: 'Suspenso',
+    sustentacao: 'Sustentação',
+    encerrado: 'Concluído',
+    morto: 'Arquivado',
+  };
+  const fmtStatus = (s?: string) =>
+    (s && statusLabel[s]) || s || '—';
 
   const base = (title: string, formula: string, unit: RacionalView['unit']) => ({
     id,
@@ -144,7 +154,7 @@ function buildRacional(
     return {
       ...base(
         'Ganho estimado',
-        'Soma de ganhoFinanceiroAnual (economia estimada/ano da ficha ou planilha) de todos os projetos.',
+        'Soma da economia estimada anual informada em cada projeto (ficha / planilha).',
         'brl',
       ),
       total: rows.reduce((s, r) => s + r.valor, 0),
@@ -167,7 +177,7 @@ function buildRacional(
     return {
       ...base(
         'Risco financeiro mitigado',
-        'Soma de riscoFinanceiroMitigadoAnual declarado na ficha (mitigação de risco financeiro/ano).',
+        'Soma do risco financeiro mitigado por ano declarado em cada projeto.',
         'brl',
       ),
       total: rows.reduce((s, r) => s + r.valor, 0),
@@ -190,7 +200,7 @@ function buildRacional(
     return {
       ...base(
         'Ganho do negócio',
-        'Soma de ganhoNegocioAnual declarado na ficha dos projetos.',
+        'Soma dos ganhos de negócio anuais declarados em cada projeto.',
         'brl',
       ),
       total: rows.reduce((s, r) => s + r.valor, 0),
@@ -213,7 +223,7 @@ function buildRacional(
     return {
       ...base(
         'Horas economizadas',
-        'Soma de horasEconomizadasAno (retorno HH/ano ou HH engenheiro+líder+analista da planilha).',
+        'Soma das horas economizadas por ano (retorno HH ou HH engenheiro + líder + analista).',
         'hours',
       ),
       total: rows.reduce((s, r) => s + r.valor, 0),
@@ -244,7 +254,7 @@ function buildRacional(
     return {
       ...base(
         'Recorrentes (anual)',
-        'Soma monetária (financeiro + risco + negócio) dos projetos marcados como ganho recorrente. Horizonte 3 anos = anual × 3.',
+        'Soma monetária dos projetos com ganho recorrente (financeiro + risco + negócio). Em 3 anos = anual × 3.',
         'brl',
       ),
       total: anual,
@@ -274,7 +284,7 @@ function buildRacional(
     return {
       ...base(
         'Pontuais (uma vez)',
-        'Soma monetária (financeiro + risco + negócio) dos projetos com ganho pontual (não recorrente). Conta uma única vez no horizonte.',
+        'Soma monetária dos projetos com ganho pontual. Entra uma única vez no horizonte.',
         'brl',
       ),
       total: rows.reduce((s, r) => s + r.valor, 0),
@@ -312,7 +322,7 @@ function buildRacional(
     return {
       ...base(
         'Horizonte 3 anos',
-        'Fórmula: (soma monetária recorrente × 3) + (soma monetária pontual × 1).',
+        'Recorrentes × 3 anos + pontuais × 1.',
         'brl',
       ),
       total: rows.reduce((s, r) => s + r.valor, 0),
@@ -335,7 +345,7 @@ function buildRacional(
     return {
       ...base(
         'Investimento CAPEX',
-        'Soma de investimentoCapex (ou investimento aprovado) dos projetos.',
+        'Soma do CAPEX informado (ou investimento aprovado) por projeto.',
         'brl',
       ),
       total: rows.reduce((s, r) => s + r.valor, 0),
@@ -358,7 +368,7 @@ function buildRacional(
     return {
       ...base(
         'Investimento OPEX',
-        'Soma de investimentoOpex (ou OPEX gerado) dos projetos.',
+        'Soma do OPEX informado por projeto.',
         'brl',
       ),
       total: rows.reduce((s, r) => s + r.valor, 0),
@@ -378,14 +388,14 @@ function buildRacional(
         area: p.area,
         status: fmtStatus(p.status),
         valor: nVal(p.investimentoCapexParaOpex),
-        detalhe: 'Pendente de Encerrar/Sustentação',
+        detalhe: 'Pendente',
         racional: p.memoriaCalculoGanho,
       }))
       .sort((a, b) => b.valor - a.valor);
     return {
       ...base(
         'CAPEX → OPEX pendente',
-        'Soma do valor planejado de CAPEX→OPEX ainda não aplicado (projeto não implementado).',
+        'Valores planejados para migrar de CAPEX para OPEX após Encerrar ou Sustentação.',
         'brl',
       ),
       total: rows.reduce((s, r) => s + r.valor, 0),
@@ -406,7 +416,7 @@ function buildRacional(
       status: fmtStatus(p.status),
       valor: nVal(p.investimentoCapexParaOpex),
       detalhe: p.capexParaOpexAplicadoEm
-        ? `Aplicado em ${new Date(p.capexParaOpexAplicadoEm).toLocaleString('pt-BR')}`
+        ? `Aplicado em ${new Date(p.capexParaOpexAplicadoEm).toLocaleDateString('pt-BR')}`
         : 'Aplicado',
       racional: p.memoriaCalculoGanho,
     }))
@@ -414,7 +424,7 @@ function buildRacional(
   return {
     ...base(
       'CAPEX → OPEX aplicado',
-      'Soma do valor CAPEX→OPEX já migrado automaticamente ao Encerrar/Sustentação.',
+      'Valores já migrados de CAPEX para OPEX após implementação do projeto.',
       'brl',
     ),
     total: rows.reduce((s, r) => s + r.valor, 0),
@@ -566,6 +576,10 @@ export function AnalyticsBoard({
   );
   const [areaFilter, setAreaFilter] = useState('all');
   const [racionalKpi, setRacionalKpi] = useState<PotencialKpiId | null>(null);
+  const [racionalQuery, setRacionalQuery] = useState('');
+  const [racionalExpandido, setRacionalExpandido] = useState<string | null>(
+    null,
+  );
 
   const projects = useMemo(() => {
     return (portfolio?.porProjeto || []).map((p: any) => ({
@@ -590,6 +604,39 @@ export function AnalyticsBoard({
     () => (racionalKpi ? buildRacional(racionalKpi, projects) : null),
     [racionalKpi, projects],
   );
+
+  useEffect(() => {
+    setRacionalQuery('');
+    setRacionalExpandido(null);
+  }, [racionalKpi]);
+
+  const racionalRowsFiltradas = useMemo(() => {
+    if (!racional) return [];
+    const q = racionalQuery.trim().toLowerCase();
+    if (!q) return racional.rows;
+    return racional.rows.filter(
+      (r) =>
+        r.nome.toLowerCase().includes(q) ||
+        r.area.toLowerCase().includes(q) ||
+        (r.status || '').toLowerCase().includes(q) ||
+        (r.detalhe || '').toLowerCase().includes(q),
+    );
+  }, [racional, racionalQuery]);
+
+  const racionalTop = useMemo(() => {
+    if (!racional?.rows.length || racional.unit === 'count') return null;
+    const top = racional.rows.slice(0, 3);
+    const somaTop = top.reduce((s, r) => s + r.valor, 0);
+    const pct =
+      racional.total > 0 ? Math.round((somaTop / racional.total) * 100) : 0;
+    return { top, pct };
+  }, [racional]);
+
+  function fecharRacional() {
+    setRacionalKpi(null);
+    setRacionalQuery('');
+    setRacionalExpandido(null);
+  }
 
   if (!portfolio) {
     return (
@@ -945,27 +992,24 @@ export function AnalyticsBoard({
       )}
 
       {racional && (
-        <div
-          className="drawer-backdrop"
-          onClick={() => setRacionalKpi(null)}
-        >
+        <div className="drawer-backdrop" onClick={fecharRacional}>
           <aside
             className="project-detail-drawer racional-drawer"
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-label={`Racional de ${racional.title}`}
           >
-            <div className="drawer-head">
-              <div>
+            <div className="drawer-head racional-head">
+              <div className="racional-head-main">
                 <button
                   type="button"
                   className="linkish"
-                  onClick={() => setRacionalKpi(null)}
+                  onClick={fecharRacional}
                 >
-                  ← Voltar ao potencial
+                  ← Voltar
                 </button>
-                <h2 style={{ margin: '8px 0 0' }}>Racional · {racional.title}</h2>
-                <p className="muted" style={{ margin: '6px 0 0' }}>
-                  {racional.formula}
-                </p>
+                <h2>{racional.title}</h2>
+                <p className="racional-formula">{racional.formula}</p>
               </div>
               <div className="racional-total">
                 <span className="label">Total</span>
@@ -978,53 +1022,121 @@ export function AnalyticsBoard({
                 </span>
               </div>
             </div>
-            <div className="drawer-body">
-              {!racional.rows.length ? (
-                <p className="muted">Nenhum projeto contribui para este indicador.</p>
-              ) : (
-                <div className="rag-table-wrap">
-                  <table className="rag-table">
-                    <thead>
-                      <tr>
-                        <th>Projeto</th>
-                        <th>Área</th>
-                        <th>Status</th>
-                        <th>Detalhe</th>
-                        <th style={{ textAlign: 'right' }}>Valor</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {racional.rows.map((r) => (
-                        <tr key={r.projetoId}>
-                          <td>
-                            <strong>{r.nome}</strong>
-                            {r.racional ? (
-                              <div className="racional-memo muted">{r.racional}</div>
-                            ) : null}
-                          </td>
-                          <td>{r.area}</td>
-                          <td>{r.status || '—'}</td>
-                          <td>{r.detalhe || '—'}</td>
-                          <td style={{ textAlign: 'right' }}>
-                            {formatRacionalValor(racional.unit, r.valor)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                    <tfoot>
-                      <tr>
-                        <td colSpan={4}>
-                          <strong>Soma</strong>
-                        </td>
-                        <td style={{ textAlign: 'right' }}>
-                          <strong>
-                            {formatRacionalValor(racional.unit, racional.total)}
-                          </strong>
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </table>
+
+            <div className="drawer-body racional-body">
+              {racionalTop && (
+                <div className="racional-summary">
+                  <span>
+                    Top 3 concentram <strong>{racionalTop.pct}%</strong> do
+                    total
+                  </span>
+                  <div className="racional-chips">
+                    {racionalTop.top.map((r) => (
+                      <span key={r.projetoId} className="racional-chip">
+                        {r.nome.length > 28
+                          ? `${r.nome.slice(0, 28)}…`
+                          : r.nome}
+                        <em>{formatRacionalValor(racional.unit, r.valor)}</em>
+                      </span>
+                    ))}
+                  </div>
                 </div>
+              )}
+
+              {!racional.rows.length ? (
+                <p className="muted">
+                  Nenhum projeto contribui para este indicador.
+                </p>
+              ) : (
+                <>
+                  <div className="racional-toolbar">
+                    <input
+                      type="search"
+                      className="racional-search"
+                      placeholder="Buscar projeto, área ou status…"
+                      value={racionalQuery}
+                      onChange={(e) => setRacionalQuery(e.target.value)}
+                    />
+                    <span className="muted">
+                      {racionalRowsFiltradas.length} de {racional.rows.length}
+                    </span>
+                  </div>
+
+                  <div className="racional-list">
+                    {racionalRowsFiltradas.map((r, idx) => {
+                      const aberto = racionalExpandido === r.projetoId;
+                      const temMemo = Boolean(r.racional?.trim());
+                      return (
+                        <div
+                          key={r.projetoId}
+                          className={`racional-item ${aberto ? 'is-open' : ''}`}
+                        >
+                          <button
+                            type="button"
+                            className="racional-item-main"
+                            onClick={() =>
+                              setRacionalExpandido(
+                                aberto ? null : r.projetoId,
+                              )
+                            }
+                            disabled={!temMemo && !r.detalhe}
+                          >
+                            <span className="racional-rank">{idx + 1}</span>
+                            <span className="racional-item-info">
+                              <strong>{r.nome}</strong>
+                              <span className="racional-item-meta">
+                                {r.area}
+                                {r.status ? ` · ${r.status}` : ''}
+                                {r.detalhe ? ` · ${r.detalhe}` : ''}
+                              </span>
+                            </span>
+                            <span className="racional-item-value">
+                              {formatRacionalValor(racional.unit, r.valor)}
+                            </span>
+                            {temMemo ? (
+                              <span
+                                className="racional-chevron"
+                                aria-hidden
+                              >
+                                {aberto ? '▾' : '▸'}
+                              </span>
+                            ) : (
+                              <span className="racional-chevron is-empty" />
+                            )}
+                          </button>
+                          {aberto && temMemo && (
+                            <div className="racional-item-detail">
+                              <div className="racional-detail-label">
+                                Memória / racional do projeto
+                              </div>
+                              <pre className="racional-detail-text">
+                                {r.racional}
+                              </pre>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                    {!racionalRowsFiltradas.length && (
+                      <p className="muted">Nenhum resultado para a busca.</p>
+                    )}
+                  </div>
+
+                  <div className="racional-foot">
+                    <span>Soma filtrada</span>
+                    <strong>
+                      {formatRacionalValor(
+                        racional.unit,
+                        racional.unit === 'count'
+                          ? racionalRowsFiltradas.length
+                          : racionalRowsFiltradas.reduce(
+                              (s, r) => s + r.valor,
+                              0,
+                            ),
+                      )}
+                    </strong>
+                  </div>
+                </>
               )}
             </div>
           </aside>
