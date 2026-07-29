@@ -190,15 +190,19 @@ export default function App() {
   }, [portfolio, projetos]);
 
   const enriched = useMemo(() => {
-    return projetos.map((p) => {
+    return projetos.map((p: any) => {
       const a = analyticsById.get(p.id);
+      const pepReal =
+        Array.isArray(p.peps) && p.peps.length > 0
+          ? p.peps.reduce((s: number, pep: any) => s + Number(pep.real || 0), 0)
+          : null;
       return {
         ...p,
         analytics: a,
         brr: a?.brr ?? null,
         health: healthFromBrr(a?.brr),
         prometido: a?.prometido ?? Number(p.investimentoAprovado || 0),
-        realizado: a?.realizado ?? 0,
+        realizado: pepReal ?? a?.realizado ?? 0,
       };
     });
   }, [projetos, analyticsById]);

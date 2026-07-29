@@ -181,6 +181,7 @@ async function wipeProjetos() {
   await prisma.agentRecommendation.deleteMany();
   await prisma.agentActivity.deleteMany();
   await prisma.demanda.updateMany({ data: { projetoId: null } });
+  await prisma.projetoPep.deleteMany();
   await prisma.projeto.deleteMany();
   console.log('Projetos mockados / anteriores removidos');
 }

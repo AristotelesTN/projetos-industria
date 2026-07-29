@@ -80,6 +80,7 @@ export class ProjetosService {
             },
           },
         },
+        peps: { orderBy: { carteira: 'asc' } },
       },
       orderBy: { nome: 'asc' },
     });
@@ -118,6 +119,7 @@ export class ProjetosService {
           orderBy: { decididaEm: 'desc' },
         },
         custos: { orderBy: { periodoReferencia: 'desc' } },
+        peps: { orderBy: { carteira: 'asc' } },
       },
     });
     if (!projeto) throw new NotFoundException('Projeto não encontrado');
@@ -831,6 +833,7 @@ export class ProjetosService {
       await tx.wizardSessao.deleteMany({ where: { projetoId: id } });
       await tx.gateDecisao.deleteMany({ where: { projetoId: id } });
       await tx.custoRealizado.deleteMany({ where: { projetoId: id } });
+      await tx.projetoPep.deleteMany({ where: { projetoId: id } });
       await tx.historicoResponsavel.deleteMany({ where: { projetoId: id } });
 
       const beneficios = projeto.businessCase?.beneficios ?? [];

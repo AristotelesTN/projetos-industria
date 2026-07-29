@@ -306,6 +306,7 @@ model Projeto {
   businessCase   BusinessCase?
   gates          GateDecisao[]
   custos         CustoRealizado[]
+  peps           ProjetoPep[]
   historicosResp HistoricoResponsavel[]
   wizards        WizardSessao[]
   agentRecs      AgentRecommendation[]
@@ -314,6 +315,27 @@ model Projeto {
   @@index([fonteImportacao])
   @@index([status])
   @@map("projetos")
+}
+
+/// Elemento PEP (WBS) do SAP vinculado ao projeto — custos orçamentários.
+model ProjetoPep {
+  id              String   @id @default(uuid())
+  projetoId       String   @map("projeto_id")
+  codigoPep       String   @map("codigo_pep")
+  carteira        String
+  descricao       String?
+  orcamento       Decimal  @db.Decimal(18, 2)
+  disposto        Decimal  @db.Decimal(18, 2)
+  real            Decimal  @db.Decimal(18, 2)
+  comprometido    Decimal  @db.Decimal(18, 2)
+  disponivel      Decimal  @db.Decimal(18, 2)
+  importadoEm     DateTime @default(now()) @map("importado_em")
+
+  projeto Projeto @relation(fields: [projetoId], references: [id])
+
+  @@unique([codigoPep])
+  @@index([projetoId])
+  @@map("projeto_peps")
 }
 
 /// Funil de captação/triagem (US-82..89) antes da execução com ganhos.

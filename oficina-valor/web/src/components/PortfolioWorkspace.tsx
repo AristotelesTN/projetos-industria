@@ -66,6 +66,19 @@ type ProjetoRow = {
   fimReal?: string | null;
   inicioPrevisto?: string | null;
   fimPrevisto?: string | null;
+  peps?: PepRow[];
+};
+
+type PepRow = {
+  id: string;
+  codigoPep: string;
+  carteira: string;
+  descricao?: string | null;
+  orcamento: number | string;
+  disposto: number | string;
+  real: number | string;
+  comprometido: number | string;
+  disponivel: number | string;
 };
 
 type ViewTab = 'board' | 'lista' | 'saude';
@@ -1320,6 +1333,85 @@ export function PortfolioWorkspace({
                 <span>PM</span>
                 <strong>{detail?.pm?.nome || selected?.pm?.nome || '—'}</strong>
               </div>
+
+              {(() => {
+                const peps =
+                  detail?.peps || selected?.peps || [];
+                if (!peps.length) return null;
+                const pepTotal = {
+                  orcamento: peps.reduce(
+                    (s: number, p: PepRow) => s + Number(p.orcamento),
+                    0,
+                  ),
+                  disposto: peps.reduce(
+                    (s: number, p: PepRow) => s + Number(p.disposto),
+                    0,
+                  ),
+                  real: peps.reduce(
+                    (s: number, p: PepRow) => s + Number(p.real),
+                    0,
+                  ),
+                  comprometido: peps.reduce(
+                    (s: number, p: PepRow) => s + Number(p.comprometido),
+                    0,
+                  ),
+                  disponivel: peps.reduce(
+                    (s: number, p: PepRow) => s + Number(p.disponivel),
+                    0,
+                  ),
+                };
+                return (
+                  <div className="fapd-block">
+                    <h3>Custos PEP (SAP)</h3>
+                    <table className="pep-table">
+                      <thead>
+                        <tr>
+                          <th>PEP</th>
+                          <th>Carteira</th>
+                          <th className="num">Orçamento</th>
+                          <th className="num">Disposto</th>
+                          <th className="num">Real</th>
+                          <th className="num">Comprom.</th>
+                          <th className="num">Disponível</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {peps.map((p: PepRow) => (
+                          <tr key={p.id}>
+                            <td>{p.codigoPep}</td>
+                            <td>{p.carteira}</td>
+                            <td className="num">{brl(Number(p.orcamento))}</td>
+                            <td className="num">{brl(Number(p.disposto))}</td>
+                            <td className="num">{brl(Number(p.real))}</td>
+                            <td className="num">
+                              {brl(Number(p.comprometido))}
+                            </td>
+                            <td className="num">
+                              {brl(Number(p.disponivel))}
+                            </td>
+                          </tr>
+                        ))}
+                        {peps.length > 1 && (
+                          <tr className="pep-total">
+                            <td colSpan={2}>Total</td>
+                            <td className="num">
+                              {brl(pepTotal.orcamento)}
+                            </td>
+                            <td className="num">{brl(pepTotal.disposto)}</td>
+                            <td className="num">{brl(pepTotal.real)}</td>
+                            <td className="num">
+                              {brl(pepTotal.comprometido)}
+                            </td>
+                            <td className="num">
+                              {brl(pepTotal.disponivel)}
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                );
+              })()}
 
               <div className="fapd-block">
                 <h3>Ganhos · potencial declarado</h3>
