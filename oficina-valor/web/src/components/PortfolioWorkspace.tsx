@@ -114,12 +114,43 @@ const OE_FIELDS: {
   key: 'Oe1' | 'Oe3' | 'Oe4' | 'Oe5Sust' | 'Oe5Tech';
   label: string;
   hint: string;
+  tooltip: string;
 }[] = [
-  { key: 'Oe1', label: 'OE1', hint: 'Estratégia / alinhamento' },
-  { key: 'Oe3', label: 'OE3', hint: 'Valor / benefício' },
-  { key: 'Oe4', label: 'OE4', hint: 'Execução / capacidade' },
-  { key: 'Oe5Sust', label: 'OE5 Sust.', hint: 'Sustentação' },
-  { key: 'Oe5Tech', label: 'OE5 Tech', hint: 'Tecnologia' },
+  {
+    key: 'Oe1',
+    label: 'OE1',
+    hint: 'Estratégia / alinhamento',
+    tooltip:
+      'Objetivo Estratégico 1 — Estratégia / alinhamento: o quanto o projeto contribui e está alinhado à estratégia e às prioridades da organização.',
+  },
+  {
+    key: 'Oe3',
+    label: 'OE3',
+    hint: 'Valor / benefício',
+    tooltip:
+      'Objetivo Estratégico 3 — Valor / benefício: o valor e o benefício esperados (financeiro, risco mitigado ou ganho de negócio).',
+  },
+  {
+    key: 'Oe4',
+    label: 'OE4',
+    hint: 'Execução / capacidade',
+    tooltip:
+      'Objetivo Estratégico 4 — Execução / capacidade: viabilidade de executar o projeto com a capacidade, prazo e recursos disponíveis.',
+  },
+  {
+    key: 'Oe5Sust',
+    label: 'OE5 Sust.',
+    hint: 'Sustentação',
+    tooltip:
+      'Objetivo Estratégico 5 (Sustentação) — capacidade de manter os ganhos após a implementação (processo, operação e governança).',
+  },
+  {
+    key: 'Oe5Tech',
+    label: 'OE5 Tech',
+    hint: 'Tecnologia',
+    tooltip:
+      'Objetivo Estratégico 5 (Tecnologia) — adequação tecnológica, arquitetura, integração e risco técnico do projeto.',
+  },
 ];
 
 const GANHO_PRINCIPAL_OPTIONS: { id: string; label: string }[] = [
@@ -1572,7 +1603,18 @@ export function PortfolioWorkspace({
                     return (
                       <label key={oe.key} className="fapd-oe">
                         <span className="fapd-oe-label">
-                          {oe.label}
+                          <span className="fapd-oe-title">
+                            {oe.label}
+                            <span
+                              className="fapd-oe-info"
+                              tabIndex={0}
+                              role="note"
+                              aria-label={oe.tooltip}
+                              data-tooltip={oe.tooltip}
+                            >
+                              ?
+                            </span>
+                          </span>
                           <small>{oe.hint}</small>
                         </span>
                         <div className="fapd-oe-controls">
