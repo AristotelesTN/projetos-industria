@@ -1,0 +1,54 @@
+import {
+  Body,
+  Controller,
+  Param,
+  Post,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { memoryStorage } from 'multer';
+import { CustosService } from './custos.service';
+import { DevAuthGuard } from '../auth/dev-auth.guard';
+import { CurrentUser } from '../common/decorators';
+import { RolesGuard } from '../common/roles.guard';
+import { AuthUser } from '../common/roles';
+
+class CustoDto {
+  @IsString()
+  periodoReferencia!: string;
+
+  @IsNumber()
+  @Min(0)
+  valor!: number;
+
+  @IsOptional()
+  @IsString()
+  centroCustoCodigo?: string;
+}
+
+@Controller()
+@UseGuards(DevAuthGuard, RolesGuard)
+export class CustosController {
+  constructor(private readonly custos: CustosService) {}
+
+  @Post('projetos/:id/custos')
+  add(
+    @Param('id') id: string,
+    @Body() dto: CustoDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.custos.adicionar(id, dto, user);
+  }
+
+  @Post('integracoes/erp/custos')
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
+  importCsv(
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.custos.importCsv(file.buffer, user);
+  }
+}

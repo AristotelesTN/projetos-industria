@@ -1,0 +1,11 @@
+# Override para ambientes Docker nested (ex.: cloud agents) onde
+# TCP container↔container na rede bridge falha. Na sua máquina local
+# NÃO use este arquivo — o docker-compose.yml padrão basta.
+services:
+  api:
+    environment:
+      DATABASE_URL: postgresql://oficina:oficina@host.docker.internal:5433/oficina_valor
+      CORS_ORIGIN: "*"
+      NAO_SYNC_URL: http://host.docker.internal:8788/sync
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

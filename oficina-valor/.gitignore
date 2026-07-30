@@ -1,0 +1,10 @@
+node_modules/
+dist/
+uploads/*
+!uploads/.gitkeep
+*.duckdb
+.env
+.DS_Store
+api/uploads/
+nao/data/*.csv
+web/dist/

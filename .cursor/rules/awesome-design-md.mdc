@@ -1,0 +1,14 @@
+---
+description: Use VoltAgent awesome-design-md brand DESIGN.md files when generating or restyling UI.
+alwaysApply: false
+---
+
+# Awesome DESIGN.md
+
+When building or restyling UI, use the curated DESIGN.md library:
+
+- Global clone: `~/.cursor/awesome-design-md/design-md/<brand>/DESIGN.md`
+- Skill: `awesome-design-md`
+- Upstream: https://github.com/VoltAgent/awesome-design-md
+
+Pick a brand, read its DESIGN.md, optionally install it as project `DESIGN.md`, then match tokens/layout — don’t invent a conflicting visual system.

@@ -1,11 +1,35 @@
 {
   "version": 1,
   "skills": {
+    "gstack": {
+      "source": "garrytan/gstack",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "3fac2ca1320d26d7cc8d95fb0844fd499d2f34796cb4a845e6487518fd17edcd"
+    },
+    "karpathy-guidelines": {
+      "source": "multica-ai/andrej-karpathy-skills",
+      "sourceType": "github",
+      "skillPath": "skills/karpathy-guidelines/SKILL.md",
+      "computedHash": "41e8ca055bbde13d240776a14a076a59614057200340c243130a76ba4e64cac8"
+    },
     "llm-council": {
       "source": "am-will/codex-skills",
       "sourceType": "github",
       "skillPath": "skills/llm-council/SKILL.md",
       "computedHash": "ac408ec68f72afce439aac6dc45d0f35394ef6b17bd08ce5f35843909eadb51c"
+    },
+    "awesome-design-md": {
+      "source": "VoltAgent/awesome-design-md",
+      "sourceType": "github",
+      "skillPath": "README.md",
+      "computedHash": "5f910062a49166aa17d940050ac7327703954e08a12d0644fce94e6063cdf243"
+    },
+    "last30days": {
+      "source": "mvanhorn/last30days-skill",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "f440ad866dd4bf888972c9d6735c2d49e3a3fea987762a8137d473fa6423e018"
     }
   }
 }

@@ -1,0 +1,692 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PapelCodigo {
+  GERENTE_PORTFOLIO
+}
+
+enum ProjetoStatus {
+  conceito
+  aprovado
+  execucao
+  encerrado
+  sustentacao
+  morto
+  hold
+}
+
+/// Tipo de investimento informado na planilha de planejamento.
+enum TipoProjetoInvestimento {
+  capex
+  opex
+  demanda
+}
+
+/// Semáforo OK/NOK da planilha (comunicação, custo, prazo, escopo).
+enum SemaforoRag {
+  ok
+  nok
+}
+
+/// Classificação operacional da planilha.
+enum ClassificacaoProjeto {
+  inovacao
+  melhoria
+}
+
+/// Escopo de negócio do projeto (filtro Analytics: Comercial × Industrial).
+enum EscopoNegocio {
+  comercial
+  industrial
+}
+
+/// Papel estratégico na matriz FAPD (avaliação de projetos digitais).
+enum PapelEstrategicoFapd {
+  estruturante
+  gerador
+}
+
+enum BeneficioCategoria {
+  hard
+  soft
+  avoidance
+  estrategico
+}
+
+enum BeneficioStatus {
+  planejado
+  em_captura
+  incorporado
+  cancelado
+}
+
+enum MedicaoStatus {
+  rascunho
+  pendente_validacao
+  validada
+  rejeitada
+  estornada
+  arquivada
+}
+
+enum GateTipo {
+  G1
+  G2
+  G3
+  G4
+  G5
+}
+
+enum GateDecisaoTipo {
+  go
+  kill
+  hold
+  recycle
+}
+
+enum ValidacaoDecisao {
+  aprovada
+  rejeitada
+}
+
+enum OrigemCusto {
+  erp_import
+  manual
+}
+
+enum DemandaOrigem {
+  interna
+  aevo
+}
+
+enum DemandaStatus {
+  recebida
+  entrevista
+  ficha
+  priorizacao
+  decisao
+  aprovada
+  reprovada
+}
+
+/// Tipo do ganho principal declarado no projeto (painel de valor).
+enum GanhoPrincipalTipo {
+  qualitativo
+  horas_economizadas
+  financeiro
+  risco_mitigado
+  negocio
+}
+
+enum CategoriaQualitativaGanho {
+  estruturante
+  prover_informacoes
+  capacitacao
+  exploracao
+  auditoria
+  obrigacao_legal
+  indefinido
+}
+
+model Usuario {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  nome      String
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  papeis              PapelUsuario[]
+  projetosSponsor     Projeto[]           @relation("ProjetoSponsor")
+  projetosPm          Projeto[]           @relation("ProjetoPm")
+  beneficiosOwner     Beneficio[]         @relation("BenefitOwner")
+  medicoesRegistradas Medicao[]           @relation("MedicaoRegistrador")
+  validacoes          Validacao[]
+  gates               GateDecisao[]
+  baselinesAprovadas  Baseline[]          @relation("BaselineAprovador")
+  custosImportados    CustoRealizado[]
+  auditorias          Auditoria[]
+  historicosDe        HistoricoResponsavel[] @relation("ResponsavelAnterior")
+  historicosPara      HistoricoResponsavel[] @relation("ResponsavelNovo")
+  agentRecommendations AgentRecommendation[] @relation("AgentResolvedBy")
+
+  @@map("usuarios")
+}
+
+model Papel {
+  id     String      @id @default(uuid())
+  codigo PapelCodigo @unique
+  nome   String
+
+  usuarios PapelUsuario[]
+
+  @@map("papeis")
+}
+
+model PapelUsuario {
+  id        String @id @default(uuid())
+  usuarioId String @map("usuario_id")
+  papelId   String @map("papel_id")
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+  papel   Papel   @relation(fields: [papelId], references: [id])
+
+  @@unique([usuarioId, papelId])
+  @@map("papel_usuario")
+}
+
+model Portfolio {
+  id        String   @id @default(uuid())
+  nome      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  projetos Projeto[]
+
+  @@map("portfolios")
+}
+
+model Area {
+  id   String @id @default(uuid())
+  nome String @unique
+
+  projetos Projeto[]
+
+  @@map("areas")
+}
+
+model CentroCusto {
+  id     String @id @default(uuid())
+  codigo String @unique
+  nome   String
+
+  beneficios Beneficio[]
+  custos     CustoRealizado[]
+
+  @@map("centros_custo")
+}
+
+model Projeto {
+  id                     String        @id @default(uuid())
+  nome                   String
+  portfolioId            String        @map("portfolio_id")
+  areaId                 String        @map("area_id")
+  sponsorId              String        @map("sponsor_id")
+  pmId                   String        @map("pm_id")
+  status                 ProjetoStatus @default(conceito)
+  investimentoAprovado   Decimal       @default(0) @map("investimento_aprovado") @db.Decimal(18, 2)
+  inicioPrevisto         DateTime?     @map("inicio_previsto") @db.Date
+  fimPrevisto            DateTime?     @map("fim_previsto") @db.Date
+  /// Datas reais de execução (planilha DT. Início / DT. Fim).
+  inicioReal             DateTime?     @map("inicio_real") @db.Date
+  fimReal                DateTime?     @map("fim_real") @db.Date
+  premissasOkFinancas    Boolean       @default(false) @map("premissas_ok_financas")
+  wizardBaselineCompleto Boolean       @default(false) @map("wizard_baseline_completo")
+  semGanhos              Boolean       @default(false) @map("sem_ganhos")
+  naoAdotado             Boolean       @default(false) @map("nao_adotado")
+  causaNaoAdocao         String?       @map("causa_nao_adocao")
+
+  /// Origem / chave de importação (ex.: planejamento_estruturado).
+  fonteImportacao        String?       @map("fonte_importacao")
+  codigoExterno          String?       @map("codigo_externo")
+
+  /// Campos da planilha Planejamento Estruturado.
+  tipoInvestimento       TipoProjetoInvestimento? @map("tipo_investimento")
+  facilitador            String?
+  responsavelNome        String?       @map("responsavel_nome")
+  fornecedor             String?
+  setor                  String?
+  diretoria              String?
+  /// Comercial vs Industrial — usado nos filtros de Analytics.
+  escopoNegocio          EscopoNegocio @default(industrial) @map("escopo_negocio")
+  classificacao          ClassificacaoProjeto? @map("classificacao")
+  emUso                  Boolean?      @map("em_uso")
+  ragComunicacao         SemaforoRag?  @map("rag_comunicacao")
+  ragCusto               SemaforoRag?  @map("rag_custo")
+  ragPrazo               SemaforoRag?  @map("rag_prazo")
+  ragEscopo              SemaforoRag?  @map("rag_escopo")
+  ganhoQuantitativoTexto String?       @map("ganho_quantitativo_texto") @db.Text
+  economiaEstimadaAno    Decimal?      @map("economia_estimada_ano") @db.Decimal(18, 2)
+  economiaRealAno        Decimal?      @map("economia_real_ano") @db.Decimal(18, 2)
+  hhEngenheiro           Decimal?      @map("hh_engenheiro") @db.Decimal(18, 2)
+  hhLider                Decimal?      @map("hh_lider") @db.Decimal(18, 2)
+  hhAnalista             Decimal?      @map("hh_analista") @db.Decimal(18, 2)
+  retornoHhAno           Decimal?      @map("retorno_hh_ano") @db.Decimal(18, 2)
+
+  /// Avaliação FAPD (MVP): notas OE 0–5 ou N/A + papel estratégico.
+  notaOe1                Int?          @map("nota_oe1")
+  notaOe3                Int?          @map("nota_oe3")
+  notaOe4                Int?          @map("nota_oe4")
+  notaOe5Sust            Int?          @map("nota_oe5_sust")
+  notaOe5Tech            Int?          @map("nota_oe5_tech")
+  naOe1                  Boolean       @default(false) @map("na_oe1")
+  naOe3                  Boolean       @default(false) @map("na_oe3")
+  naOe4                  Boolean       @default(false) @map("na_oe4")
+  naOe5Sust              Boolean       @default(false) @map("na_oe5_sust")
+  naOe5Tech              Boolean       @default(false) @map("na_oe5_tech")
+  papelEstrategico       PapelEstrategicoFapd? @map("papel_estrategico")
+  comentarioFapd         String?       @map("comentario_fapd")
+
+  /// Memória de cálculo do ganho (premissas, fórmula, fontes) + comentários livres.
+  memoriaCalculoGanho    String?       @map("memoria_calculo_ganho") @db.Text
+  comentarios            String?       @map("comentarios") @db.Text
+  /// OPEX gerado / impacto operacional informado no projeto (R$).
+  opexGerado             Decimal?      @map("opex_gerado") @db.Decimal(18, 2)
+
+  /// Potencial de ganhos declarado (painel de valor — distinto do realizado homologado).
+  ganhoPrincipal              GanhoPrincipalTipo? @map("ganho_principal")
+  ganhoQualitativoEscala      Int?                @map("ganho_qualitativo_escala")
+  categoriaQualitativa        CategoriaQualitativaGanho? @map("categoria_qualitativa")
+  horasEconomizadasAno        Decimal?            @map("horas_economizadas_ano") @db.Decimal(18, 2)
+  ganhoFinanceiroAnual        Decimal?            @map("ganho_financeiro_anual") @db.Decimal(18, 2)
+  riscoFinanceiroMitigadoAnual Decimal?           @map("risco_financeiro_mitigado_anual") @db.Decimal(18, 2)
+  ganhoNegocioAnual           Decimal?            @map("ganho_negocio_anual") @db.Decimal(18, 2)
+  /// true = recorrente (repete e acumula nos anos); false = pontual (uma vez).
+  ganhoRecorrente             Boolean             @default(false) @map("ganho_recorrente")
+  /// Se true, o projeto não entra no painel de potencial estimado.
+  excluirDoPotencialEstimado  Boolean             @default(false) @map("excluir_do_potencial_estimado")
+
+  /// Investimento detalhado (substitui o uso isolado de investimentoAprovado no painel).
+  investimentoCapex           Decimal?            @map("investimento_capex") @db.Decimal(18, 2)
+  investimentoOpex            Decimal?            @map("investimento_opex") @db.Decimal(18, 2)
+  /// Valor planejado a migrar de CAPEX → OPEX após implementação (encerrado/sustentação).
+  investimentoCapexParaOpex   Decimal?            @map("investimento_capex_para_opex") @db.Decimal(18, 2)
+  /// Quando a migração CAPEX→OPEX foi aplicada automaticamente.
+  capexParaOpexAplicadoEm     DateTime?           @map("capex_para_opex_aplicado_em")
+
+  /// Após encerrar: dispara ciclo de acompanhamento de ganhos pós-projeto.
+  acompanhamentoPosPendente Boolean    @default(false) @map("acompanhamento_pos_pendente")
+  finalizadoEm           DateTime?     @map("finalizado_em")
+  justificativaDecisao   String?       @map("justificativa_decisao") @db.Text
+
+  createdAt              DateTime      @default(now()) @map("created_at")
+  updatedAt              DateTime      @updatedAt @map("updated_at")
+
+  portfolio      Portfolio         @relation(fields: [portfolioId], references: [id])
+  area           Area              @relation(fields: [areaId], references: [id])
+  sponsor        Usuario           @relation("ProjetoSponsor", fields: [sponsorId], references: [id])
+  pm             Usuario           @relation("ProjetoPm", fields: [pmId], references: [id])
+  businessCase   BusinessCase?
+  gates          GateDecisao[]
+  custos         CustoRealizado[]
+  peps           ProjetoPep[]
+  historicosResp HistoricoResponsavel[]
+  wizards        WizardSessao[]
+  agentRecs      AgentRecommendation[]
+  demandaOrigem  Demanda?
+
+  @@index([fonteImportacao])
+  @@index([status])
+  @@map("projetos")
+}
+
+/// Elemento PEP (WBS) do SAP vinculado ao projeto — custos orçamentários.
+model ProjetoPep {
+  id              String   @id @default(uuid())
+  projetoId       String   @map("projeto_id")
+  codigoPep       String   @map("codigo_pep")
+  carteira        String
+  descricao       String?
+  orcamento       Decimal  @db.Decimal(18, 2)
+  disposto        Decimal  @db.Decimal(18, 2)
+  real            Decimal  @db.Decimal(18, 2)
+  comprometido    Decimal  @db.Decimal(18, 2)
+  disponivel      Decimal  @db.Decimal(18, 2)
+  importadoEm     DateTime @default(now()) @map("importado_em")
+
+  projeto Projeto @relation(fields: [projetoId], references: [id])
+
+  @@unique([codigoPep])
+  @@index([projetoId])
+  @@map("projeto_peps")
+}
+
+/// Funil de captação/triagem (US-82..89) antes da execução com ganhos.
+model Demanda {
+  id                String        @id @default(uuid())
+  titulo            String
+  descricao         String        @db.Text
+  solicitanteNome   String        @map("solicitante_nome")
+  areaNome          String        @map("area_nome")
+  origem            DemandaOrigem @default(interna)
+  idAevo            String?       @map("id_aevo")
+  status            DemandaStatus @default(recebida)
+
+  entrevistaConcluida              Boolean @default(false) @map("entrevista_concluida")
+  entrevistaDispensaJustificativa  String? @map("entrevista_dispensa_justificativa") @db.Text
+  ganhosEstimadosResumo            String? @map("ganhos_estimados_resumo") @db.Text
+
+  scoreImpacto       Int?     @map("score_impacto")
+  scoreAlinhamento   Int?     @map("score_alinhamento")
+  scoreEsforco       Int?     @map("score_esforco")
+  scoreRisco         Int?     @map("score_risco")
+  scoreTotal         Decimal? @map("score_total") @db.Decimal(8, 2)
+  justificativaPriorizacao String? @map("justificativa_priorizacao") @db.Text
+
+  desenvolvimentoInterno Boolean? @map("desenvolvimento_interno")
+  investimentoEstimado   Decimal? @map("investimento_estimado") @db.Decimal(18, 2)
+  decisaoGoNoGo          String?  @map("decisao_go_nogo")
+  justificativaDecisao   String?  @map("justificativa_decisao") @db.Text
+
+  projetoId String?  @unique @map("projeto_id")
+  projeto   Projeto? @relation(fields: [projetoId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([origem])
+  @@map("demandas")
+}
+
+enum WizardTipo {
+  baseline
+  realizacao
+}
+
+enum WizardRamo {
+  producao
+  reducao_custos
+  tempo_produtividade
+  qualitativo_qualidade
+  qualitativo_risco
+  sem_ganhos
+}
+
+enum WizardStatus {
+  em_andamento
+  concluido
+  encaminhado
+}
+
+model WizardSessao {
+  id               String       @id @default(uuid())
+  projetoId        String       @map("projeto_id")
+  tipo             WizardTipo
+  status           WizardStatus @default(em_andamento)
+  respondenteId    String?      @map("respondente_id")
+  respondenteNome  String?      @map("respondente_nome")
+  conheceProjeto   Boolean?     @map("conhece_projeto")
+  adotado          Boolean?
+  causaNaoAdocao   String?      @map("causa_nao_adocao")
+  ramo             WizardRamo?
+  cicloRetry       Int          @default(0) @map("ciclo_retry")
+  respostas        Json         @default("{}")
+  resultado        Json?
+  semGanhos        Boolean      @default(false) @map("sem_ganhos")
+  encaminhadoPara  String?      @map("encaminhado_para")
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
+
+  projeto Projeto @relation(fields: [projetoId], references: [id])
+
+  @@index([projetoId, tipo])
+  @@map("wizard_sessoes")
+}
+
+model BusinessCase {
+  id           String   @id @default(uuid())
+  projetoId    String   @unique @map("projeto_id")
+  problema     String
+  investimento Decimal  @db.Decimal(18, 2)
+  prazoMeses   Int      @map("prazo_meses")
+  submetido    Boolean  @default(false)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  projeto    Projeto     @relation(fields: [projetoId], references: [id])
+  beneficios Beneficio[]
+
+  @@map("business_cases")
+}
+
+model Beneficio {
+  id                   String             @id @default(uuid())
+  businessCaseId       String             @map("business_case_id")
+  nome                 String
+  categoria            BeneficioCategoria
+  centroCustoId        String?            @map("centro_custo_id")
+  valorMensalEsperado  Decimal            @default(0) @map("valor_mensal_esperado") @db.Decimal(18, 2)
+  escalaEstrategica    Int?               @map("escala_estrategica")
+  inicioCaptura        DateTime?          @map("inicio_captura") @db.Date
+  janelaMeses          Int                @default(12) @map("janela_meses")
+  benefitOwnerId       String             @map("benefit_owner_id")
+  status               BeneficioStatus    @default(planejado)
+  capturaPausada       Boolean            @default(false) @map("captura_pausada")
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+
+  businessCase BusinessCase @relation(fields: [businessCaseId], references: [id])
+  centroCusto  CentroCusto? @relation(fields: [centroCustoId], references: [id])
+  benefitOwner Usuario      @relation("BenefitOwner", fields: [benefitOwnerId], references: [id])
+  baselines    Baseline[]
+  medicoes     Medicao[]
+  historicos   HistoricoResponsavel[]
+
+  @@map("beneficios")
+}
+
+model Baseline {
+  id                   String   @id @default(uuid())
+  beneficioId          String   @map("beneficio_id")
+  valorTotalBaseline   Decimal  @map("valor_total_baseline") @db.Decimal(18, 2)
+  perfilMensal         Json     @map("perfil_mensal")
+  moeda                String   @default("BRL")
+  taxaCambioCongelada  Decimal  @default(1) @map("taxa_cambio_congelada") @db.Decimal(18, 6)
+  congeladaEm          DateTime? @map("congelada_em")
+  aprovadaPorId        String?  @map("aprovada_por_id")
+  versao               Int
+  vigente              Boolean  @default(false)
+  createdAt            DateTime @default(now()) @map("created_at")
+
+  beneficio   Beneficio @relation(fields: [beneficioId], references: [id])
+  aprovadaPor Usuario?  @relation("BaselineAprovador", fields: [aprovadaPorId], references: [id])
+
+  @@unique([beneficioId, versao])
+  @@map("baselines")
+}
+
+model Medicao {
+  id                String        @id @default(uuid())
+  beneficioId       String        @map("beneficio_id")
+  periodoReferencia DateTime      @map("periodo_referencia") @db.Date
+  valorRealizado    Decimal       @map("valor_realizado") @db.Decimal(18, 2)
+  status            MedicaoStatus @default(rascunho)
+  medicaoAjusteId   String?       @map("medicao_ajuste_id")
+  registradaPorId   String        @map("registrada_por_id")
+  registradaEm      DateTime      @default(now()) @map("registrada_em")
+  comentario        String?
+  deletedAt         DateTime?     @map("deleted_at")
+
+  beneficio     Beneficio  @relation(fields: [beneficioId], references: [id])
+  registradaPor Usuario    @relation("MedicaoRegistrador", fields: [registradaPorId], references: [id])
+  medicaoOrigem Medicao?   @relation("MedicaoAjuste", fields: [medicaoAjusteId], references: [id])
+  ajustes       Medicao[]  @relation("MedicaoAjuste")
+  evidencias    Evidencia[]
+  validacao     Validacao?
+
+  @@unique([beneficioId, periodoReferencia])
+  @@map("medicoes")
+}
+
+model Validacao {
+  id           String            @id @default(uuid())
+  medicaoId    String            @unique @map("medicao_id")
+  validadaPorId String           @map("validada_por_id")
+  decisao      ValidacaoDecisao
+  comentario   String?
+  validadaEm   DateTime          @default(now()) @map("validada_em")
+
+  medicao     Medicao @relation(fields: [medicaoId], references: [id])
+  validadaPor Usuario @relation(fields: [validadaPorId], references: [id])
+
+  @@map("validacoes")
+}
+
+model Evidencia {
+  id          String   @id @default(uuid())
+  medicaoId   String   @map("medicao_id")
+  nomeArquivo String   @map("nome_arquivo")
+  caminho     String
+  versao      Int      @default(1)
+  mimeType    String?  @map("mime_type")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  medicao Medicao @relation(fields: [medicaoId], references: [id])
+
+  @@map("evidencias")
+}
+
+model GateDecisao {
+  id          String          @id @default(uuid())
+  projetoId   String          @map("projeto_id")
+  gate        GateTipo
+  decisao     GateDecisaoTipo
+  decididaPorId String        @map("decidida_por_id")
+  decididaEm  DateTime        @default(now()) @map("decidida_em")
+  comentario  String?
+  ataUrl      String?         @map("ata_url")
+
+  projeto     Projeto @relation(fields: [projetoId], references: [id])
+  decididaPor Usuario @relation(fields: [decididaPorId], references: [id])
+
+  @@map("gate_decisoes")
+}
+
+model CustoRealizado {
+  id                String      @id @default(uuid())
+  projetoId         String      @map("projeto_id")
+  centroCustoId     String?     @map("centro_custo_id")
+  periodoReferencia DateTime    @map("periodo_referencia") @db.Date
+  valor             Decimal     @db.Decimal(18, 2)
+  origem            OrigemCusto @default(manual)
+  importadoPorId    String      @map("importado_por_id")
+  createdAt         DateTime    @default(now()) @map("created_at")
+
+  projeto      Projeto      @relation(fields: [projetoId], references: [id])
+  centroCusto  CentroCusto? @relation(fields: [centroCustoId], references: [id])
+  importadoPor Usuario      @relation(fields: [importadoPorId], references: [id])
+
+  @@map("custos_realizados")
+}
+
+model HistoricoResponsavel {
+  id               String   @id @default(uuid())
+  projetoId        String?  @map("projeto_id")
+  beneficioId      String?  @map("beneficio_id")
+  tipo             String
+  anteriorId       String   @map("anterior_id")
+  novoId           String   @map("novo_id")
+  alteradoEm       DateTime @default(now()) @map("alterado_em")
+  motivo           String?
+
+  projeto   Projeto?  @relation(fields: [projetoId], references: [id])
+  beneficio Beneficio? @relation(fields: [beneficioId], references: [id])
+  anterior  Usuario    @relation("ResponsavelAnterior", fields: [anteriorId], references: [id])
+  novo      Usuario    @relation("ResponsavelNovo", fields: [novoId], references: [id])
+
+  @@map("historico_responsaveis")
+}
+
+model PeriodoFechado {
+  id        String   @id @default(uuid())
+  periodo   DateTime @unique @db.Date
+  publicadoEm DateTime @default(now()) @map("publicado_em")
+  publicadoPorId String @map("publicado_por_id")
+
+  @@map("periodos_fechados")
+}
+
+enum AgentCodigo {
+  chief
+  captura
+  roi_auditor
+  curva_s
+  risco
+  insights
+}
+
+enum AgentRecoStatus {
+  pending
+  accepted
+  rejected
+  auto
+}
+
+enum AgentMode {
+  assisted
+  automated
+}
+
+model ConfigVmo {
+  id                     String    @id @default(uuid())
+  janelaSavingsPadrao    Int       @default(12) @map("janela_savings_padrao")
+  limiarLeanInvestimento Decimal   @default(50000) @map("limiar_lean_investimento") @db.Decimal(18, 2)
+  pesosScoring           Json      @default("{\"alinhamento\":0.25,\"roi\":0.25,\"risco\":0.20,\"urgencia\":0.15,\"capacidade\":0.15}") @map("pesos_scoring")
+  agentMode              AgentMode @default(assisted) @map("agent_mode")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+
+  @@map("config_vmo")
+}
+
+model AgentRecommendation {
+  id            String          @id @default(uuid())
+  agent         AgentCodigo
+  codigo        String          @unique
+  titulo        String
+  acaoProposta  String          @map("acao_proposta")
+  projetoId     String?         @map("projeto_id")
+  confidence    Int             @default(80)
+  reasoning     Json            @default("{}")
+  effect        Json            @default("{}")
+  status        AgentRecoStatus @default(pending)
+  mode          AgentMode       @default(assisted)
+  createdAt     DateTime        @default(now()) @map("created_at")
+  resolvedAt    DateTime?       @map("resolved_at")
+  resolvedById  String?         @map("resolved_by_id")
+
+  projeto    Projeto? @relation(fields: [projetoId], references: [id])
+  resolvedBy  Usuario? @relation("AgentResolvedBy", fields: [resolvedById], references: [id])
+
+  @@index([status, agent])
+  @@index([createdAt])
+  @@map("agent_recommendations")
+}
+
+model AgentActivity {
+  id               String      @id @default(uuid())
+  agent            AgentCodigo
+  event            String
+  summary          String
+  recommendationId String?     @map("recommendation_id")
+  projetoId        String?     @map("projeto_id")
+  statusBadge      String?     @map("status_badge")
+  detail           Json        @default("{}")
+  createdAt        DateTime    @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@index([agent])
+  @@map("agent_activities")
+}
+
+model Auditoria {
+  id          String   @id @default(uuid())
+  entidade    String
+  entidadeId  String   @map("entidade_id")
+  acao        String
+  usuarioId   String?  @map("usuario_id")
+  valorAnterior Json?  @map("valor_anterior")
+  valorNovo   Json?    @map("valor_novo")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  usuario Usuario? @relation(fields: [usuarioId], references: [id])
+
+  @@index([entidade, entidadeId])
+  @@index([createdAt])
+  @@map("auditoria")
+}
