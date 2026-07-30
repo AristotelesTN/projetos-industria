@@ -49,6 +49,7 @@ type ProjetoRow = {
   fornecedor?: string | null;
   setor?: string | null;
   diretoria?: string | null;
+  escopoNegocio?: 'comercial' | 'industrial' | null;
   classificacao?: string | null;
   emUso?: boolean | null;
   ragComunicacao?: string | null;
@@ -326,6 +327,28 @@ export function PortfolioWorkspace({
   const [showCreate, setShowCreate] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detail, setDetail] = useState<any | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    nome: '',
+    status: 'conceito',
+    tipoInvestimento: '',
+    classificacao: '',
+    facilitador: '',
+    responsavelNome: '',
+    fornecedor: '',
+    setor: '',
+    diretoria: '',
+    escopoNegocio: 'industrial',
+    emUso: '',
+    ragComunicacao: '',
+    ragCusto: '',
+    ragPrazo: '',
+    ragEscopo: '',
+    economiaEstimadaAno: '',
+    economiaRealAno: '',
+    retornoHhAno: '',
+    areaNome: '',
+  });
   const [fapd, setFapd] = useState<FapdForm>({ ...EMPTY_FAPD });
   const [valor, setValor] = useState({ ...EMPTY_VALOR });
   const [goNoGoJustificativa, setGoNoGoJustificativa] = useState('');
@@ -404,6 +427,7 @@ export function PortfolioWorkspace({
   async function openDetail(id: string) {
     onSelect(id);
     setDetailOpen(true);
+    setEditing(false);
     setBusy(true);
     try {
       const [full, analytics] = await Promise.all([
@@ -411,6 +435,87 @@ export function PortfolioWorkspace({
         api.analytics(id).catch(() => null),
       ]);
       setDetail({ ...full, analytics });
+    } catch (err: any) {
+      onError(err.message || String(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function startEdit() {
+    const src = detail || selected;
+    if (!src) return;
+    setEditForm({
+      nome: src.nome || '',
+      status: src.status || 'conceito',
+      tipoInvestimento: src.tipoInvestimento || '',
+      classificacao: src.classificacao || '',
+      facilitador: src.facilitador || '',
+      responsavelNome: src.responsavelNome || '',
+      fornecedor: src.fornecedor || '',
+      setor: src.setor || '',
+      diretoria: src.diretoria || '',
+      escopoNegocio: src.escopoNegocio || 'industrial',
+      emUso:
+        src.emUso == null ? '' : src.emUso ? 'sim' : 'nao',
+      ragComunicacao: src.ragComunicacao || '',
+      ragCusto: src.ragCusto || '',
+      ragPrazo: src.ragPrazo || '',
+      ragEscopo: src.ragEscopo || '',
+      economiaEstimadaAno:
+        src.economiaEstimadaAno == null
+          ? ''
+          : String(src.economiaEstimadaAno),
+      economiaRealAno:
+        src.economiaRealAno == null ? '' : String(src.economiaRealAno),
+      retornoHhAno:
+        src.retornoHhAno == null ? '' : String(src.retornoHhAno),
+      areaNome: src.area?.nome || '',
+    });
+    setEditing(true);
+  }
+
+  async function saveCadastro() {
+    if (!selectedId) return;
+    setBusy(true);
+    try {
+      const emptyToNull = (v: string) => {
+        const s = v.trim();
+        return s === '' ? null : s;
+      };
+      const moneyOrNull = (v: string) => {
+        if (v.trim() === '') return null;
+        const n = Number(v);
+        return Number.isNaN(n) ? null : n;
+      };
+      const updated = await api.atualizarProjeto(selectedId, {
+        nome: editForm.nome.trim(),
+        status: editForm.status,
+        tipoInvestimento: emptyToNull(editForm.tipoInvestimento),
+        classificacao: emptyToNull(editForm.classificacao),
+        facilitador: emptyToNull(editForm.facilitador),
+        responsavelNome: emptyToNull(editForm.responsavelNome),
+        fornecedor: emptyToNull(editForm.fornecedor),
+        setor: emptyToNull(editForm.setor),
+        diretoria: emptyToNull(editForm.diretoria),
+        escopoNegocio: editForm.escopoNegocio || 'industrial',
+        emUso:
+          editForm.emUso === ''
+            ? null
+            : editForm.emUso === 'sim',
+        ragComunicacao: emptyToNull(editForm.ragComunicacao),
+        ragCusto: emptyToNull(editForm.ragCusto),
+        ragPrazo: emptyToNull(editForm.ragPrazo),
+        ragEscopo: emptyToNull(editForm.ragEscopo),
+        economiaEstimadaAno: moneyOrNull(editForm.economiaEstimadaAno),
+        economiaRealAno: moneyOrNull(editForm.economiaRealAno),
+        retornoHhAno: moneyOrNull(editForm.retornoHhAno),
+        areaNome: emptyToNull(editForm.areaNome),
+      });
+      setDetail((prev: any) => ({ ...(prev || {}), ...updated }));
+      setEditing(false);
+      await onRefresh();
+      onMessage('Projeto atualizado');
     } catch (err: any) {
       onError(err.message || String(err));
     } finally {
@@ -1139,7 +1244,10 @@ export function PortfolioWorkspace({
                 <button
                   type="button"
                   className="linkish"
-                  onClick={() => setDetailOpen(false)}
+                  onClick={() => {
+                    setEditing(false);
+                    setDetailOpen(false);
+                  }}
                 >
                   ← Fechar
                 </button>
@@ -1154,10 +1262,41 @@ export function PortfolioWorkspace({
                     : ''}
                 </p>
               </div>
-              <span
-                className={`rag-dot ${selected?.health || 'yellow'}`}
-                title="Saúde do projeto"
-              />
+              <div className="drawer-head-actions">
+                {!editing ? (
+                  <button
+                    type="button"
+                    className="btn secondary"
+                    disabled={busy}
+                    onClick={startEdit}
+                  >
+                    Editar
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      className="btn secondary"
+                      disabled={busy}
+                      onClick={() => setEditing(false)}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      className="btn"
+                      disabled={busy || !editForm.nome.trim()}
+                      onClick={() => void saveCadastro()}
+                    >
+                      Salvar
+                    </button>
+                  </>
+                )}
+                <span
+                  className={`rag-dot ${selected?.health || 'yellow'}`}
+                  title="Saúde do projeto"
+                />
+              </div>
             </div>
             <div className="drawer-body">
               <div className="detail-kv">
@@ -1173,7 +1312,7 @@ export function PortfolioWorkspace({
                 </strong>
               </div>
               <div className="detail-kv">
-                <span>Economia real (ano)</span>
+                <span>Economia realizada (ano)</span>
                 <strong>
                   {brl(
                     Number(
@@ -1203,6 +1342,250 @@ export function PortfolioWorkspace({
               </div>
 
               <h3>Dados do planejamento</h3>
+              {editing ? (
+                <div className="planilha-edit form-grid">
+                  <label className="fapd-field">
+                    <span>Nome</span>
+                    <input
+                      value={editForm.nome}
+                      disabled={busy}
+                      onChange={(e) =>
+                        setEditForm((f) => ({ ...f, nome: e.target.value }))
+                      }
+                    />
+                  </label>
+                  <label className="fapd-field">
+                    <span>Status</span>
+                    <select
+                      value={editForm.status}
+                      disabled={busy}
+                      onChange={(e) =>
+                        setEditForm((f) => ({ ...f, status: e.target.value }))
+                      }
+                    >
+                      {STATUS_COLUMNS.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="fapd-field">
+                    <span>Área</span>
+                    <input
+                      list="edit-area-options"
+                      value={editForm.areaNome}
+                      disabled={busy}
+                      onChange={(e) =>
+                        setEditForm((f) => ({ ...f, areaNome: e.target.value }))
+                      }
+                    />
+                    <datalist id="edit-area-options">
+                      {AREA_OPTIONS.map((a) => (
+                        <option key={a} value={a} />
+                      ))}
+                    </datalist>
+                  </label>
+                  <label className="fapd-field">
+                    <span>Tipo</span>
+                    <select
+                      value={editForm.tipoInvestimento}
+                      disabled={busy}
+                      onChange={(e) =>
+                        setEditForm((f) => ({
+                          ...f,
+                          tipoInvestimento: e.target.value,
+                        }))
+                      }
+                    >
+                      <option value="">—</option>
+                      <option value="capex">CAPEX</option>
+                      <option value="opex">OPEX</option>
+                      <option value="demanda">Demanda</option>
+                    </select>
+                  </label>
+                  <label className="fapd-field">
+                    <span>Classificação</span>
+                    <select
+                      value={editForm.classificacao}
+                      disabled={busy}
+                      onChange={(e) =>
+                        setEditForm((f) => ({
+                          ...f,
+                          classificacao: e.target.value,
+                        }))
+                      }
+                    >
+                      <option value="">—</option>
+                      <option value="inovacao">Inovação</option>
+                      <option value="melhoria">Melhoria</option>
+                    </select>
+                  </label>
+                  <label className="fapd-field">
+                    <span>Facilitador</span>
+                    <input
+                      value={editForm.facilitador}
+                      disabled={busy}
+                      onChange={(e) =>
+                        setEditForm((f) => ({
+                          ...f,
+                          facilitador: e.target.value,
+                        }))
+                      }
+                    />
+                  </label>
+                  <label className="fapd-field">
+                    <span>Responsável</span>
+                    <input
+                      value={editForm.responsavelNome}
+                      disabled={busy}
+                      onChange={(e) =>
+                        setEditForm((f) => ({
+                          ...f,
+                          responsavelNome: e.target.value,
+                        }))
+                      }
+                    />
+                  </label>
+                  <label className="fapd-field">
+                    <span>Fornecedor</span>
+                    <input
+                      value={editForm.fornecedor}
+                      disabled={busy}
+                      onChange={(e) =>
+                        setEditForm((f) => ({
+                          ...f,
+                          fornecedor: e.target.value,
+                        }))
+                      }
+                    />
+                  </label>
+                  <label className="fapd-field">
+                    <span>Setor</span>
+                    <input
+                      value={editForm.setor}
+                      disabled={busy}
+                      onChange={(e) =>
+                        setEditForm((f) => ({ ...f, setor: e.target.value }))
+                      }
+                    />
+                  </label>
+                  <label className="fapd-field">
+                    <span>Diretoria</span>
+                    <input
+                      value={editForm.diretoria}
+                      disabled={busy}
+                      onChange={(e) =>
+                        setEditForm((f) => ({
+                          ...f,
+                          diretoria: e.target.value,
+                        }))
+                      }
+                    />
+                  </label>
+                  <label className="fapd-field">
+                    <span>Projeto (escopo)</span>
+                    <select
+                      value={editForm.escopoNegocio}
+                      disabled={busy}
+                      onChange={(e) =>
+                        setEditForm((f) => ({
+                          ...f,
+                          escopoNegocio: e.target.value,
+                        }))
+                      }
+                    >
+                      <option value="industrial">Industrial</option>
+                      <option value="comercial">Comercial</option>
+                    </select>
+                  </label>
+                  <label className="fapd-field">
+                    <span>Em uso?</span>
+                    <select
+                      value={editForm.emUso}
+                      disabled={busy}
+                      onChange={(e) =>
+                        setEditForm((f) => ({ ...f, emUso: e.target.value }))
+                      }
+                    >
+                      <option value="">—</option>
+                      <option value="sim">Sim</option>
+                      <option value="nao">Não</option>
+                    </select>
+                  </label>
+                  {(
+                    [
+                      ['ragComunicacao', 'Comunicação'],
+                      ['ragCusto', 'Custo'],
+                      ['ragPrazo', 'Prazo'],
+                      ['ragEscopo', 'Escopo'],
+                    ] as const
+                  ).map(([key, label]) => (
+                    <label key={key} className="fapd-field">
+                      <span>{label}</span>
+                      <select
+                        value={editForm[key]}
+                        disabled={busy}
+                        onChange={(e) =>
+                          setEditForm((f) => ({ ...f, [key]: e.target.value }))
+                        }
+                      >
+                        <option value="">—</option>
+                        <option value="ok">OK</option>
+                        <option value="nok">NOK</option>
+                      </select>
+                    </label>
+                  ))}
+                  <label className="fapd-field">
+                    <span>Economia estimada (ano)</span>
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      value={editForm.economiaEstimadaAno}
+                      disabled={busy}
+                      onChange={(e) =>
+                        setEditForm((f) => ({
+                          ...f,
+                          economiaEstimadaAno: e.target.value,
+                        }))
+                      }
+                    />
+                  </label>
+                  <label className="fapd-field">
+                    <span>Economia realizada (ano)</span>
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      value={editForm.economiaRealAno}
+                      disabled={busy}
+                      onChange={(e) =>
+                        setEditForm((f) => ({
+                          ...f,
+                          economiaRealAno: e.target.value,
+                        }))
+                      }
+                    />
+                  </label>
+                  <label className="fapd-field">
+                    <span>Retorno HH/ano</span>
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      value={editForm.retornoHhAno}
+                      disabled={busy}
+                      onChange={(e) =>
+                        setEditForm((f) => ({
+                          ...f,
+                          retornoHhAno: e.target.value,
+                        }))
+                      }
+                    />
+                  </label>
+                </div>
+              ) : (
               <div className="planilha-grid">
                 <div className="detail-kv">
                   <span>Tipo</span>
@@ -1259,6 +1642,18 @@ export function PortfolioWorkspace({
                   </strong>
                 </div>
                 <div className="detail-kv">
+                  <span>Projeto (escopo)</span>
+                  <strong>
+                    {(
+                      detail?.escopoNegocio ||
+                      selected?.escopoNegocio ||
+                      'industrial'
+                    ) === 'comercial'
+                      ? 'Comercial'
+                      : 'Industrial'}
+                  </strong>
+                </div>
+                <div className="detail-kv">
                   <span>Comunicação</span>
                   <strong>
                     {(
@@ -1295,6 +1690,7 @@ export function PortfolioWorkspace({
                   </strong>
                 </div>
               </div>
+              )}
               {(detail?.ganhoQuantitativoTexto ||
                 selected?.ganhoQuantitativoTexto) && (
                 <div className="detail-block">
@@ -1388,11 +1784,11 @@ export function PortfolioWorkspace({
                               <strong>{brl(Number(p.orcamento))}</strong>
                             </div>
                             <div className="pep-metric">
-                              <span>Disposto</span>
+                              <span>Compromissado total</span>
                               <strong>{brl(Number(p.disposto))}</strong>
                             </div>
                             <div className="pep-metric">
-                              <span>Real</span>
+                              <span>Realizado</span>
                               <strong>{brl(Number(p.real))}</strong>
                             </div>
                             <div className="pep-metric">
@@ -1417,11 +1813,11 @@ export function PortfolioWorkspace({
                               <strong>{brl(pepTotal.orcamento)}</strong>
                             </div>
                             <div className="pep-metric">
-                              <span>Disposto</span>
+                              <span>Compromissado total</span>
                               <strong>{brl(pepTotal.disposto)}</strong>
                             </div>
                             <div className="pep-metric">
-                              <span>Real</span>
+                              <span>Realizado</span>
                               <strong>{brl(pepTotal.real)}</strong>
                             </div>
                             <div className="pep-metric">

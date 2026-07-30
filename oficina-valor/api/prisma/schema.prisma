@@ -40,6 +40,12 @@ enum ClassificacaoProjeto {
   melhoria
 }
 
+/// Escopo de negócio do projeto (filtro Analytics: Comercial × Industrial).
+enum EscopoNegocio {
+  comercial
+  industrial
+}
+
 /// Papel estratégico na matriz FAPD (avaliação de projetos digitais).
 enum PapelEstrategicoFapd {
   estruturante
@@ -236,6 +242,8 @@ model Projeto {
   fornecedor             String?
   setor                  String?
   diretoria              String?
+  /// Comercial vs Industrial — usado nos filtros de Analytics.
+  escopoNegocio          EscopoNegocio @default(industrial) @map("escopo_negocio")
   classificacao          ClassificacaoProjeto? @map("classificacao")
   emUso                  Boolean?      @map("em_uso")
   ragComunicacao         SemaforoRag?  @map("rag_comunicacao")

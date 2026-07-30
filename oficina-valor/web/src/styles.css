@@ -3576,6 +3576,112 @@ a {
   border-bottom: 1px solid var(--ds-border);
 }
 
+.drawer-head-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.planilha-edit {
+  margin-top: 4px;
+  padding: 12px;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-background-neutral);
+}
+
+.pep-analytics {
+  display: grid;
+  gap: 14px;
+}
+
+.pep-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--ds-text-subtle);
+}
+
+.pep-legend i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.pep-legend i.orc {
+  background: #8590a2;
+}
+.pep-legend i.comp {
+  background: #0c66e4;
+}
+.pep-legend i.real {
+  background: #22a06b;
+}
+
+.pep-year-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+  min-height: 180px;
+  padding: 8px 4px 0;
+}
+
+.pep-year-col {
+  flex: 1;
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+}
+
+.pep-year-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 140px;
+  width: 100%;
+  max-width: 72px;
+  justify-content: center;
+}
+
+.pep-year-bars i {
+  display: block;
+  width: 14px;
+  min-height: 2px;
+  border-radius: 3px 3px 0 0;
+}
+
+.pep-year-bars i.orc {
+  background: #8590a2;
+}
+.pep-year-bars i.comp {
+  background: #0c66e4;
+}
+.pep-year-bars i.real {
+  background: #22a06b;
+}
+
+.pep-year-col > span {
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--ds-text-subtle);
+}
+
+.pep-subrow td {
+  background: var(--ds-background-neutral);
+  font-size: 12px;
+}
+
+.pep-analytics-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 .project-detail-drawer .drawer-body {
   padding: 16px 18px;
   overflow: auto;

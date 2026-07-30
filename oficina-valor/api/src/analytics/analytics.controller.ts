@@ -17,4 +17,9 @@ export class AnalyticsController {
   portfolio() {
     return this.analytics.portfolioResumo();
   }
+
+  @Get('portfolio/pep-custos')
+  pepCustos() {
+    return this.analytics.pepCustosResumo();
+  }
 }

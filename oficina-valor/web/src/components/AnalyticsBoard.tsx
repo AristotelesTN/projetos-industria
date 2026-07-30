@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { brl } from '../lib/api';
+import { PepCustosPanel } from './PepCustosPanel';
 
 type Health = 'green' | 'yellow' | 'red';
 
@@ -57,6 +58,137 @@ type RacionalView = {
 function nVal(v: unknown): number {
   const x = Number(v);
   return Number.isFinite(x) ? x : 0;
+}
+
+function buildCurvaSFromProjects(
+  projects: any[],
+  anoFilter: 'all' | number,
+): {
+  periodo: string;
+  planejadoAcumulado: number;
+  realizadoAcumulado: number;
+}[] {
+  const mapPlan = new Map<string, number>();
+  const mapAct = new Map<string, number>();
+  for (const p of projects) {
+    let prevP = 0;
+    let prevA = 0;
+    for (const pt of p.curvaS || []) {
+      const year = Number(String(pt.periodo).slice(0, 4));
+      const dP = Number(pt.planejadoAcumulado) - prevP;
+      const dA = Number(pt.realizadoAcumulado) - prevA;
+      prevP = Number(pt.planejadoAcumulado);
+      prevA = Number(pt.realizadoAcumulado);
+      if (anoFilter !== 'all' && year !== anoFilter) continue;
+      mapPlan.set(pt.periodo, (mapPlan.get(pt.periodo) ?? 0) + dP);
+      mapAct.set(pt.periodo, (mapAct.get(pt.periodo) ?? 0) + dA);
+    }
+  }
+  const months = Array.from(
+    new Set([...mapPlan.keys(), ...mapAct.keys()]),
+  ).sort();
+  let accP = 0;
+  let accA = 0;
+  return months.map((m) => {
+    accP += mapPlan.get(m) ?? 0;
+    accA += mapAct.get(m) ?? 0;
+    return {
+      periodo: m,
+      planejadoAcumulado: accP,
+      realizadoAcumulado: accA,
+    };
+  });
+}
+
+function computePotencialFromProjects(projects: any[]) {
+  let potencialFinanceiro = 0;
+  let potencialRisco = 0;
+  let potencialNegocio = 0;
+  let potencialHoras = 0;
+  let potencialRecorrenteAnual = 0;
+  let potencialPontual = 0;
+  let qtdeRecorrentes = 0;
+  let qtdePontuais = 0;
+  let qtdeQuantitativos = 0;
+  let qtdeQualitativos = 0;
+  let excluidos = 0;
+  let capex = 0;
+  let opex = 0;
+  let capexParaOpex = 0;
+  let capexParaOpexPendente = 0;
+  let capexParaOpexAplicado = 0;
+
+  for (const p of projects) {
+    if (p.excluirDoPotencialEstimado) {
+      excluidos += 1;
+      continue;
+    }
+    const fin = nVal(p.ganhoFinanceiroAnual);
+    const risco = nVal(p.riscoFinanceiroMitigadoAnual);
+    const negocio = nVal(p.ganhoNegocioAnual);
+    const horas = nVal(p.horasEconomizadasAno);
+    potencialFinanceiro += fin;
+    potencialRisco += risco;
+    potencialNegocio += negocio;
+    potencialHoras += horas;
+    const monetario = fin + risco + negocio;
+    const temGanho =
+      monetario > 0 || horas > 0 || p.ganhoPrincipal != null;
+    if (temGanho) {
+      if (p.ganhoRecorrente) {
+        qtdeRecorrentes += 1;
+        potencialRecorrenteAnual += monetario;
+      } else {
+        qtdePontuais += 1;
+        potencialPontual += monetario;
+      }
+    }
+    capex += nVal(p.investimentoCapex);
+    opex += nVal(p.investimentoOpex);
+    const planejadoCapexOpex = nVal(p.investimentoCapexParaOpex);
+    capexParaOpex += planejadoCapexOpex;
+    if (p.capexParaOpexAplicadoEm) capexParaOpexAplicado += planejadoCapexOpex;
+    else capexParaOpexPendente += planejadoCapexOpex;
+
+    if (p.ganhoPrincipal === 'qualitativo') qtdeQualitativos += 1;
+    else if (p.ganhoPrincipal) qtdeQuantitativos += 1;
+  }
+
+  const totalClassificados = qtdeQuantitativos + qtdeQualitativos;
+  return {
+    potencial: {
+      projetosQuantitativos: qtdeQuantitativos,
+      projetosQualitativos: qtdeQualitativos,
+      totalClassificados,
+      pctQuantitativos:
+        totalClassificados === 0
+          ? null
+          : (qtdeQuantitativos / totalClassificados) * 100,
+      pctQualitativos:
+        totalClassificados === 0
+          ? null
+          : (qtdeQualitativos / totalClassificados) * 100,
+      ganhoFinanceiroAnual: potencialFinanceiro,
+      riscoFinanceiroMitigadoAnual: potencialRisco,
+      ganhoNegocioAnual: potencialNegocio,
+      horasEconomizadasAno: potencialHoras,
+      recorrente: {
+        projetos: qtdeRecorrentes,
+        anual: potencialRecorrenteAnual,
+        horizonte3Anos: potencialRecorrenteAnual * 3,
+      },
+      pontual: { projetos: qtdePontuais, total: potencialPontual },
+      horizonte3Anos: potencialRecorrenteAnual * 3 + potencialPontual,
+      excluidos,
+    },
+    investimento: {
+      capex,
+      opex,
+      capexParaOpex,
+      capexParaOpexPendente,
+      capexParaOpexAplicado,
+    },
+  };
 }
 
 function monetarioProjeto(p: any): number {
@@ -576,10 +708,14 @@ export function AnalyticsBoard({
   onOpenProjeto?: (id: string) => void;
   agentsPending?: number;
 }) {
-  const [view, setView] = useState<'overview' | 'ganhos' | 'risco' | 'areas'>(
-    'overview',
-  );
+  const [view, setView] = useState<
+    'overview' | 'ganhos' | 'risco' | 'areas' | 'pep'
+  >('overview');
   const [areaFilter, setAreaFilter] = useState('all');
+  const [anoFilter, setAnoFilter] = useState<'all' | number>('all');
+  const [escopoFilter, setEscopoFilter] = useState<
+    'all' | 'comercial' | 'industrial'
+  >('all');
   const [racionalKpi, setRacionalKpi] = useState<PotencialKpiId | null>(null);
   const [racionalQuery, setRacionalQuery] = useState('');
   const [racionalExpandido, setRacionalExpandido] = useState<string | null>(
@@ -591,6 +727,8 @@ export function AnalyticsBoard({
       ...p,
       health: p.health || healthFromBrr(p.brr),
       area: p.area || 'Área',
+      escopoNegocio: p.escopoNegocio || 'industrial',
+      ano: p.ano ?? null,
     }));
   }, [portfolio]);
 
@@ -600,14 +738,71 @@ export function AnalyticsBoard({
     return Array.from(set).sort();
   }, [projects]);
 
+  const anos = useMemo(() => {
+    const fromPortfolio = (portfolio?.anos || []) as number[];
+    if (fromPortfolio.length) return [...fromPortfolio].sort((a, b) => a - b);
+    const set = new Set<number>();
+    for (const p of projects) {
+      if (typeof p.ano === 'number') set.add(p.ano);
+    }
+    return Array.from(set).sort((a, b) => a - b);
+  }, [portfolio, projects]);
+
   const filtered = useMemo(() => {
-    if (areaFilter === 'all') return projects;
-    return projects.filter((p: any) => p.area === areaFilter);
-  }, [projects, areaFilter]);
+    return projects.filter((p: any) => {
+      if (areaFilter !== 'all' && p.area !== areaFilter) return false;
+      if (escopoFilter !== 'all' && p.escopoNegocio !== escopoFilter)
+        return false;
+      if (anoFilter !== 'all') {
+        if (p.ano == null || p.ano !== anoFilter) return false;
+      }
+      return true;
+    });
+  }, [projects, areaFilter, escopoFilter, anoFilter]);
+
+  const metrics = useMemo(() => {
+    const prometido = filtered.reduce(
+      (s: number, p: any) => s + nVal(p.prometido),
+      0,
+    );
+    const realizado = filtered.reduce(
+      (s: number, p: any) => s + nVal(p.realizado),
+      0,
+    );
+    const custo = filtered.reduce(
+      (s: number, p: any) => s + nVal(p.custoRealizado),
+      0,
+    );
+    const hardMed = filtered.reduce(
+      (s: number, p: any) => s + nVal(p.porCategoria?.hard),
+      0,
+    );
+    const soft = filtered.reduce(
+      (s: number, p: any) => s + nVal(p.porCategoria?.soft),
+      0,
+    );
+    const hard = hardMed > 0 ? hardMed : realizado;
+    const roi = custo === 0 ? null : (realizado - custo) / custo;
+    const { potencial, investimento } = computePotencialFromProjects(filtered);
+    const curvaS = buildCurvaSFromProjects(filtered, anoFilter);
+    return {
+      prometido,
+      realizado,
+      custo,
+      hard,
+      soft,
+      roi,
+      roiLabel:
+        roi === null ? 'ROI não calculável' : `${(roi * 100).toFixed(1)}%`,
+      potencial,
+      investimento,
+      curvaS,
+    };
+  }, [filtered, anoFilter]);
 
   const racional = useMemo(
-    () => (racionalKpi ? buildRacional(racionalKpi, projects) : null),
-    [racionalKpi, projects],
+    () => (racionalKpi ? buildRacional(racionalKpi, filtered) : null),
+    [racionalKpi, filtered],
   );
 
   useEffect(() => {
@@ -651,21 +846,20 @@ export function AnalyticsBoard({
     );
   }
 
-  const prometido = Number(portfolio.prometido || 0);
-  const realizado = Number(portfolio.realizado || 0);
-  const custo = Number(portfolio.custo || 0);
-  const hard = Number(portfolio.hard || 0);
-  const soft = Number(portfolio.soft || 0);
-  const potencial = portfolio.potencial;
-  const investimento = portfolio.investimento;
+  const prometido = metrics.prometido;
+  const realizado = metrics.realizado;
+  const custo = metrics.custo;
+  const hard = metrics.hard;
+  const soft = metrics.soft;
+  const potencial = metrics.potencial;
+  const investimento = metrics.investimento;
   const capturePct = prometido > 0 ? (realizado / prometido) * 100 : 0;
-  const roiPct =
-    portfolio.roi == null ? null : Number(portfolio.roi) * 100;
-  const sparkRealizado = (portfolio.curvaS || []).map(
-    (c: any) => Number(c.realizadoAcumulado) || 0,
+  const roiPct = metrics.roi == null ? null : Number(metrics.roi) * 100;
+  const sparkRealizado = metrics.curvaS.map(
+    (c) => Number(c.realizadoAcumulado) || 0,
   );
-  const sparkPlanejado = (portfolio.curvaS || []).map(
-    (c: any) => Number(c.planejadoAcumulado) || 0,
+  const sparkPlanejado = metrics.curvaS.map(
+    (c) => Number(c.planejadoAcumulado) || 0,
   );
   const healthCounts = {
     green: filtered.filter((p: any) => p.health === 'green').length,
@@ -673,13 +867,28 @@ export function AnalyticsBoard({
     red: filtered.filter((p: any) => p.health === 'red').length,
   };
 
-  const byArea = areas.map((area) => {
-    const items = projects.filter((p: any) => p.area === area);
-    const real = items.reduce((s: number, p: any) => s + Number(p.realizado || 0), 0);
-    const prom = items.reduce((s: number, p: any) => s + Number(p.prometido || 0), 0);
-    const risk = items.filter((p: any) => p.health !== 'green').length;
-    return { area, real, prom, risk, count: items.length };
-  });
+  const byArea = areas
+    .map((area) => {
+      const items = filtered.filter((p: any) => p.area === area);
+      if (!items.length) return null;
+      const real = items.reduce(
+        (s: number, p: any) => s + Number(p.realizado || 0),
+        0,
+      );
+      const prom = items.reduce(
+        (s: number, p: any) => s + Number(p.prometido || 0),
+        0,
+      );
+      const risk = items.filter((p: any) => p.health !== 'green').length;
+      return { area, real, prom, risk, count: items.length };
+    })
+    .filter(Boolean) as Array<{
+    area: string;
+    real: number;
+    prom: number;
+    risk: number;
+    count: number;
+  }>;
 
   const attention = [...filtered]
     .sort((a: any, b: any) => Number(a.brr ?? 1) - Number(b.brr ?? 1))
@@ -719,6 +928,62 @@ export function AnalyticsBoard({
     .sort((a: any, b: any) => Number(b.roi) - Number(a.roi))
     .slice(0, 6);
   const maxRoi = Math.max(0.01, ...roiBars.map((p: any) => Math.abs(Number(p.roi))));
+
+  const filterToolbar = (
+    <div className="toolbar">
+      <label className="field" style={{ margin: 0, minWidth: 140 }}>
+        Ano
+        <select
+          value={anoFilter === 'all' ? 'all' : String(anoFilter)}
+          onChange={(e) =>
+            setAnoFilter(
+              e.target.value === 'all' ? 'all' : Number(e.target.value),
+            )
+          }
+        >
+          <option value="all">Todos</option>
+          {anos.map((a) => (
+            <option key={a} value={a}>
+              {a}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="field" style={{ margin: 0, minWidth: 160 }}>
+        Projeto
+        <select
+          value={escopoFilter}
+          onChange={(e) =>
+            setEscopoFilter(
+              e.target.value as 'all' | 'comercial' | 'industrial',
+            )
+          }
+        >
+          <option value="all">Todos</option>
+          <option value="industrial">Industrial</option>
+          <option value="comercial">Comercial</option>
+        </select>
+      </label>
+      <label className="field" style={{ margin: 0, minWidth: 160 }}>
+        Área
+        <select
+          value={areaFilter}
+          onChange={(e) => setAreaFilter(e.target.value)}
+        >
+          <option value="all">Todas</option>
+          {areas.map((a) => (
+            <option key={a} value={a}>
+              {a}
+            </option>
+          ))}
+        </select>
+      </label>
+      <span className="badge in-progress">{filtered.length} projetos</span>
+      <span className="badge warning">
+        {healthCounts.red + healthCounts.yellow} em risco
+      </span>
+    </div>
+  );
 
   if (racional) {
     const somaFiltrada =
@@ -915,6 +1180,8 @@ export function AnalyticsBoard({
         </div>
       </div>
 
+      {filterToolbar}
+
       <div className="analytics-tabs">
         {(
           [
@@ -922,6 +1189,7 @@ export function AnalyticsBoard({
             ['ganhos', 'Ganhos'],
             ['risco', 'Risco'],
             ['areas', 'Áreas'],
+            ['pep', 'Custos PEP'],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -934,25 +1202,15 @@ export function AnalyticsBoard({
         ))}
       </div>
 
-      <div className="toolbar">
-        <label className="field" style={{ margin: 0, minWidth: 160 }}>
-          Área
-          <select
-            value={areaFilter}
-            onChange={(e) => setAreaFilter(e.target.value)}
-          >
-            <option value="all">Todas</option>
-            {areas.map((a) => (
-              <option key={a} value={a}>
-                {a}
-              </option>
-            ))}
-          </select>
-        </label>
-        <span className="badge in-progress">{filtered.length} projetos</span>
-        <span className="badge warning">{portfolio.projetosEmRisco} em risco</span>
-      </div>
-
+      {view === 'pep' ? (
+        <PepCustosPanel
+          onOpenProjeto={onOpenProjeto}
+          anoFilter={anoFilter}
+          escopoFilter={escopoFilter}
+          areaFilter={areaFilter}
+        />
+      ) : (
+        <>
       <div className={`insight-banner tone-${prescriptions[0]?.tone || 'info'}`}>
         <strong>{prescriptions[0]?.title || 'Sem alertas críticos'}</strong>
         <span>{prescriptions[0]?.text || 'Portfólio estável no período.'}</span>
@@ -975,7 +1233,7 @@ export function AnalyticsBoard({
           <div className="kpi-top">
             <div>
               <div className="label">ROI portfólio</div>
-              <div className="value">{portfolio.roiLabel}</div>
+              <div className="value">{metrics.roiLabel}</div>
               <div className={`trend ${(roiPct ?? 0) >= 0 ? 'up' : 'down'}`}>
                 Custo {brl(custo)}
               </div>
@@ -1293,7 +1551,7 @@ export function AnalyticsBoard({
           <h2>Curva S · planejado vs realizado</h2>
           <span className="meta">Acumulado mensal</span>
         </div>
-        <CurvaSCompact data={portfolio.curvaS || []} />
+        <CurvaSCompact data={metrics.curvaS} />
       </section>
 
       {(view === 'overview' || view === 'areas' || view === 'risco') && (
@@ -1411,6 +1669,8 @@ export function AnalyticsBoard({
           </div>
         </div>
       </section>
+        </>
+      )}
     </div>
   );
 }

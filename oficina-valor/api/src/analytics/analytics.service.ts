@@ -188,6 +188,13 @@ export class AnalyticsService {
         memoriaCalculoGanho: true,
         economiaEstimadaAno: true,
         economiaRealAno: true,
+        diretoria: true,
+        setor: true,
+        escopoNegocio: true,
+        inicioPrevisto: true,
+        inicioReal: true,
+        fimPrevisto: true,
+        fimReal: true,
         updatedAt: true,
         area: { select: { nome: true } },
       },
@@ -325,10 +332,24 @@ export class AnalyticsService {
 
     const porProjeto = analytics.map((a) => {
       const p = byId.get(a.projetoId);
+      const anoRef = (() => {
+        const d =
+          p?.inicioReal ||
+          p?.inicioPrevisto ||
+          p?.fimReal ||
+          p?.fimPrevisto ||
+          null;
+        if (!d) return null;
+        return d.getFullYear();
+      })();
       return {
         ...a,
         area: p?.area?.nome || 'Área',
         status: p?.status,
+        diretoria: p?.diretoria ?? null,
+        setor: p?.setor ?? null,
+        escopoNegocio: p?.escopoNegocio ?? 'industrial',
+        ano: anoRef,
         ganhoPrincipal: p?.ganhoPrincipal ?? null,
         ganhoFinanceiroAnual: p ? n(p.ganhoFinanceiroAnual) : null,
         riscoFinanceiroMitigadoAnual: p
@@ -350,6 +371,14 @@ export class AnalyticsService {
       };
     });
 
+    const anos = Array.from(
+      new Set(
+        porProjeto
+          .map((p) => p.ano)
+          .filter((y): y is number => typeof y === 'number'),
+      ),
+    ).sort((a, b) => a - b);
+
     return {
       prometido,
       realizado,
@@ -364,6 +393,7 @@ export class AnalyticsService {
       projetosEmRisco: emRisco,
       porProjeto,
       curvaS,
+      anos,
       potencial: {
         projetosQuantitativos: qtdeQuantitativos,
         projetosQualitativos: qtdeQualitativos,
@@ -402,6 +432,192 @@ export class AnalyticsService {
         capexParaOpexAplicado,
       },
       atualizadoEm: ultimaAtualizacao?.toISOString() ?? new Date().toISOString(),
+    };
+  }
+
+  /** Indicadores de custos PEP (SAP) agregados por ano / projeto. */
+  async pepCustosResumo() {
+    const n = (v: unknown) => {
+      if (v == null) return 0;
+      const x = Number(v);
+      return Number.isNaN(x) ? 0 : x;
+    };
+    const anoFromCarteira = (carteira: string): number | null => {
+      const parts = carteira.split('-');
+      if (parts.length < 2) return null;
+      const yy = Number(parts[1]);
+      if (!Number.isFinite(yy)) return null;
+      return yy >= 0 && yy < 100 ? 2000 + yy : yy;
+    };
+
+    const rows = await this.prisma.projetoPep.findMany({
+      include: {
+        projeto: {
+          select: {
+            id: true,
+            nome: true,
+            status: true,
+            escopoNegocio: true,
+            area: { select: { nome: true } },
+          },
+        },
+      },
+      orderBy: [{ carteira: 'asc' }, { codigoPep: 'asc' }],
+    });
+
+    const totais = {
+      orcamento: 0,
+      compromissadoTotal: 0,
+      realizado: 0,
+      comprometido: 0,
+      disponivel: 0,
+      peps: rows.length,
+    };
+
+    const porAnoMap = new Map<
+      number,
+      {
+        ano: number;
+        orcamento: number;
+        compromissadoTotal: number;
+        realizado: number;
+        comprometido: number;
+        disponivel: number;
+        peps: number;
+      }
+    >();
+
+    const porProjetoMap = new Map<
+      string,
+      {
+        projetoId: string;
+        nome: string;
+        area: string;
+        status: string;
+        escopoNegocio: string;
+        orcamento: number;
+        compromissadoTotal: number;
+        realizado: number;
+        comprometido: number;
+        disponivel: number;
+        peps: Array<{
+          codigoPep: string;
+          carteira: string;
+          ano: number | null;
+          descricao: string | null;
+          orcamento: number;
+          compromissadoTotal: number;
+          realizado: number;
+          comprometido: number;
+          disponivel: number;
+        }>;
+      }
+    >();
+
+    for (const r of rows) {
+      const orcamento = n(r.orcamento);
+      const compromissadoTotal = n(r.disposto);
+      const realizado = n(r.real);
+      const comprometido = n(r.comprometido);
+      const disponivel = n(r.disponivel);
+      const ano = anoFromCarteira(r.carteira);
+
+      totais.orcamento += orcamento;
+      totais.compromissadoTotal += compromissadoTotal;
+      totais.realizado += realizado;
+      totais.comprometido += comprometido;
+      totais.disponivel += disponivel;
+
+      if (ano != null) {
+        const cur = porAnoMap.get(ano) || {
+          ano,
+          orcamento: 0,
+          compromissadoTotal: 0,
+          realizado: 0,
+          comprometido: 0,
+          disponivel: 0,
+          peps: 0,
+        };
+        cur.orcamento += orcamento;
+        cur.compromissadoTotal += compromissadoTotal;
+        cur.realizado += realizado;
+        cur.comprometido += comprometido;
+        cur.disponivel += disponivel;
+        cur.peps += 1;
+        porAnoMap.set(ano, cur);
+      }
+
+      const pid = r.projetoId;
+      const proj = porProjetoMap.get(pid) || {
+        projetoId: pid,
+        nome: r.projeto.nome,
+        area: r.projeto.area?.nome || 'Área',
+        status: r.projeto.status,
+        escopoNegocio: r.projeto.escopoNegocio || 'industrial',
+        orcamento: 0,
+        compromissadoTotal: 0,
+        realizado: 0,
+        comprometido: 0,
+        disponivel: 0,
+        peps: [],
+      };
+      proj.orcamento += orcamento;
+      proj.compromissadoTotal += compromissadoTotal;
+      proj.realizado += realizado;
+      proj.comprometido += comprometido;
+      proj.disponivel += disponivel;
+      proj.peps.push({
+        codigoPep: r.codigoPep,
+        carteira: r.carteira,
+        ano,
+        descricao: r.descricao,
+        orcamento,
+        compromissadoTotal,
+        realizado,
+        comprometido,
+        disponivel,
+      });
+      porProjetoMap.set(pid, proj);
+    }
+
+    const porAno = Array.from(porAnoMap.values()).sort((a, b) => a.ano - b.ano);
+    const porProjeto = Array.from(porProjetoMap.values()).sort(
+      (a, b) => b.realizado - a.realizado,
+    );
+
+    const topRealizado = porProjeto.slice(0, 12).map((p) => ({
+      projetoId: p.projetoId,
+      nome: p.nome,
+      valor: p.realizado,
+    }));
+    const topOrcamento = [...porProjeto]
+      .sort((a, b) => b.orcamento - a.orcamento)
+      .slice(0, 12)
+      .map((p) => ({
+        projetoId: p.projetoId,
+        nome: p.nome,
+        valor: p.orcamento,
+      }));
+    const consumo = porProjeto
+      .filter((p) => p.orcamento > 0)
+      .map((p) => ({
+        projetoId: p.projetoId,
+        nome: p.nome,
+        pct: (p.realizado / p.orcamento) * 100,
+        orcamento: p.orcamento,
+        realizado: p.realizado,
+      }))
+      .sort((a, b) => b.pct - a.pct)
+      .slice(0, 12);
+
+    return {
+      totais,
+      porAno,
+      porProjeto,
+      topRealizado,
+      topOrcamento,
+      consumo,
+      anos: porAno.map((a) => a.ano),
     };
   }
 }

@@ -7,11 +7,15 @@ import {
 import {
   BeneficioCategoria,
   CategoriaQualitativaGanho,
+  ClassificacaoProjeto,
+  EscopoNegocio,
   GanhoPrincipalTipo,
   GateDecisaoTipo,
   GateTipo,
   PapelEstrategicoFapd,
   ProjetoStatus,
+  SemaforoRag,
+  TipoProjetoInvestimento,
 } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditoriaService } from '../auditoria/auditoria.service';
@@ -804,6 +808,148 @@ export class ProjetosService {
     user: AuthUser,
   ) {
     return this.updateValorPotencial(id, input, user);
+  }
+
+  /** Cadastro básico do projeto (dados de planejamento / identidade). */
+  async updateCadastro(
+    id: string,
+    input: {
+      nome?: string;
+      status?: ProjetoStatus;
+      tipoInvestimento?: TipoProjetoInvestimento | null;
+      classificacao?: ClassificacaoProjeto | null;
+      facilitador?: string | null;
+      responsavelNome?: string | null;
+      fornecedor?: string | null;
+      setor?: string | null;
+      diretoria?: string | null;
+      escopoNegocio?: EscopoNegocio;
+      emUso?: boolean | null;
+      ragComunicacao?: SemaforoRag | null;
+      ragCusto?: SemaforoRag | null;
+      ragPrazo?: SemaforoRag | null;
+      ragEscopo?: SemaforoRag | null;
+      economiaEstimadaAno?: number | null;
+      economiaRealAno?: number | null;
+      retornoHhAno?: number | null;
+      areaNome?: string | null;
+    },
+    user: AuthUser,
+  ) {
+    const before = await this.prisma.projeto.findUnique({ where: { id } });
+    if (!before) throw new NotFoundException('Projeto não encontrado');
+
+    const money = (v: unknown) => {
+      if (v == null || v === '') return null;
+      const n = Number(v);
+      return Number.isNaN(n) ? null : Math.max(0, n);
+    };
+    const str = (v: unknown) => {
+      if (v == null) return null;
+      const s = String(v).trim();
+      return s === '' ? null : s;
+    };
+
+    let areaId = before.areaId;
+    if (input.areaNome !== undefined && input.areaNome != null) {
+      const nome = String(input.areaNome).trim() || 'Sem área';
+      const area =
+        (await this.prisma.area.findFirst({ where: { nome } })) ||
+        (await this.prisma.area.create({ data: { nome } }));
+      areaId = area.id;
+    }
+
+    const data = {
+      nome:
+        input.nome === undefined
+          ? before.nome
+          : String(input.nome).trim() || before.nome,
+      status: input.status === undefined ? before.status : input.status,
+      areaId,
+      tipoInvestimento:
+        input.tipoInvestimento === undefined
+          ? before.tipoInvestimento
+          : input.tipoInvestimento,
+      classificacao:
+        input.classificacao === undefined
+          ? before.classificacao
+          : input.classificacao,
+      facilitador:
+        input.facilitador === undefined
+          ? before.facilitador
+          : str(input.facilitador),
+      responsavelNome:
+        input.responsavelNome === undefined
+          ? before.responsavelNome
+          : str(input.responsavelNome),
+      fornecedor:
+        input.fornecedor === undefined
+          ? before.fornecedor
+          : str(input.fornecedor),
+      setor: input.setor === undefined ? before.setor : str(input.setor),
+      diretoria:
+        input.diretoria === undefined
+          ? before.diretoria
+          : str(input.diretoria),
+      escopoNegocio:
+        input.escopoNegocio === undefined
+          ? before.escopoNegocio
+          : input.escopoNegocio,
+      emUso: input.emUso === undefined ? before.emUso : input.emUso,
+      ragComunicacao:
+        input.ragComunicacao === undefined
+          ? before.ragComunicacao
+          : input.ragComunicacao,
+      ragCusto:
+        input.ragCusto === undefined ? before.ragCusto : input.ragCusto,
+      ragPrazo:
+        input.ragPrazo === undefined ? before.ragPrazo : input.ragPrazo,
+      ragEscopo:
+        input.ragEscopo === undefined ? before.ragEscopo : input.ragEscopo,
+      economiaEstimadaAno:
+        input.economiaEstimadaAno === undefined
+          ? before.economiaEstimadaAno
+          : money(input.economiaEstimadaAno),
+      economiaRealAno:
+        input.economiaRealAno === undefined
+          ? before.economiaRealAno
+          : money(input.economiaRealAno),
+      retornoHhAno:
+        input.retornoHhAno === undefined
+          ? before.retornoHhAno
+          : money(input.retornoHhAno),
+    };
+
+    await this.prisma.projeto.update({ where: { id }, data });
+    await this.auditoria.log({
+      entidade: 'Projeto',
+      entidadeId: id,
+      acao: 'atualizar_cadastro',
+      usuarioId: user.id,
+      valorAnterior: {
+        nome: before.nome,
+        status: before.status,
+        areaId: before.areaId,
+        tipoInvestimento: before.tipoInvestimento,
+        classificacao: before.classificacao,
+        facilitador: before.facilitador,
+        responsavelNome: before.responsavelNome,
+        fornecedor: before.fornecedor,
+        setor: before.setor,
+        diretoria: before.diretoria,
+        escopoNegocio: before.escopoNegocio,
+        emUso: before.emUso,
+        ragComunicacao: before.ragComunicacao,
+        ragCusto: before.ragCusto,
+        ragPrazo: before.ragPrazo,
+        ragEscopo: before.ragEscopo,
+        economiaEstimadaAno: before.economiaEstimadaAno,
+        economiaRealAno: before.economiaRealAno,
+        retornoHhAno: before.retornoHhAno,
+      },
+      valorNovo: data,
+    });
+    return this.get(id, user);
   }
 
   async remove(id: string, user: AuthUser) {

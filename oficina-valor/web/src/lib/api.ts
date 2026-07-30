@@ -264,6 +264,12 @@ export const api = {
       method: 'DELETE',
     }),
   portfolio: () => request<any>('/portfolio/resumo'),
+  pepCustos: () => request<any>('/portfolio/pep-custos'),
+  atualizarProjeto: (id: string, body: Record<string, unknown>) =>
+    request<any>(`/projetos/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    }),
   pendentes: () => request<any[]>('/medicoes/pendentes'),
   criarMedicao: (
     beneficioId: string,

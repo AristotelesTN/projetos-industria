@@ -11,9 +11,13 @@ import {
 import {
   BeneficioCategoria,
   CategoriaQualitativaGanho,
+  ClassificacaoProjeto,
+  EscopoNegocio,
   GanhoPrincipalTipo,
   PapelEstrategicoFapd,
   ProjetoStatus,
+  SemaforoRag,
+  TipoProjetoInvestimento,
 } from '@prisma/client';
 import {
   IsArray,
@@ -159,6 +163,87 @@ class CreateRapidoDto {
 class StatusDto {
   @IsEnum(ProjetoStatus)
   status!: ProjetoStatus;
+}
+
+class AtualizarProjetoDto {
+  @IsOptional()
+  @IsString()
+  nome?: string;
+
+  @IsOptional()
+  @IsEnum(ProjetoStatus)
+  status?: ProjetoStatus;
+
+  @IsOptional()
+  @IsEnum(TipoProjetoInvestimento)
+  tipoInvestimento?: TipoProjetoInvestimento | null;
+
+  @IsOptional()
+  @IsEnum(ClassificacaoProjeto)
+  classificacao?: ClassificacaoProjeto | null;
+
+  @IsOptional()
+  @IsString()
+  facilitador?: string | null;
+
+  @IsOptional()
+  @IsString()
+  responsavelNome?: string | null;
+
+  @IsOptional()
+  @IsString()
+  fornecedor?: string | null;
+
+  @IsOptional()
+  @IsString()
+  setor?: string | null;
+
+  @IsOptional()
+  @IsString()
+  diretoria?: string | null;
+
+  @IsOptional()
+  @IsEnum(EscopoNegocio)
+  escopoNegocio?: EscopoNegocio;
+
+  @IsOptional()
+  @IsBoolean()
+  emUso?: boolean | null;
+
+  @IsOptional()
+  @IsEnum(SemaforoRag)
+  ragComunicacao?: SemaforoRag | null;
+
+  @IsOptional()
+  @IsEnum(SemaforoRag)
+  ragCusto?: SemaforoRag | null;
+
+  @IsOptional()
+  @IsEnum(SemaforoRag)
+  ragPrazo?: SemaforoRag | null;
+
+  @IsOptional()
+  @IsEnum(SemaforoRag)
+  ragEscopo?: SemaforoRag | null;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  economiaEstimadaAno?: number | null;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  economiaRealAno?: number | null;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  retornoHhAno?: number | null;
+
+  @IsOptional()
+  @IsString()
+  areaNome?: string | null;
 }
 
 class AvaliacaoFapdDto {
@@ -378,6 +463,15 @@ export class ProjetosController {
     @CurrentUser() user: AuthUser,
   ) {
     return this.projetos.updateStatus(id, dto.status, user);
+  }
+
+  @Patch(':id')
+  atualizar(
+    @Param('id') id: string,
+    @Body() dto: AtualizarProjetoDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.projetos.updateCadastro(id, dto, user);
   }
 
   @Patch(':id/avaliacao-fapd')
