@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=ai-legible&utm_source=comment&utm_medium=referral&utm_id=782bdad0-ac75-44d4-8b10-176ebb1cb13d
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="hosting-provider" content="Netlify">
+<meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=782bdad0-ac75-44d4-8b10-176ebb1cb13d">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="assets/icons/icone-brennand.svg">
+<meta name="description" content="Projeto Fio · Blueprint Matrix — o processo de design ponta a ponta em fases e técnicas">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Design System GCB">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:title" content="Projeto Fio · Blueprint Matrix">
+    <meta property="og:description" content="Projeto Fio · Blueprint Matrix — o processo de design ponta a ponta em fases e técnicas">
+    <meta property="og:url" content="https://gcb-ds.netlify.app/projeto-fio.html">
+    <meta property="og:image" content="https://gcb-ds.netlify.app/assets/og/og-fio.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Fio · Tecnova — pipeline de design do problema à especificação">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Projeto Fio · Blueprint Matrix">
+    <meta name="twitter:description" content="Projeto Fio · Blueprint Matrix — o processo de design ponta a ponta em fases e técnicas">
+    <meta name="twitter:image" content="https://gcb-ds.netlify.app/assets/og/og-fio.png">
+<title>Projeto Fio · Blueprint Matrix</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=space-grotesk@700,600,500,400&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#175ce5;--blue-ghost:rgba(23,92,229,.08);--blue-border:rgba(23,92,229,.2);--blue-hover:#1450cc;
+  --surface-base:#f9f9f9;--white:#ffffff;--surface-raised:#f4f4f6;--surface-border:#e4e4e8;
+  --text-default:#1a1d22;--text-secondary:#565b66;--text-subtle:#757a85;
+  --font:'Space Grotesk',sans-serif;
+  --brand:var(--blue);--brand-l:var(--blue-ghost);--brand-m:var(--blue-border);--brand-d:var(--blue-hover);
+  --blue2:#1e40af;--blue2-l:rgba(30,64,175,.07);--blue2-m:rgba(30,64,175,.2);
+  --teal:#0d9488;--teal-l:rgba(13,148,136,.07);--teal-m:rgba(13,148,136,.2);
+  --purple:#7c3aed;--purple-l:rgba(124,58,237,.07);--purple-m:rgba(124,58,237,.2);
+  --gray:#6b7280;--gray-l:rgba(107,114,128,.06);--gray-m:rgba(107,114,128,.18);
+  --bg:var(--surface-base);--bg-c:var(--white);--bg-l:var(--surface-raised);
+  --br:var(--surface-border);--br2:#eceef2;
+  --tx:var(--text-default);--tx2:var(--text-secondary);--tx3:var(--text-subtle);
+  --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);height:100vh;display:flex;flex-direction:column;overflow:hidden;font-size:13px;font-family:var(--font)}
+/* ── Header ── */
+.hdr{height:52px;background:var(--bg-c);border-bottom:1px solid var(--br);display:flex;align-items:center;gap:12px;padding:0 20px;flex-shrink:0;z-index:200;position:relative}
+.hdr::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--brand)}
+.hname{font-size:13px;font-weight:700;color:var(--tx);letter-spacing:-.02em;flex-shrink:0}
+.hname span{color:var(--brand)}
+.htag{font-family:var(--mono);font-size:9px;color:var(--tx3);background:var(--bg-l);border:1px solid var(--br);border-radius:3px;padding:2px 7px}
+.hdiv{width:1px;height:16px;background:var(--br);flex-shrink:0}
+.hbtn{font-family:var(--font);font-size:11px;font-weight:500;padding:4px 11px;border-radius:4px;border:1px solid var(--br);background:transparent;color:var(--tx2);cursor:pointer;transition:all .12s;white-space:nowrap}
+.hbtn:hover{border-color:var(--brand);color:var(--brand)}
+.hbtn.on{background:var(--brand-l);color:var(--brand);border-color:var(--brand-m)}
+.hright{margin-left:auto;display:flex;align-items:center;gap:6px}
+/* ── Canvas ── */
+.vp{flex:1;overflow:hidden;cursor:grab;position:relative;background:var(--bg)}
+.vp.grabbing{cursor:grabbing}
+.cv{transform-origin:0 0;position:absolute;top:0;left:0}
+.gw{display:inline-block;padding:28px 120px 160px 28px}
+.grid-row{display:flex;flex-direction:row}
+.corner-col{width:172px;min-width:172px;height:66px;background:var(--bg-c);border-right:2px solid var(--br);border-bottom:2px solid var(--br);flex-shrink:0;display:flex;align-items:center;padding:0 14px;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);font-family:var(--mono)}
+.col-hdr{height:66px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:8px 14px;border-right:1px solid var(--br);border-bottom:2px solid var(--br);background:var(--bg-c);flex-shrink:0}
+.col-n{font-family:var(--mono);font-size:8px;color:var(--tx3)}
+.col-lbl{font-size:11px;font-weight:600;color:var(--tx);letter-spacing:-.01em;line-height:1.2}
+.col-mode{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:8px;padding:2px 6px;border-radius:2px;border:1px solid;width:fit-content}
+.col-mode.convergir{color:var(--brand);border-color:var(--brand-m);background:var(--brand-l)}
+.col-mode.divergir{color:var(--purple);border-color:var(--purple-m);background:var(--purple-l)}
+.row-lbl{width:172px;min-width:172px;position:relative;padding:12px 10px 12px 18px;background:var(--bg-c);border-right:2px solid var(--br);border-bottom:1px solid var(--br2);display:flex;flex-direction:column;justify-content:flex-start;gap:5px;flex-shrink:0;min-height:120px}
+.row-bar{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:0 2px 2px 0}
+.row-name{font-size:11px;font-weight:600;color:var(--tx);line-height:1.3;letter-spacing:-.01em}
+.row-sub{font-size:8px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--tx3);line-height:1.45}
+.cell{min-height:120px;padding:9px;border-right:1px solid var(--br2);border-bottom:1px solid var(--br2);display:flex;flex-direction:column;gap:4px;align-items:flex-start;flex-shrink:0;background:var(--bg-c);transition:background .1s}
+.cell-dir{min-height:80px;padding:10px 12px;border-right:1px solid var(--br2);border-bottom:1px solid var(--br2);flex-shrink:0;background:rgba(23,92,229,.015)}
+.cell-dir-label{font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);margin-bottom:2px}
+.cell-dir-q{font-size:11px;font-weight:600;color:var(--tx);line-height:1.45;margin-bottom:8px}
+.cell-dir-w{font-size:10px;color:var(--tx2);line-height:1.5;font-style:italic}
+.tag-list{display:flex;flex-wrap:wrap;gap:3px}
+.tag{font-size:9px;font-weight:500;padding:2px 7px;border-radius:3px;border:1px solid;white-space:nowrap;line-height:1.55}
+.t-out{background:var(--gray-l);color:var(--gray);border-color:var(--gray-m);font-weight:600;font-size:10px;padding:3px 8px}
+.t-tec{background:var(--teal-l);color:var(--teal);border-color:var(--teal-m);cursor:pointer;transition:all .12s}
+.t-tec:hover{background:rgba(13,148,136,.14);border-color:rgba(13,148,136,.4)}
+.modal-badge{display:inline-flex;align-items:center;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:3px;border:1px solid;margin-bottom:10px;font-family:var(--mono)}
+.modal-title{font-size:15px;font-weight:700;color:var(--tx);line-height:1.3;margin-bottom:8px;letter-spacing:-.02em}
+.modal-sec{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);padding-bottom:5px;border-bottom:1px solid var(--br2);margin:14px 0 8px;font-family:var(--mono)}
+.modal-body{font-size:12px;color:var(--tx2);line-height:1.7}
+/* ── Legend ── */
+.legend{position:fixed;bottom:16px;right:56px;background:var(--bg-c);border:1px solid var(--br);border-radius:6px;padding:12px 15px;z-index:150;min-width:220px;box-shadow:0 4px 16px rgba(17,24,39,.06)}
+.legend.hidden{display:none}
+.leg-title{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:9px;font-family:var(--mono)}
+.leg-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:10px;color:var(--tx2)}
+.leg-swatch{width:24px;height:10px;border-radius:2px;flex-shrink:0;border:1px solid}
+/* ── Zoom bar ── */
+.zbar{position:fixed;right:14px;bottom:96px;top:auto;transform:none;display:flex;flex-direction:column;align-items:center;background:var(--bg-c);border:1px solid var(--br);border-radius:6px;padding:3px;z-index:150;box-shadow:0 2px 12px rgba(17,24,39,.07)}
+.zbar-btn{font-family:var(--mono);font-size:16px;font-weight:300;width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;color:var(--tx2);cursor:pointer;border-radius:4px;transition:background .1s;line-height:1}
+.zbar-btn:hover{background:var(--bg-l);color:var(--brand)}
+.zbar-sep{width:22px;height:1px;background:var(--br);margin:1px 0}
+.zbar-val{font-family:var(--mono);font-size:10px;color:var(--tx3);text-align:center;padding:5px 0;width:32px}
+/* ── Content modal ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(17,24,39,.3);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--bg-c);border:1px solid var(--br);border-radius:8px;padding:22px 24px;max-width:560px;width:92%;max-height:86vh;overflow-y:auto;box-shadow:0 20px 60px rgba(17,24,39,.14);position:relative}
+.modal-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--tx3);font-size:18px;cursor:pointer;padding:4px 8px;border-radius:4px;transition:all .12s;line-height:1}
+.modal-close:hover{color:var(--tx);background:var(--bg-l)}
+/* ── Floating Builder Button ── */
+.builder-fab-stack{position:fixed;bottom:20px;right:14px;z-index:160;display:flex;flex-direction:column;align-items:center;gap:4px}
+.builder-fab{width:46px;height:46px;border-radius:50%;background:var(--brand);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(23,92,229,.4);transition:all .15s;color:#fff}
+.builder-fab:hover{background:var(--brand-d);transform:scale(1.07);box-shadow:0 6px 24px rgba(23,92,229,.5)}
+.builder-fab-caption{font-size:9px;font-weight:600;color:var(--tx2);letter-spacing:.02em;line-height:1;text-align:center}
+/* ── Builder Modal ── */
+.builder-overlay{display:none;position:fixed;inset:0;background:rgba(17,24,39,.35);backdrop-filter:blur(4px);z-index:600;align-items:center;justify-content:center}
+.builder-overlay.open{display:flex}
+.builder-box{background:var(--bg-c);border:1px solid var(--br);border-radius:10px;width:96%;max-width:620px;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 24px 72px rgba(17,24,39,.18);position:relative;overflow:hidden}
+.builder-header{padding:18px 24px 14px;border-bottom:1px solid var(--br);flex-shrink:0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.builder-title{font-size:14px;font-weight:700;color:var(--tx);letter-spacing:-.02em}
+.builder-subtitle{font-size:11px;color:var(--tx3);margin-top:2px}
+.builder-close{background:none;border:none;color:var(--tx3);font-size:18px;cursor:pointer;padding:2px 6px;border-radius:4px;transition:all .12s;line-height:1;flex-shrink:0}
+.builder-close:hover{color:var(--tx);background:var(--bg-l)}
+/* Step bar */
+.builder-stepbar{padding:14px 24px;border-bottom:1px solid var(--br2);display:flex;align-items:center;gap:0;flex-shrink:0}
+.bsi{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:600;color:var(--tx3);font-family:var(--mono);white-space:nowrap}
+.bsi-dot{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--br);background:var(--bg-l);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--tx3);transition:all .2s;flex-shrink:0}
+.bsi.active .bsi-dot{background:var(--brand);border-color:var(--brand);color:#fff}
+.bsi.done .bsi-dot{background:rgba(22,163,74,.15);border-color:rgba(22,163,74,.4);color:#15803d}
+.bsi.active{color:var(--tx)}
+.bsi.skipped{opacity:.35;pointer-events:none}
+.bsi-line{flex:1;height:1px;background:var(--br);margin:0 8px;min-width:16px}
+/* Builder panels */
+.builder-body{flex:1;overflow-y:auto;padding:20px 24px}
+.builder-body::-webkit-scrollbar{width:4px}
+.builder-body::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+.builder-panel{display:none}
+.builder-panel.active{display:block}
+.bp-label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;font-family:var(--mono)}
+/* Task groups */
+.task-group{margin-bottom:16px}
+.task-group-label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);margin-bottom:6px;font-family:var(--mono)}
+.task-item{display:flex;align-items:center;padding:10px 12px;border:1.5px solid var(--br);border-radius:6px;cursor:pointer;transition:all .12s;margin-bottom:4px;gap:10px}
+.task-item:hover{border-color:var(--brand-m);background:var(--brand-l)}
+.task-item.selected{border-color:var(--brand);background:var(--brand-l)}
+.task-item-label{font-size:12px;font-weight:500;color:var(--tx);line-height:1.3}
+.task-item-arrow{margin-left:auto;color:var(--tx3);font-size:14px;flex-shrink:0;transition:transform .12s}
+.task-item:hover .task-item-arrow,.task-item.selected .task-item-arrow{color:var(--brand);transform:translateX(2px)}
+/* Techniques */
+.technique-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid var(--br2);border-radius:6px;cursor:pointer;transition:all .12s;margin-bottom:6px}
+.technique-item:hover{border-color:var(--brand-m);background:var(--brand-l)}
+.technique-item.selected{border-color:var(--brand);background:var(--brand-l)}
+.technique-check{width:16px;height:16px;border:1.5px solid var(--br);border-radius:3px;background:var(--bg-c);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.technique-item.selected .technique-check,.deliverable-item.selected .technique-check{background:var(--brand);border-color:var(--brand)}
+.technique-check-mark{color:#fff;font-size:9px;display:none}
+.technique-item.selected .technique-check-mark,.deliverable-item.selected .technique-check-mark{display:block}
+.technique-body{flex:1;min-width:0}
+.technique-label{font-size:12px;font-weight:500;color:var(--tx)}
+.technique-tooltip{font-size:10px;color:var(--tx3);margin-top:2px;line-height:1.5}
+.technique-skip{font-size:10px;color:var(--tx3);margin-bottom:14px;font-style:italic}
+/* Deliverables */
+.deliverable-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid var(--br2);border-radius:6px;cursor:pointer;transition:all .12s;margin-bottom:6px}
+.deliverable-item:hover{border-color:var(--brand-m);background:var(--brand-l)}
+.deliverable-item.selected{border-color:var(--brand);background:var(--brand-l)}
+.deliverable-radio{width:16px;height:16px;border:1.5px solid var(--br);border-radius:50%;background:var(--bg-c);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.deliverable-item.selected .deliverable-radio{border-color:var(--brand)}
+.deliverable-radio-dot{width:8px;height:8px;border-radius:50%;background:var(--brand);display:none}
+.deliverable-item.selected .deliverable-radio-dot{display:block}
+.deliverable-body{flex:1;min-width:0}
+.deliverable-label{font-size:12px;font-weight:500;color:var(--tx)}
+.deliverable-tooltip{font-size:10px;color:var(--tx3);margin-top:2px;line-height:1.5}
+.other-input{width:100%;margin-top:8px;padding:8px 10px;border:1.5px solid var(--br);border-radius:4px;font-family:var(--font);font-size:12px;color:var(--tx);background:var(--bg-l);transition:border-color .12s;resize:none}
+.other-input:focus{outline:none;border-color:var(--brand)}
+/* Context step */
+/* ── Jornada de Especificação (portada de especif.html) ── */
+.esp-note{font-size:10px;color:var(--tx3);margin-bottom:14px;font-style:italic}
+.esp-lgpd{background:#fff8e8;border:1px solid #f1d48a;border-left:3px solid #f39c12;border-radius:6px;padding:10px 12px;margin-bottom:14px;font-size:10.5px;color:#7a5a12;line-height:1.55}
+.esp-lgpd b{color:#6b4d0a}
+.esp-glabel{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);font-family:var(--mono);margin:14px 0 8px}
+.esp-glabel:first-child{margin-top:0}
+.esp-locked{opacity:.62;cursor:default}
+.esp-locked:hover{border-color:var(--br2);background:transparent}
+.esp-tag{font-size:9px;font-family:var(--mono);color:var(--tx3);margin-left:auto;white-space:nowrap;padding-left:8px}
+.esp-toolbar{display:flex;gap:6px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.esp-search{flex:1;min-width:160px;display:flex;align-items:center;gap:6px;border:1.5px solid var(--br);border-radius:6px;padding:0 10px;background:var(--bg-c);transition:border-color .12s}
+.esp-search:focus-within{border-color:var(--brand)}
+.esp-search svg{flex:none;color:var(--tx3)}
+.esp-search input{flex:1;border:0;outline:0;background:transparent;font-family:var(--font);font-size:12px;color:var(--tx);padding:8px 0}
+.esp-cbtn{border:1.5px solid var(--br);background:var(--bg-c);border-radius:6px;padding:8px 11px;font-family:var(--font);font-size:11px;color:var(--tx2);cursor:pointer;transition:all .12s;white-space:nowrap}
+.esp-cbtn:hover{border-color:var(--brand-m);color:var(--brand)}
+.esp-filters{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.esp-chip{border:1.5px solid var(--br2);background:var(--bg-c);border-radius:100px;padding:5px 11px;font-family:var(--font);font-size:10.5px;color:var(--tx2);cursor:pointer;transition:all .12s;display:flex;align-items:center;gap:6px}
+.esp-chip:hover{border-color:var(--brand-m)}
+.esp-chip.on{border-color:var(--brand);background:var(--brand-l);color:var(--brand);font-weight:500}
+.esp-chip .dot{width:7px;height:7px;border-radius:50%;flex:none}
+.esp-area{margin-bottom:18px}
+.esp-area h4{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;color:var(--tx);margin:0 0 8px;font-family:var(--font)}
+.esp-area h4 .barr{width:3px;height:13px;border-radius:2px;flex:none}
+.esp-area h4 .qtd{font-family:var(--mono);font-size:9px;color:var(--tx3);font-weight:400;margin-left:auto}
+.esp-cards{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+@media(max-width:620px){.esp-cards{grid-template-columns:1fr}}
+.esp-card{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;border:1.5px solid var(--br2);border-radius:6px;cursor:pointer;transition:all .12s;background:var(--bg-c)}
+.esp-card:hover{border-color:var(--brand-m);background:var(--brand-l)}
+.esp-card.on{border-color:var(--brand);background:var(--brand-l)}
+.esp-card .ck{width:15px;height:15px;border:1.5px solid var(--br);border-radius:3px;background:var(--bg-c);flex:none;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .12s;font-size:9px;color:#fff}
+.esp-card.on .ck{background:var(--brand);border-color:var(--brand)}
+.esp-card .ck span{display:none}
+.esp-card.on .ck span{display:block}
+.esp-card .nm{font-size:11.5px;font-weight:500;color:var(--tx);line-height:1.35}
+.esp-card .dsc{font-size:9.5px;color:var(--tx3);margin-top:2px;line-height:1.45}
+.esp-card .pii{display:inline-block;font-family:var(--mono);font-size:8px;letter-spacing:.06em;background:#fdecec;color:#a33;border-radius:3px;padding:1px 4px;margin-top:4px}
+.esp-empty{font-size:11px;color:var(--tx3);font-style:italic;padding:18px 0;text-align:center}
+.esp-tray{display:flex;align-items:center;gap:8px;background:var(--brand-l);border:1px solid var(--brand-m);border-radius:6px;padding:9px 12px;margin-bottom:12px;font-size:11px;color:var(--tx2)}
+.esp-tray b{color:var(--brand);font-family:var(--mono);font-size:13px}
+.context-textarea{width:100%;min-height:160px;padding:12px;border:1.5px solid var(--br);border-radius:6px;font-family:var(--font);font-size:12px;color:var(--tx);background:var(--bg-l);resize:vertical;transition:border-color .12s;line-height:1.6}
+.context-textarea:focus{outline:none;border-color:var(--brand)}
+.context-hint{font-size:10px;color:var(--tx3);margin-top:6px;line-height:1.5}
+/* Result */
+.result-summary{background:var(--brand-l);border:1px solid var(--brand-m);border-radius:6px;padding:12px 14px;margin-bottom:14px}
+.result-summary-label{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);margin-bottom:6px}
+.result-summary-row{font-size:11px;color:var(--tx2);margin-bottom:3px;line-height:1.5}
+.result-summary-row span{font-weight:600;color:var(--tx)}
+.prompt-pre{font-family:var(--mono);font-size:10px;color:var(--tx2);line-height:1.65;white-space:pre-wrap;word-break:break-word;max-height:280px;overflow-y:auto;background:var(--bg-l);border:1px solid var(--br);border-radius:4px;padding:12px;margin-bottom:10px;mask-image:linear-gradient(to bottom,black calc(100% - 32px),transparent 100%);-webkit-mask-image:linear-gradient(to bottom,black calc(100% - 32px),transparent 100%)}
+.prompt-pre:hover,.prompt-pre:focus-within{mask-image:none;-webkit-mask-image:none}
+.prompt-pre::-webkit-scrollbar{width:3px}
+.prompt-pre::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+/* Builder nav */
+.builder-footer{padding:14px 24px;border-top:1px solid var(--br);display:flex;gap:8px;flex-shrink:0}
+.btn-primary{font-family:var(--font);font-size:12px;font-weight:600;padding:8px 18px;border-radius:5px;border:none;background:var(--brand);color:#fff;cursor:pointer;transition:all .12s;flex-shrink:0}
+.btn-primary:hover{background:var(--brand-d)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.btn-secondary{font-family:var(--font);font-size:12px;font-weight:500;padding:8px 14px;border-radius:5px;border:1px solid var(--br);background:transparent;color:var(--tx2);cursor:pointer;transition:all .12s}
+.btn-secondary:hover{border-color:var(--brand);color:var(--brand)}
+.btn-copy{font-family:var(--font);font-size:12px;font-weight:600;padding:8px 16px;border-radius:5px;border:1px solid var(--purple-m);background:var(--purple-l);color:var(--purple);cursor:pointer;transition:all .15s;flex:1}
+.btn-copy:hover{background:rgba(124,58,237,.13);border-color:rgba(124,58,237,.35)}
+/* Hints */
+.hint{position:fixed;bottom:16px;left:16px;font-size:10px;color:var(--tx3);font-family:var(--mono);display:flex;gap:12px;z-index:100}
+.hint kbd{background:var(--bg-c);border:1px solid var(--br);border-radius:3px;padding:1px 5px;font-size:9px}
+/* Easter egg */
+.egg-overlay{position:fixed;inset:0;z-index:900;background:var(--bg-c);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .6s ease}
+.egg-overlay.fade-out{opacity:0;pointer-events:none}
+.egg-overlay.hidden{display:none}
+.egg-logo{font-size:15px;font-weight:700;color:var(--tx);letter-spacing:-.02em;user-select:none}
+.egg-logo span{color:var(--brand)}
+.egg-cursor{color:var(--brand);animation:blink .9s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.egg-hint{font-family:var(--mono);font-size:11px;color:var(--tx3);text-align:center;line-height:1.7}
+.egg-seq{display:flex;align-items:center;gap:8px}
+.egg-key{width:38px;height:38px;border-radius:5px;background:var(--bg-l);border:1.5px solid var(--br);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:15px;font-weight:600;color:transparent;transition:all .18s ease}
+.egg-key.active{background:var(--brand);border-color:var(--brand-d);transform:scale(1.08);color:#fff}
+.egg-key.done{background:rgba(22,163,74,.1);border-color:rgba(22,163,74,.32);color:#15803d;transform:scale(1)}
+</style>
+</head>
+<body>
+<div class="egg-overlay hidden" id="egg-overlay">
+  <div class="egg-logo">Projeto <span>Fio</span><span class="egg-cursor">_</span></div>
+  <div class="egg-hint">Blueprint Matrix · Tecnova · Soluções Digitais<br>Digite a sequência para acessar</div>
+  <div class="egg-seq">
+    <div class="egg-key" id="ek-0"></div>
+    <span style="color:var(--br);font-size:10px">→</span>
+    <div class="egg-key" id="ek-1"></div>
+    <span style="color:var(--br);font-size:10px">→</span>
+    <div class="egg-key" id="ek-2"></div>
+  </div>
+</div>
+
+<header class="hdr">
+  <div style="display:flex;align-items:baseline;gap:10px;flex-shrink:0">
+    <span class="hname">Projeto <span>Fio</span></span>
+    <span style="font-size:11px;color:var(--tx3)">·</span>
+    <span style="font-size:12px;font-weight:500;color:var(--tx2)">Blueprint Matrix</span>
+    <span class="htag">v2.0</span>
+  </div>
+  <div class="hdiv"></div>
+  <span style="font-size:11px;color:var(--tx3)">Tecnova · Soluções Digitais</span>
+  <div class="hright">
+    <a class='hbtn' href='index.html' style='text-decoration:none'>Fio ↗</a>
+    <a class='hbtn' href='ds.html' style='text-decoration:none'>Design System ↗</a>
+    <button class="hbtn" id="btn-leg" onclick="toggleLeg(this)">Legenda</button>
+    <button class="hbtn" onclick="resetV()">↺ Reset</button>
+  </div>
+</header>
+
+<div class="vp" id="vp"><div class="cv" id="cv"><div class="gw" id="gw"></div></div></div>
+
+<div class="legend hidden" id="legend">
+  <div class="leg-title">Raias</div>
+  <div class="leg-row"><div class="leg-swatch" style="background:var(--gray-l);border-color:var(--gray-m)"></div>Entregável</div>
+  <div class="leg-row"><div class="leg-swatch" style="background:rgba(23,92,229,.015);border-color:var(--brand-m)"></div>Diretriz</div>
+  <div class="leg-row"><div class="leg-swatch" style="background:var(--teal-l);border-color:var(--teal-m)"></div>Técnicas · clique para detalhes</div>
+  <div class="leg-title" style="margin-top:10px">Modo</div>
+  <div class="leg-row"><div class="col-mode convergir" style="padding:1px 6px">◆ convergir</div></div>
+  <div class="leg-row"><div class="col-mode divergir" style="padding:1px 6px">◇ divergir</div></div>
+</div>
+
+<div class="zbar">
+  <button class="zbar-btn" onclick="dz(.1)">+</button>
+  <div class="zbar-sep"></div>
+  <div class="zbar-val" id="zv">75%</div>
+  <div class="zbar-sep"></div>
+  <button class="zbar-btn" onclick="dz(-.1)">−</button>
+</div>
+
+<!-- Floating Builder Button -->
+<div class="builder-fab-stack">
+  <button class="builder-fab" onclick="openBuilder()" title="Preparar prompt"><span style="font-size:14px">✦</span></button>
+  <div class="builder-fab-caption">Prompt</div>
+</div>
+
+<!-- Builder Modal -->
+<div class="builder-overlay" id="builder-overlay" onclick="onBuilderBg(event)">
+  <div class="builder-box">
+    <div class="builder-header">
+      <div>
+        <div class="builder-title">Preparar prompt</div>
+        <div class="builder-subtitle">Configure o prompt passo a passo — técnicas, audiência e contexto</div>
+      </div>
+      <button class="builder-close" onclick="closeBuilder()">×</button>
+    </div>
+    <div class="builder-stepbar" id="builder-stepbar"></div>
+    <div class="builder-body" id="builder-body">
+      <!-- Step 1: Task -->
+      <div class="builder-panel active" id="bs-1">
+        <div class="bp-label">Qual é a sua tarefa?</div>
+        <div id="task-list"></div>
+      </div>
+      <!-- Step 2: Techniques -->
+      <div class="builder-panel" id="bs-2">
+        <div class="bp-label">Quais técnicas usar?</div>
+        <div class="technique-skip">Opcional — selecione zero ou mais</div>
+        <div id="technique-list"></div>
+      </div>
+      <!-- Step 3: Audience or Deliverable -->
+      <div class="builder-panel" id="bs-3">
+        <div class="bp-label" id="step3-label">Para quem é este documento?</div>
+        <div id="deliverable-list"></div>
+      </div>
+      <!-- Step 4: Context -->
+      <div class="builder-panel" id="bs-4">
+        <div class="bp-label">Cole o contexto do projeto</div>
+        <div class="esp-lgpd" id="esp-lgpd" style="display:none"><b>Aviso LGPD.</b> Caso o seu projeto envolva dados pessoais ou dados pessoais sensíveis, comunique ao time de Segurança da Informação através do e-mail <b>seginfo@gcb.com.br</b>. Prefira contexto anonimizado ou fictício.</div>
+        <div class="technique-item" id="annexes-option" onclick="toggleAnnexes()" style="margin-bottom:12px">
+          <div class="technique-check" id="annexes-check"><span class="technique-check-mark">✓</span></div>
+          <div class="technique-body">
+            <div class="technique-label">Contexto nos documentos anexos</div>
+            <div class="technique-tooltip">O contexto do projeto está em arquivos ou documentos já anexados a esta conversa — não é necessário colar aqui</div>
+          </div>
+        </div>
+        <textarea class="context-textarea" id="context-input" placeholder="Cole aqui o briefing, os dados brutos, o protótipo HTML, transcrições de entrevistas ou qualquer insumo que a IA precisa para trabalhar.&#10;&#10;Este campo é opcional — mas quanto mais contexto, melhor o resultado."></textarea>
+        <div class="context-hint">Cole qualquer insumo disponível: briefing, HMWs, transcrições, protótipo, PRD.</div>
+      </div>
+      <!-- Especificação: Tópicos -->
+      <div class="builder-panel" id="bs-esp-topicos">
+        <div class="bp-label">Tópicos da especificação</div>
+        <div class="esp-note">Os obrigatórios entram sempre. Marque os opcionais que fizerem sentido.</div>
+        <div class="esp-glabel">Obrigatórios</div>
+        <div id="esp-top-obrig"></div>
+        <div class="esp-glabel">Opcionais</div>
+        <div id="esp-top-opc"></div>
+        <div class="esp-glabel">Outro tópico</div>
+        <div class="esp-note" style="margin-bottom:8px">Algum bloco que a especificação precisa cobrir e não está na lista? Descreva aqui.</div>
+        <textarea class="context-textarea" id="esp-topico-outro" style="min-height:56px" placeholder="Ex.: plano de migração de dados do sistema legado" oninput="espState.topicoOutro=this.value"></textarea>
+      </div>
+      <!-- Especificação: Tipo de especificação da área -->
+      <div class="builder-panel" id="bs-esp-tipo">
+        <div class="bp-label">Tipo de especificação da área</div>
+        <div class="esp-note">Seleção múltipla — cada tipo escolhido acrescenta um escopo ao prompt.</div>
+        <div class="esp-tray" id="esp-tray"></div>
+        <div class="esp-toolbar">
+          <div class="esp-search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="esp-search" type="text" placeholder="Buscar tipo… (ex: pipeline, chatbot, LGPD, BPMN)" oninput="espOnSearch(this.value)">
+          </div>
+          <button class="esp-cbtn" onclick="espSelectVisible()">Selecionar visíveis</button>
+          <button class="esp-cbtn" onclick="espClearAll()">Limpar tudo</button>
+        </div>
+        <div class="esp-filters" id="esp-filters"></div>
+        <div id="esp-areas"></div>
+        <div class="esp-glabel">Fora das áreas mapeadas</div>
+        <div class="esp-note" style="margin-bottom:8px">Se o caso não se encaixa em nenhuma área acima, descreva aqui — vale sozinho ou combinado com os tipos selecionados.</div>
+        <textarea class="context-textarea" id="esp-tipo-outro" style="min-height:56px" placeholder="Ex.: especificação de um processo jurídico interno, sem sistema envolvido" oninput="espOnTipoOutro(this.value)"></textarea>
+      </div>
+      <!-- Especificação: Entregável -->
+      <div class="builder-panel" id="bs-esp-entregavel">
+        <div class="bp-label">Entregável</div>
+        <div class="esp-note">Duas escolhas: a profundidade do conteúdo e o formato do arquivo que a Fase 2 vai produzir.</div>
+        <div class="esp-glabel">Profundidade</div>
+        <div id="esp-entregaveis"></div>
+        <div class="esp-glabel">Formato do arquivo</div>
+        <div id="esp-formatos"></div>
+        <textarea class="context-textarea" id="esp-formato-outro" style="min-height:56px;display:none;margin-top:8px" placeholder="Descreva o formato desejado" oninput="espState.formatoOutro=this.value"></textarea>
+      </div>
+      <!-- Result -->
+      <div class="builder-panel" id="bs-result">
+        <div class="result-summary" id="result-summary"></div>
+        <div class="bp-label" style="margin-bottom:8px">Prompt gerado</div>
+        <pre class="prompt-pre" id="prompt-output"></pre>
+      </div>
+    </div>
+    <div class="builder-footer" id="builder-footer">
+      <button class="btn-secondary" id="btn-back" onclick="builderBack()" style="display:none">← Voltar</button>
+      <button class="btn-primary" id="btn-next" onclick="builderNext()">Avançar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Content modal (for blueprint cells if needed) -->
+<div class="modal-overlay" id="modal" onclick="onModalBg(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<div class="hint">
+  <span><kbd>scroll</kbd> mover</span>
+  <span><kbd>ctrl+scroll</kbd> zoom</span>
+  <span><kbd>0</kbd> reset</span>
+  <span><kbd>Esc</kbd> fechar</span>
+</div>
+
+<script>
+/* Base única do Design System publicado — alterar aqui reflete em todos os prompts gerados. */
+const DS_BASE='https://gcb-ds.netlify.app';
+'use strict';
+
+/* ── Easter egg ── */
+const EGG=['f','i','o'];let eggIdx=0;
+const eggKeys=[0,1,2].map(i=>document.getElementById('ek-'+i));
+document.addEventListener('keydown',e=>{
+  const ov=document.getElementById('egg-overlay');
+  if(ov.classList.contains('hidden'))return;
+  const k=e.key.toLowerCase();
+  if(k===EGG[eggIdx]){
+    eggKeys[eggIdx].textContent=k.toUpperCase();
+    eggKeys[eggIdx].classList.add('active');
+    eggIdx++;
+    if(eggIdx===EGG.length){
+      setTimeout(()=>eggKeys.forEach(el=>{el.classList.remove('active');el.classList.add('done');}),80);
+      setTimeout(()=>{ov.classList.add('fade-out');setTimeout(()=>ov.classList.add('hidden'),600);},500);
+    }
+  } else {
+    eggKeys.forEach(el=>{el.classList.remove('active','done');el.textContent='';});
+    eggIdx=k===EGG[0]?1:0;
+    if(eggIdx===1){eggKeys[0].textContent=EGG[0].toUpperCase();eggKeys[0].classList.add('active');}
+  }
+});
+
+/* ── Grid Data ── */
+const CW=210;
+const PHASES=[
+  {id:'p1',n:'01',label:'Definição',mode:'convergir'},
+  {id:'p2',n:'02',label:'Ciclo de vida',mode:'divergir'},
+  {id:'p3',n:'03',label:'Recorte',mode:'convergir'},
+  {id:'p4',n:'04',label:'Pesquisa',mode:'divergir'},
+  {id:'p5',n:'05',label:'Síntese',mode:'convergir'},
+  {id:'p6',n:'06',label:'Ideação',mode:'divergir'},
+  {id:'p7',n:'07',label:'Pré-especificação',mode:'convergir'},
+  {id:'p8',n:'08',label:'Prototipação',mode:'divergir'},
+  {id:'p9',n:'09',label:'Especificação',mode:'convergir'},
+];
+const ROWS=[
+  {id:'r_ent',label:'Entregável',sub:'O que sai desta fase',color:'#6b7280'},
+  {id:'r_dir',label:'Diretriz',sub:'Pergunta central · quando usar',color:'#175CE5'},
+  {id:'r_tec',label:'Técnicas',sub:'Clique para ver descrição',color:'#0d9488'},
+];
+
+const TECHNIQUES={
+  p1:[
+    {id:'kickoff',label:'Kickoff meeting',desc:'Reunião estruturada para alinhar problema, stakeholders, restrições e critérios de sucesso antes de avançar.'},
+    {id:'lightning',label:'Lightning demos',desc:'Apresentação rápida de referências de mercado para calibrar expectativas e expandir repertório antes de definir o objeto.'},
+    {id:'an-briefing',label:'Análise de briefing',desc:'Leitura crítica do briefing em três camadas: explícito (pedido declarado), implícito (pressuposto não dito) e ausente (o que precisaria estar aqui e não está).'},
+    {id:'est-problema',label:'Estruturação do problema',desc:'Reformula a demanda como problema real: "O problema é X, que causa Y, para Z." Diferencia sintoma de causa raiz.'},
+    {id:'mapa-atuacao',label:'Mapa de atuação',desc:'Verifica se a demanda está dentro dos domínios do time antes de avançar. Encerra se estiver fora do escopo.'},
+    {id:'pontos-cegos',label:'Mapeamento de pontos cegos',desc:'Mapeia suposições explícitas e implícitas, categoriza por tipo (informacional, cognitiva, emocional, ambiental) e indica risco e como verificar cada uma.'},
+    {id:'ctx-estrategico',label:'Contexto estratégico',desc:'Define objetivo estratégico, modelo de negócio e momento da empresa antes de selecionar frameworks de métricas.'},
+    {id:'checklist-metricas',label:'Checklist crítico de métricas',desc:'Filtra métricas candidatas por acionabilidade, comportamento real, risco de manipulação e necessidade de proxy.'},
+    {id:'contra-testes',label:'Contra-testes',desc:'Audita métricas selecionadas identificando suposições implícitas, kill metrics e riscos de confundir correlação com causalidade.'},
+  ],
+  p2:[
+    {id:'field-study',label:'Field study',desc:'Observação direta do contexto real onde o processo acontece — registra o que as pessoas fazem, não o que dizem que fazem.'},
+    {id:'kickoff-proc',label:'Kickoff com processo',desc:'Reunião focada em mapear o processo existente com quem o opera, identificando etapas, atores e pontos de baixa visibilidade.'},
+    {id:'svc-blueprint',label:'Service blueprint textual',desc:'Descreve o fluxo de serviço em tabela com atores, etapas, entradas e saídas. Sinaliza pontos de baixa visibilidade.'},
+    {id:'mapa-sistema',label:'Mapeamento de sistema',desc:'Identifica os componentes do sistema (pessoas, ferramentas, dados, processos) e como se relacionam. Foca em dependências e fluxos, sem entrar em solução.'},
+  ],
+  p3:[
+    {id:'round-table',label:'Round table',desc:'Discussão estruturada com stakeholders para avaliar opções de recorte, alinhar prioridades e validar viabilidade.'},
+    {id:'dot-voting',label:'Dot voting',desc:'Técnica de priorização visual — participantes distribuem votos entre opções para revelar consenso e divergência.'},
+    {id:'an-priorizacao',label:'Análise de priorização',desc:'Avalia pontos do ciclo por frequência da dor, efeito sistêmico e solidez da evidência. Classifica Alta/Média/Baixa em cada dimensão.'},
+    {id:'matriz-ie',label:'Matriz impacto × esforço',desc:'Compara opções de recorte por impacto esperado e esforço de implementação. Entregue como tabela: Opção | Impacto | Esforço | Justificativa | Recomendação.'},
+  ],
+  p4:[
+    {id:'user-interviews',label:'User interviews',desc:'Entrevistas em profundidade para entender comportamentos, motivações e dores reais. Execução exige presença humana — a IA auxilia no roteiro (T5b) e na síntese (T6).'},
+    {id:'survey',label:'Survey',desc:'Questionário estruturado com consentimento obrigatório, fechadas e abertas. Dimensionado para até 10 minutos de resposta. A IA auxilia na construção e análise.'},
+    {id:'focus-group',label:'Focus group',desc:'Sessão moderada com grupo de usuários para explorar percepções. Exige facilitação humana — a IA auxilia no guia de moderação (T5b).'},
+    {id:'field-study-4',label:'Field study',desc:'Observação em contexto real para capturar comportamentos que usuários não conseguem verbalizar. Exige presença do pesquisador.'},
+    {id:'card-sorting',label:'Card sorting',desc:'Técnica para entender como usuários categorizam informações. Aberto (participante cria categorias) ou fechado (valida categorias pré-definidas).'},
+    {id:'usability-testing',label:'Usability testing',desc:'Observação de usuários executando tarefas no produto com script estruturado. Identifica problemas de usabilidade com base em comportamento real.'},
+    {id:'task-testing',label:'Task-based testing',desc:'Variação do usability testing com tarefas específicas e métricas de conclusão. Quantifica facilidade de uso.'},
+    {id:'tree-test',label:'Tree test',desc:'Valida estrutura de navegação pedindo que usuários encontrem itens em hierarquia de menus, sem interface visual.'},
+    {id:'competitive',label:'Competitive analysis',desc:'Levantamento de como concorrentes ou referências resolvem o mesmo problema. Inclui ficha por player e tabela comparativa.'},
+    {id:'analytics',label:'Analytics',desc:'Análise de dados de uso existentes — logs, métricas de comportamento, funis. Identifica padrões mas não explica motivação.'},
+    {id:'heuristic',label:'Heuristic evaluation',desc:'Avaliação de interface existente contra os 10 princípios de Nielsen. Para cada violação: heurística, severidade (1–4) e recomendação.'},
+    {id:'desk-research',label:'Desk research',desc:'Pesquisa em fontes secundárias com citação de fonte e nível de confiabilidade. Não extrapola além do que as fontes afirmam.'},
+    {id:'lgpd',label:'Anonimização LGPD',desc:'Anonimiza dados pessoais antes de processar: nomes → [PESSOA_N], documentos → [DOCUMENTO_ID], contatos → [CONTATO] etc. Inclui bloco de auditoria ao final.'},
+  ],
+  p5:[
+    {id:'affinity',label:'Affinity map',desc:'Agrupa achados por afinidade temática para revelar padrões emergentes. Nomeia clusters com frases orientadas ao usuário, não ao sistema.'},
+    {id:'empathy',label:'Empathy map',desc:'Organiza dados em 4 quadrantes (DIZ, FAZ, PENSA, SENTE) baseados exclusivamente no que foi observado. Inferências marcadas explicitamente.'},
+    {id:'dot-voting-5',label:'Priorização analítica',desc:'Avalia cada oportunidade por impacto potencial e grau de evidência. Recomenda os 3–5 itens com melhor combinação como candidatos à ideação.'},
+    {id:'clareza-ep',label:'Clareza epistêmica',desc:'Classifica cada achado: Dado, Dor, Necessidade, Insight, Oportunidade, Hipótese ou HMW. Diferencia fato de suposição com evidência explícita por item.'},
+    {id:'sintese-trans',label:'Síntese de transcrições',desc:'Extrai padrões de dados brutos agrupando por recorrência. Sinaliza tensões e diferencia casos isolados de padrões confirmados.'},
+    {id:'hmw-gen',label:'Geração de HMWs',desc:'Transforma oportunidades em perguntas orientadas à ideação. Específico o suficiente para direcionar, amplo o suficiente para não pré-determinar solução.'},
+    {id:'persona',label:'Persona',desc:'Constrói persona baseada em dados observados — não em suposições. Inclui comportamentos, motivações, dores com nível epistêmico e citação representativa real.'},
+    {id:'jtbd',label:'Jobs to be Done',desc:'Mapeia jobs funcionais, emocionais e sociais por ator. Diferencia jobs de alta frequência (rotina) de alta importância (críticos mesmo que raros).'},
+  ],
+  p6:[
+    {id:'round-table-6',label:'Round table',desc:'Sessão estruturada com stakeholders para avaliar e refinar conceitos antes de selecionar os candidatos finais.'},
+    {id:'crazy8s',label:'Crazy 8s',desc:'Gera 8 direções de solução diversas antes de convergir. Após gerar, verifica mapeabilidade para primitivas de IA e seleciona os 3 mais promissores.'},
+    {id:'worst-idea',label:'Worst idea',desc:'Técnica de inversão: lista as 5 piores soluções e inverte cada uma para revelar direções não óbvias que não apareceram na geração direta.'},
+    {id:'moodboard',label:'Moodboard',desc:'Painel de referências visuais e conceituais para calibrar direção estética e semântica antes de prototipar.'},
+    {id:'dot-voting-6',label:'Dot voting',desc:'Priorização dos conceitos candidatos com stakeholders. Revela consenso e divergência antes da seleção final.'},
+    {id:'template-conceito',label:'Template de conceito IA',desc:'Estrutura cada conceito com: nome, necessidade, primitivas de IA (Detect/Identify/Estimate/Forecast/Compare/Discover/Generate/Act), dados, ação, mudança operacional, valor, risco e nível epistêmico.'},
+    {id:'filtro-ia',label:'Filtro de capacidades IA',desc:'Avalia em duas camadas: (1) viabilidade atual — o que a IA executa hoje vs. experimental; (2) valor sem IA perfeita — onde IA imperfeita já gera valor.'},
+    {id:'matriz-ie-6',label:'Matriz impacto × esforço',desc:'Compara conceitos por impacto esperado e esforço de implementação. Destaca o conceito recomendado para avançar.'},
+  ],
+  p7:[
+    {id:'user-flow',label:'User flow',desc:'Fluxo de uma tarefa específica do usuário — escopo restrito, alto detalhe. Cobre fluxo feliz + 1 alternativo + 1 estado de erro.'},
+    {id:'round-stakeholders',label:'Round table c/ stakeholders',desc:'Validação da estrutura funcional com as áreas envolvidas antes de prototipar. Sinaliza decisões abertas.'},
+    {id:'geracao-prd',label:'Geração de PRD',desc:'Estrutura escopo funcional: objetivo, usuário principal, funcionalidades (Deve ter / Bom ter / Fora do escopo) e decisões abertas numeradas.'},
+    {id:'mapeamento-fluxos',label:'Mapeamento de fluxos',desc:'Múltiplos fluxos do produto em formato numerado — escopo amplo. Marca [DECISÃO ABERTA] nos passos sem comportamento definido.'},
+    {id:'sitemap',label:'Estruturação de sitemap',desc:'Organiza as telas em hierarquia: nível 1 (seções), nível 2 (telas com objetivo em uma frase), nível 3 (estados relevantes).'},
+  ],
+  p8:[
+    {id:'revisao-fluxo',label:'Revisão de fluxo',desc:'Validação humana do protótipo gerado: verifica coerência com o user flow, cobertura de estados e fidelidade ao DS.'},
+    {id:'code-proto',label:'Code-based prototype',desc:'Protótipo em HTML/CSS navegável no browser. Comentários nos trechos principais e bloco de anotações por tela ao final.'},
+    {id:'html-ds',label:'HTML/CSS com DS',desc:'Código que usa os tokens e componentes do DS da marca como base obrigatória. Sinaliza DS GAP quando componente externo for necessário.'},
+    {id:'estados',label:'Estados de interface',desc:'Cobre todas as variações: vazio, carregando, preenchido, erro, sucesso, desabilitado. Nunca apenas o fluxo feliz.'},
+  ],
+  p9:[
+    {id:'validacao-ba',label:'Validação pelo BA',desc:'Revisão humana da especificação gerada: valida coerência técnica, completude das 9 seções e alinhamento com stakeholders.'},
+    {id:'tobe',label:'TO BE detalhado',desc:'Descreve o estado futuro: fluxo feliz + alternativos + erros, out of scope, comportamentos de UX que impactam lógica técnica, decisões fixas vs. abertas.'},
+    {id:'det-telas',label:'Detalhamento de telas',desc:'Por tela: separa requisitos definidos (claros para implementação) de requisitos em aberto (precisam de decisão). Formato tabela.'},
+    {id:'restricoes',label:'Restrições técnicas e UX',desc:'DS utilizado e versão, desvios do padrão identificados, dispositivos cobertos, limitações de comportamento que o produto final deve cobrir.'},
+    {id:'regras-negocio',label:'Regras de negócio sugeridas',desc:'Requisitos de negócio inferidos do protótipo com marcador 〜 obrigatório. Agrupados por funcionalidade. Para revisão humana.'},
+    {id:'checklist-entrada',label:'Checklist de entrada',desc:'Perguntas obrigatórias antes de fechar especificação: problema de negócio, stakeholders, impacto, restrições, dados-base, detalhes implícitos.'},
+  ],
+};
+const DELIVERABLES={
+  p1:['Objeto definido','Problema declarado','Stakeholders','Restrições','Lista de incertezas','Constelação de métricas'],
+  p2:['Blueprint Matrix','Eixo X do ciclo','Raias com atores','Entradas e saídas'],
+  p3:['Escopo definido','Out of scope','Justificativa do recorte'],
+  p4:['Plano de pesquisa','Roteiros de entrevista','Critérios de recrutamento','Dados organizados'],
+  p5:['Dores + nível de evidência','Necessidades reais','Oportunidades priorizadas','HMWs para ideação','Personas','Jobs to be Done'],
+  p6:['Ideias por perspectiva','Top 3 conceitos com template','Nível epistêmico atribuído'],
+  p7:['PRD simplificado','Sitemap / navegação','Fluxos principais','Decisões abertas'],
+  p8:['Protótipo HTML/CSS','Fluxo feliz + alternativos + erros','Anotações de comportamento'],
+  p9:['Especificação em 9 seções','Detalhamento de telas','Regras de negócio sugeridas','Critérios de aceite','Itens em aberto'],
+};
+const DIRECTIVES={
+  p1:{q:'O que exatamente estamos resolvendo e para quem?',w:'A demanda chega vaga ou sem objeto de trabalho definido'},
+  p2:{q:'Como este objeto funciona do início ao fim?',w:'Você precisa entender o sistema antes de intervir'},
+  p3:{q:'Onde vale a pena atuar?',w:'O ciclo está mapeado e você precisa definir foco e escopo'},
+  p4:{q:'O que os usuários realmente fazem, precisam e sofrem?',w:'Há lacunas de conhecimento que só dados de campo respondem'},
+  p5:{q:'O que os dados revelam de acionável?',w:'Você tem dados brutos e precisa transformá-los em direção'},
+  p6:{q:'Quais conceitos valem ser explorados?',w:'Você tem HMWs priorizados e precisa gerar opções'},
+  p7:{q:'O que será construído e como o usuário navega?',w:'O conceito foi escolhido e precisa virar estrutura antes de prototipar'},
+  p8:{q:'Como a solução se comporta na prática?',w:'A estrutura está definida e precisa ser validada em código'},
+  p9:{q:'O que o time de dev precisa saber para construir?',w:'O protótipo está pronto e o handoff para dev começa'},
+};
+
+/* ── Builder Data ── */
+const AUDIENCES=[
+  {id:'clevel',label:'C-level / Diretoria',desc:'Linguagem executiva, sem jargão, foco em impacto de negócio',block:'O documento deve ser escrito em linguagem executiva: sem jargão técnico, foco em impacto de negócio, oportunidade e risco. Máximo 1 página. Recomendações diretas no início, evidências depois.'},
+  {id:'gestao',label:'Gestão / Stakeholders',desc:'Equilibra contexto e recomendação, orienta decisão',block:'O documento deve equilibrar contexto e recomendação. Inclua dados de suporte para orientar decisão. Linguagem acessível para não-especialistas em design ou tecnologia.'},
+  {id:'design',label:'Time de design e produto',desc:'Técnico, vocabulário de UX, orientado a ação',block:'O documento deve usar vocabulário técnico de UX e produto. Seja direto e orientado a ação. Inclua insumos práticos que o time pode aplicar imediatamente.'},
+  {id:'dev',label:'Time de desenvolvimento',desc:'Estruturado para consumo técnico direto, sem ambiguidade',block:'O documento deve ser estruturado para consumo técnico direto: use tabelas para campos e validações, listas numeradas para fluxos, listas simples para restrições. Evite prosa descritiva — cada afirmação deve ser específica e sem ambiguidade. Formato compatível com implementação imediata.'},
+  {id:'outro',label:'Outro',desc:'Descreva o público-alvo'},
+];
+
+/* step3Mode: 'audience' | 'deliverable' | 'skip' */
+const BUILDER_DATA=[
+  {
+    id:'t1',group:'Estratégia e Definição',label:'Definir objeto de trabalho',step3Mode:'audience',
+    persona:'Você é um estrategista de design e analista de processos com experiência em definição de escopo e estruturação de problemas. Suas referências são Shape Up (Basecamp), Jobs to Be Done (Christensen) e Systems Thinking (Senge).',
+    tarefa:'Transforme a demanda recebida em um objeto de trabalho claro. Conduza a análise em torno de 6 perguntas: (1) Qual é o objeto? (2) Qual é o problema real — não o sintoma? (3) Para quem é um problema? (4) O que se ganha resolvendo? (5) Quem decide? (6) Como saberemos que atingimos o objetivo?\n\nSepare sintoma de problema real. Sinalize quando a demanda não está madura para avançar.\n\nSe o input for vago demais para responder às 6 perguntas com razoável precisão, sinalize o que está faltando em uma seção \"Insumos necessários\" antes de continuar. Entregue o que o input suporta e marque lacunas com [AGUARDANDO: descrição do que falta].',
+    outputBase:'Entregue em sequência, sem introduções:\n1. Objeto — uma frase descrevendo o que será trabalhado\n2. Problema declarado — separando sintoma de causa: \"O problema é X, que causa Y, para Z\"\n3. Stakeholders — lista com papel: informa / decide / executa\n4. Restrições conhecidas — técnicas, políticas, orçamentárias\n5. Incertezas críticas — numeradas por prioridade, com indicação de qual fase deve responder cada uma',
+    techniques:[
+      {id:'an-briefing',label:'Análise de briefing',tooltip:'Lê o briefing em três camadas: explícito, implícito e ausente',block:'Faça uma leitura crítica do briefing em três camadas:\n— O que está explícito (pedido declarado)\n— O que está implícito (pressuposto não dito)\n— O que está ausente (o que precisaria estar aqui e não está)\nSinalize cada achado com a camada correspondente antes de estruturar o problema.'},
+      {id:'est-problema',label:'Estruturação do problema',tooltip:'Reformula a demanda como problema real separando sintoma de causa',block:'Reformule a demanda como problema real: \"O problema é X, que causa Y, para Z.\" Para cada versão, avalie: é causa raiz ou sintoma? Se sintoma, pergunte \"por quê?\" até chegar à causa. Registre o raciocínio.'},
+      {id:'mapa-atuacao',label:'Mapa de atuação',tooltip:'Verifica se a demanda está dentro dos domínios de trabalho do time',block:'Verifique se a demanda está dentro dos domínios: descoberta e inteligência de mercado · pesquisa e diagnóstico · estratégia de negócio e inovação · estratégia digital e tecnologia · design de serviço e experiência · concepção e desenvolvimento de produto digital · inovação e futuros · processos e operações · organização e cultura. Se fora, sinalize e não avance.'},
+      {id:'pontos-cegos',label:'Mapeamento de pontos cegos',tooltip:'Mapeia suposições explícitas e implícitas antes de definir o problema',block:'Atue como cartógrafo de suposições:\n1. Suposições explícitas — o que o solicitante afirmou como verdade\n2. Suposições implícitas — o que está sendo assumido sem ser dito\n3. Categorize: informacional (dado não verificado) · cognitiva (viés) · emocional (apego/aversão) · ambiental (pressão externa)\n4. Para cada suposição: risco se falsa e como verificar\nEntregue como tabela: Suposição | Tipo | Risco se falsa | Como verificar.'},
+    ],
+  },
+  {
+    id:'t2',group:'Estratégia e Definição',label:'Mapear ciclo de vida',step3Mode:'audience',
+    persona:'Você é um estrategista de design e analista de processos com experiência em mapeamento de sistemas e service design. Suas referências são Service Blueprint (Shostack) e Systems Thinking (Senge).',
+    tarefa:'Mapeie como o objeto definido funciona do início ao fim. Mapeie o que existe — não o que deveria existir. Identifique atores, etapas, entradas e saídas. Sinalize etapas com baixa visibilidade ou documentação ausente. Não entre em soluções.\n\nSe o input não descrever o processo atual com detalhes suficientes, sinalize o que está faltando em uma seção \"Insumos necessários\". Se possível mapear parcialmente, entregue o que o input suporta e marque etapas incompletas com [AGUARDANDO: descrição do que falta].',
+    outputBase:'Entregue a estrutura base do ciclo:\n— Eixo horizontal com etapas em sequência\n— Para cada etapa: ator responsável, ação executada, entrada necessária, saída gerada\n— Pontos de baixa visibilidade marcados com [❓ baixa visibilidade: descrição do que não está documentado]\n— Lista de dependências críticas entre etapas',
+    techniques:[
+      {id:'svc-blueprint',label:'Service blueprint textual',tooltip:'Descreve o fluxo com atores, etapas, entradas e saídas em tabela',block:'Use formato de service blueprint em tabela. Colunas: Etapa | Ator | Ação | Entrada | Saída | Visibilidade. Para cada linha com baixa visibilidade, adicione nota explicando o que não está documentado e por que importa.'},
+      {id:'mapa-sistema',label:'Mapeamento de sistema',tooltip:'Identifica componentes e dependências sem entrar em solução',block:'Mapeie os componentes em quatro categorias: pessoas (quem), ferramentas (com o quê), dados (o quê) e processos (como). Para cada componente: com quem/o quê se conecta, dependência (forte/fraca) e o que acontece se falhar. Entregue como lista estruturada por categoria.'},
+    ],
+  },
+  {
+    id:'t3',group:'Estratégia e Definição',label:'Recortar escopo',step3Mode:'audience',
+    persona:'Você é um estrategista de design e analista de processos com experiência em priorização e viabilidade estratégica. Suas referências são Theory of Constraints (Goldratt) e Shape Up (Basecamp).',
+    tarefa:'Defina onde intervir no ciclo mapeado. Questione se a fricção identificada justifica intervenção. Avalie viabilidade técnica, cultural e operacional. Sinalize quando o recorte está sendo feito por conveniência e não por impacto.\n\nSe o input não contiver o ciclo de vida mapeado ou não identificar pontos de fricção com evidência suficiente, sinalize antes de continuar. Sem ciclo mapeado, o recorte será arbitrário — sinalize isso explicitamente.',
+    outputBase:'Entregue em três seções sem introduções:\n1. Escopo — o que está dentro, descrito em comportamentos e fluxos, não em funcionalidades\n2. Out of scope — o que está explicitamente fora, com justificativa por item\n3. Justificativa do recorte — por que essa escolha e não outra, com referência aos dados que sustentam',
+    techniques:[
+      {id:'an-priorizacao',label:'Análise de priorização',tooltip:'Avalia pontos do ciclo por frequência, efeito sistêmico e solidez da evidência',block:'Para cada ponto candidato à intervenção, avalie:\n— Frequência da dor: quantas vezes por ciclo gera fricção?\n— Efeito sistêmico: se resolvido, quantos outros pontos melhoram?\n— Solidez da evidência: dado observado, inferência ou hipótese?\nClassifique: Alta/Média/Baixa em cada dimensão. Recomende os 1–3 pontos com melhor combinação.'},
+      {id:'matriz-ie',label:'Matriz impacto × esforço',tooltip:'Compara opções de recorte por valor versus custo de implementação',block:'Para cada opção: Impacto (Alto/Médio/Baixo) e Esforço (Alto/Médio/Baixo) com justificativa por linha. Entregue como tabela: Opção | Impacto | Esforço | Justificativa | Recomendação. Destaque o recorte recomendado.'},
+    ],
+  },
+  {
+    id:'t4',group:'Estratégia e Definição',label:'Definir métricas do produto',step3Mode:'audience',
+    persona:'Você é um estrategista de produto com experiência em definição de métricas para produtos digitais B2B e industriais. Suas referências são HEART (Google), AARRR (McClure), North Star Metric (Amplitude) e OMTM (Lean Analytics).',
+    tarefa:'Defina as métricas de sucesso do produto descrito no contexto. Siga este processo em sequência — todas as etapas são obrigatórias:\n1. Contexto: identifique objetivo estratégico, modelo de negócio e momento da empresa\n2. Framework: selecione o framework principal e elimine os irrelevantes\n3. Constelação: proponha métricas por nível (North Star, OMTM, produto, funcionalidade, UX, guardrails)\n4. Validação crítica: questione cada métrica proposta antes de entregar\n\nRegras obrigatórias:\n— Toda métrica de funcionalidade deve ter ao menos 1 guardrail e 1 métrica de produto conectadas\n— Nunca use mais de 2 frameworks simultaneamente\n— Se não houver dados, indique a proxy mais viável\n— Para cada métrica: indique o risco de uso incorreto e como evitá-lo\n— Se B2B com usuários cativos (uso obrigatório por contrato), aplique: retenção/churn → adoção e frequência de uso ativo; DAU/MAU → task completion rate e taxa de erro; LTV/CAC → custo por usuário e tempo de onboarding; NPS isolado → CES e erros reportados ao suporte. Registre as substituições aplicadas.\n\nSe o input não descrever produto, modelo de negócio ou momento da empresa com clareza, sinalize o que está faltando antes de propor qualquer métrica.',
+    outputBase:'Entregue a constelação de métricas:\n\nNorth Star — métrica de longo prazo que representa valor real entregue\nOMTM — métrica de curto prazo para o momento atual\nMétricas de produto — retenção ou adoção (conforme contexto), engajamento, frequência de uso\nMétricas de funcionalidade — adoção, recorrência, task success rate, tempo médio da tarefa\nMétricas de UX — satisfação (NPS/CSAT/CES adaptado), esforço do usuário\nGuardrails — o que não pode piorar: tickets de suporte, erros técnicos, impacto em receita\n\nPara cada métrica: nome | o que mede | como coletar | risco de uso incorreto | proxy se não houver dados.\n\nSe a técnica Contra-testes foi selecionada, inclua uma seção Validação crítica ao final do documento.',
+    techniques:[
+      {id:'ctx-estrategico',label:'Contexto estratégico',tooltip:'Aprofunda contexto antes de selecionar o framework de métricas',block:'Antes de propor métricas, responda:\n— Objetivo estratégico: crescimento / engajamento / retenção / eficiência / redução de custo / melhoria de experiência\n— Modelo de negócio: unitário / SaaS por uso / SaaS por assinatura / B2B com usuários cativos / outro\n— Momento da empresa: tração / crescimento acelerado / sustentação / maturidade\n— Quais dados já estão disponíveis para coleta imediata?\nUse as respostas para eliminar frameworks e métricas irrelevantes antes de avançar.'},
+      {id:'checklist-metricas',label:'Checklist crítico de métricas',tooltip:'Filtra métricas candidatas antes de entregar a constelação',block:'Para cada métrica candidata:\n— É acionável? Se subir ou cair, alguém sabe o que fazer?\n— Mede comportamento real, não intenção ou vaidade?\n— Pode ser manipulada artificialmente?\n— Existe uma proxy mais fácil de medir?\n— Precisa de complemento qualitativo para ser interpretada?\nEliminar qualquer métrica que falhe em mais de um critério. Registre as eliminadas e o motivo.'},
+      {id:'contra-testes',label:'Contra-testes',tooltip:'Audita as métricas selecionadas antes de entregar',block:'Para cada métrica selecionada:\n— Qual suposição implícita está sendo feita?\n— O que um cético bem-informado diria?\n— Qual métrica poderia invalidar a hipótese central? (kill metric)\n— Estamos confundindo correlação com causalidade?\nEntregue como seção Validação crítica ao final do documento.'},
+    ],
+  },
+  {
+    id:'t5a',group:'Pesquisa',label:'Planejar pesquisa',step3Mode:'audience',
+    persona:'Você é um UX researcher sênior com experiência em planejamento de pesquisa qualitativa e quantitativa para produtos B2B e industriais. Suas referências são IDEO Human-Centered Design, NNG UX Research e Just Enough Research (Monteiro).',
+    tarefa:'Planeje a pesquisa orientada ao recorte e às métricas definidos. Não planeje pesquisar tudo — planeje pesquisar o que importa para responder às perguntas do projeto. Diferencie pesquisa exploratória de avaliativa. Justifique cada método pelo objetivo e perfil do público.\n\nNunca projete solução durante o planejamento. Nunca execute a pesquisa nesta tarefa — o plano descreve o que será feito, não faz.\n\nSe o input não contiver o recorte de escopo ou as perguntas de negócio que a pesquisa deve responder, sinalize o que está faltando antes de continuar.',
+    outputBase:'Entregue o plano com:\n1. Objetivo — o que a pesquisa precisa responder (máx. 3 perguntas centrais)\n2. Perguntas de pesquisa — derivadas das incertezas críticas do projeto\n3. Métodos selecionados — cada um com: justificativa de escolha, limitações conhecidas e o que pode e não pode responder\n4. Perfil de participantes — cargo, experiência, comportamento relevante\n5. Critérios de recrutamento — inclusão, exclusão e canais de acesso\n6. Cronograma estimado — fases e dependências\n7. Riscos do plano — o que pode comprometer a qualidade dos dados e como mitigar',
+    techniques:[],
+  },
+  {
+    id:'t5b',group:'Pesquisa',label:'Criar instrumento de coleta',step3Mode:'skip',
+    persona:'Você é um UX researcher sênior com experiência em design de instrumentos de pesquisa qualitativa e quantitativa. Suas referências são IDEO Human-Centered Design, NNG UX Research e Just Enough Research (Monteiro).',
+    tarefa:'Crie os instrumentos de coleta selecionados. Para cada instrumento: siga as melhores práticas da técnica, dimensione para o tempo indicado, cubra os objetivos de pesquisa fornecidos no contexto.\n\nSe o input não contiver os objetivos de pesquisa ou o perfil dos participantes, sinalize o que está faltando antes de criar qualquer instrumento. Instrumento gerado sem contexto de pesquisa será genérico e inutilizável.\n\nEntregue cada instrumento pronto para uso — sem introduções genéricas sobre o método.',
+    outputBase:'Entregue cada instrumento em seção separada, identificada pelo nome da técnica, numerada e pronta para uso imediato.',
+    techniques:[
+      {id:'entrevista',label:'Entrevista',tooltip:'Roteiro completo com abertura, perguntas, sondas, TCLE e encerramento — até 60 min',block:'Gere o roteiro completo:\n— Abertura: apresentação, objetivo, leitura do TCLE com confirmação verbal ou escrita, permissão de gravação, estimativa de tempo\n— Perguntas principais agrupadas por tema (máx. 4 temas)\n— Para cada pergunta: 2–3 sondas de aprofundamento (por quê? como foi? o que fez depois?)\n— Encerramento: espaço para o participante adicionar algo, lembrete de anonimização, agradecimento\n— Dimensionado para até 60 minutos\n— Não inclua perguntas fechadas (sim/não) no roteiro principal\n\nAo final, inclua modelo de TCLE básico com: objetivo da pesquisa, uso dos dados, garantia de anonimato, direito de desistência a qualquer momento, contato do responsável.'},
+      {id:'survey',label:'Survey',tooltip:'Questionário com consentimento, fechadas e abertas — até 10 min de resposta',block:'Gere o questionário completo:\n— Introdução: contexto, tempo estimado, uso dos dados, garantia de anonimato, direito de não responder a qualquer pergunta, confirmação de consentimento (checkbox obrigatório antes de iniciar)\n— Bloco 1: perguntas de perfil (máx. 3)\n— Bloco 2: comportamento com escala Likert de 5 pontos\n— Bloco 3: opinião com múltipla escolha\n— Bloco 4: 1–2 perguntas abertas\n— Encerramento: campo para comentários livres, agradecimento, como acessar os resultados se quiser\n— Dimensionado para até 10 minutos\n— Linguagem neutra, sem induzir resposta'},
+      {id:'usability',label:'Usability testing',tooltip:'Script com tarefas, critérios de sucesso e métricas para teste de usabilidade',block:'Gere o script completo:\n— Introdução ao participante: objetivo, regras do teste (pensar em voz alta, sem julgamento), confirmação verbal de consentimento antes de iniciar\n— Tarefas numeradas: enunciado em linguagem natural, critério de sucesso (completou/não completou) e tempo máximo\n— Observações por tarefa: ações, verbalizações, pontos de hesitação\n— Métricas por tarefa: taxa de conclusão, tempo, número de erros\n— Perguntas pós-tarefa: o que foi mais difícil? o que esperava que acontecesse?\n— Perguntas pós-teste: satisfação geral, comparação com expectativa\n— Dimensionado para até 60 minutos'},
+      {id:'focus-group',label:'Focus group',tooltip:'Guia de moderação com abertura, tópicos, dinâmica e encerramento — até 90 min',block:'Gere o guia de moderação:\n— Abertura: apresentação, regras do grupo (sem julgamento, uma pessoa fala por vez), confirmação de consentimento do grupo antes de iniciar\n— Aquecimento: 1 pergunta leve para todos participarem\n— Tópicos centrais: máx. 4 temas, cada um com pergunta de abertura e 2 sondas\n— Dinâmica de ativação: 1 atividade para momentos de travamento\n— Encerramento: síntese do moderador + validação com o grupo\n— Dimensionado para até 90 minutos'},
+      {id:'card-sorting',label:'Card sorting',tooltip:'Set de cards com instruções para participante e moderador',block:'Gere o set completo:\n— Lista de cards: nome + descrição de cada item (máx. 40 cards)\n— Instruções para o participante: como agrupar, que não existe resposta certa, que pode criar grupos novos\n— Orientações para o moderador: quando intervir, o que registrar, como conduzir o debriefing\n— Critérios de análise: frequência de agrupamento, cards com mais dúvida, nomes dados aos grupos\n\nSe o input não especificar o tipo (aberto/fechado/híbrido), assuma aberto e registre: [ASSUNÇÃO: card sorting aberto. Se o objetivo for validar categorias pré-definidas, use fechado.]'},
+      {id:'tree-test',label:'Tree test',tooltip:'Protocolo com hierarquia de navegação e tarefas de busca',block:'Gere o protocolo completo:\n— Estrutura hierárquica a ser testada (nível 1 → 2 → 3)\n— Tarefas de busca numeradas: enunciado + caminho esperado + critério de sucesso\n— Orientações: plataforma recomendada, amostra mínima, como recrutar\n— Critérios de análise: taxa de sucesso por tarefa, primeiros cliques, paths mais comuns'},
+      {id:'field-study',label:'Field study',tooltip:'Protocolo de observação em campo com ficha de registro estruturada',block:'Gere o protocolo completo:\n— Objetivos de observação: ações, ferramentas usadas, contexto físico, interrupções\n— Roteiro de entrada: como se apresentar, como obter consentimento, como se posicionar\n— Ficha de registro em 4 quadrantes: FAZ · FALA · USA · SENTE\n— Instruções de encerramento: como sair do campo, o que registrar imediatamente após'},
+    ],
+  },
+  {
+    id:'t5c',group:'Pesquisa',label:'Executar pesquisa',step3Mode:'audience',
+    persona:'Você é um UX researcher sênior com experiência em pesquisa secundária, avaliação heurística e análise de dados de uso. Suas referências são IDEO Human-Centered Design, NNG UX Research, Nielsen Norman Group e Just Enough Research (Monteiro).',
+    tarefa:'Execute as pesquisas selecionadas a partir do contexto fornecido. Para cada técnica: aplique o método com rigor, registre a fonte de cada dado, classifique o nível de confiabilidade e diferencie observação de inferência.\n\nNão invente dados. Sinalize com [SEM DADOS] quando a informação não estiver disponível. Se o input não contiver o material necessário para executar uma técnica, sinalize o que está faltando antes de tentar executá-la.\n\nSe o material fornecido contiver dados pessoais identificáveis (nomes, contatos, documentos, endereços, valores, dados bancários), aplique automaticamente a anonimização LGPD antes de processar — independentemente de a técnica ter sido selecionada ou não.',
+    outputBase:'Entregue os resultados de cada técnica em seção separada. Para cada achado:\n— Dado: o que foi observado ou coletado\n— Fonte: de onde vem\n— Confiabilidade: Alta (dado primário verificado) / Média (dado secundário) / Baixa (inferência especulativa)\n— Tipo: Observação (fato bruto) ou Inferência (interpretação)',
+    techniques:[
+      {id:'exec-competitive',label:'Competitive analysis',tooltip:'Executa análise de concorrentes com ficha por player e tabela comparativa',block:'Execute a análise para cada concorrente ou referência fornecido:\n— Proposta de valor: o que resolve e para quem\n— Modelo de acesso: como o usuário chega à solução\n— Capacidades principais: o que o sistema faz de melhor\n— Gaps: o que está ausente ou é fraco\n— Posicionamento: onde se situa no mercado\nEntregue como ficha por player + tabela comparativa ao final. Para cada dado: fonte e data. Se não disponível, registre [SEM FONTE] — nunca infira dados de mercado sem evidência.'},
+      {id:'exec-analytics',label:'Analytics',tooltip:'Processa dados de uso existentes para identificar padrões e anomalias',block:'Processe os dados fornecidos:\n— Padrões de comportamento: o que os usuários fazem com frequência\n— Anomalias: desvios relevantes em relação ao esperado\n— Funis: onde os usuários abandonam o fluxo\n— Oportunidades: lacunas entre comportamento atual e desejado\nPara cada achado: confirme se é dado direto ou inferência analítica. Sinalize correlações que não implicam causalidade.'},
+      {id:'exec-heuristic',label:'Heuristic evaluation',tooltip:'Avalia interface existente contra os 10 princípios de Nielsen com severidade',block:'Avalie a interface fornecida contra os 10 princípios de Nielsen:\n1. Visibilidade do status do sistema\n2. Correspondência entre o sistema e o mundo real\n3. Controle e liberdade do usuário\n4. Consistência e padrões\n5. Prevenção de erros\n6. Reconhecimento em vez de memorização\n7. Flexibilidade e eficiência de uso\n8. Design estético e minimalista\n9. Ajuda a reconhecer, diagnosticar e recuperar de erros\n10. Ajuda e documentação\n\nPara cada violação: heurística (número + nome) | descrição | exemplo específico | severidade (1 cosmético → 4 catastrófico) | recomendação. Ordene por severidade decrescente.'},
+      {id:'exec-desk',label:'Desk research',tooltip:'Executa pesquisa em fontes secundárias com citação e nível de confiabilidade',block:'Execute a pesquisa sobre o tema fornecido:\n— Para cada achado: fonte | data | confiabilidade | relevância direta para o projeto\n— Organize por tema, não por fonte\n— Síntese ao final: o que o campo já sabe e o que ainda é lacuna\n— Não extrapole além do que as fontes afirmam. Registre lacunas explicitamente.'},
+      {id:'exec-lgpd',label:'Anonimização LGPD',tooltip:'Aplica processo completo de anonimização LGPD no material fornecido antes da análise',block:'Aplique anonimização LGPD (Lei 13.709/2018) no material antes de qualquer análise:\n— Substitua por placeholders: nomes → [PESSOA_1]…; documentos → [DOCUMENTO_ID]; contatos → [CONTATO]; endereços → [ENDEREÇO]; valores → [VALOR]; nascimento → [DATA_NASC]; bancários → [DADO_BANCÁRIO]; empresas identificáveis → [EMPRESA]\n— Mantenha: estrutura lógica, contexto para análise, datas de eventos (exceto nascimento), cargos sem vínculo nominal, informações técnicas\n— Ao final, inclua bloco de auditoria: campos substituídos e placeholders usados'},
+    ],
+  },
+  {
+    id:'t6',group:'Pesquisa',label:'Sintetizar dados',step3Mode:'audience',
+    persona:'Você é um UX researcher sênior especializado em síntese qualitativa e quantitativa orientada a decisão. Suas referências são IDEO Human-Centered Design, NNG UX Research, Livework Service Design e Just Enough Research (Monteiro).',
+    tarefa:'Sintetize os dados de pesquisa fornecidos e transforme-os em insumo acionável para a próxima fase. Nunca afirme além do que os dados suportam. Priorize — não entregue lista longa, entregue o que realmente importa. Cada achado deve ter seu nível de evidência explícito.\n\nSe o input não contiver dados de pesquisa — transcrições, notas de campo, resultados de survey ou dados coletados na fase de pesquisa — sinalize antes de começar.',
+    outputBase:'Entregue em sequência:\n1. Dores consolidadas — com nível de evidência para cada uma\n2. Necessidades reais — o que está por baixo das dores\n3. Oportunidades priorizadas — lacunas entre estado atual e desejado, com evidência\n4. HMWs — prontos para usar na ideação, derivados diretamente das oportunidades\n\nSe a técnica Persona foi selecionada, inclua uma seção Personas após os HMWs — uma por perfil identificado nos dados.\nSe a técnica Jobs to be Done foi selecionada, inclua uma seção Jobs to be Done com os jobs mapeados por ator.\nAmbas as seções devem estar baseadas nos dados fornecidos — não em suposições.',
+    techniques:[
+      {id:'clareza-ep',label:'Clareza epistêmica',tooltip:'Classifica cada achado por nível de certeza: Dado, Dor, Necessidade, Insight, Oportunidade, Hipótese ou HMW',block:'Classifique cada achado usando o vocabulário de Clareza Epistêmica:\n— Dado/Observação → fato bruto, sem interpretação\n— Dor → friction point confirmado, relatado ou observado\n— Necessidade → requisito real subjacente à dor\n— Insight → conexão não óbvia entre duas ou mais observações\n— Oportunidade → lacuna entre estado atual e desejável, com evidência\n— Hipótese → afirmação estruturada e testável\n— HMW → pergunta orientada à ideação derivada de oportunidade confirmada\nPara cada item: achado | tipo | evidência que sustenta.'},
+      {id:'sintese-trans',label:'Síntese de transcrições',tooltip:'Extrai padrões de dados brutos agrupando por recorrência e relevância',block:'Processe os dados brutos:\n— Extraia fragmentos relevantes (falas, comportamentos, notas de campo)\n— Agrupe por recorrência: múltiplos participantes versus caso isolado\n— Nomeie cada cluster com frase que capture o padrão, não a instância\n— Sinalize tensões: achados que se contradizem\n— Marque inferências explicitamente — não interprete além do dado'},
+      {id:'hmw-gen',label:'Geração de HMWs',tooltip:'Transforma oportunidades em perguntas orientadas à ideação',block:'A partir das oportunidades identificadas, gere HMWs:\n— Específico o suficiente para direcionar ideação\n— Amplo o suficiente para não pré-determinar solução\n— Formulado a partir de oportunidade com evidência — não de desejo ou hipótese fraca\n— Entregue ordenados por prioridade de oportunidade (maior evidência primeiro)'},
+      {id:'affinity',label:'Affinity map',tooltip:'Agrupa achados por afinidade temática para revelar padrões emergentes',block:'Organize os achados em clusters temáticos:\n— Agrupe por afinidade de tema, não por fonte ou método\n— Nomeie cada cluster com frase orientada ao usuário (não ao sistema)\n— Indique o número de achados por cluster\n— Destaque os 3 clusters com maior densidade como candidatos prioritários à oportunidade'},
+      {id:'empathy',label:'Empathy map',tooltip:'Organiza dados em 4 quadrantes: DIZ, FAZ, PENSA, SENTE — apenas com base nos dados',block:'Organize em 4 quadrantes, baseados exclusivamente no que foi observado ou relatado:\n— DIZ: falas diretas, citações\n— FAZ: comportamentos observados, ações registradas\n— PENSA: valores implícitos inferidos de comportamento [marcar como inferido]\n— SENTE: reações emocionais observadas [marcar como inferido quando não verbalizado]\nNão adicione nada que não esteja nos dados.'},
+      {id:'priorizacao-analitica',label:'Priorização analítica',tooltip:'Avalia oportunidades por impacto potencial e grau de evidência',block:'Avalie cada oportunidade em duas dimensões:\n— Impacto potencial: Alta / Média / Baixa\n— Grau de evidência: Alta (dado confirmado) / Média (inferência forte) / Baixa (hipótese)\nRecomende os 3–5 itens com melhor combinação. Justifique com uma frase por item.'},
+      {id:'persona',label:'Persona',tooltip:'Constrói persona baseada em dados observados — não em suposições',block:'Construa a persona a partir dos dados fornecidos:\n— Nome fictício e cargo real\n— Contexto de uso: em que situação interage com o produto\n— Comportamentos observados: o que faz, com qual frequência, com quais ferramentas\n— Motivações reais (baseado em JTBD quando disponível)\n— Dores confirmadas com nível epistêmico explícito por dor\n— Citação representativa: fala real ou paráfrase — nunca fabricada\nSe os dados não suportarem persona completa, entregue o possível e marque campos sem evidência com [SEM DADOS].'},
+      {id:'jtbd',label:'Jobs to be Done',tooltip:'Mapeia jobs funcionais, emocionais e sociais por ator identificado na pesquisa',block:'Para cada ator ou perfil identificado, mapeie os jobs:\n— Job principal: \"Quando [situação], quero [motivação], para [resultado esperado]\"\n— Jobs funcionais: o que precisa ser feito operacionalmente\n— Jobs emocionais: como o ator quer se sentir no processo\n— Jobs sociais: como o ator quer ser percebido pelos outros\nDiferencie jobs de alta frequência (rotina) de alta importância (críticos mesmo que raros). Baseie cada job em dado observado — marque inferências explicitamente.'},
+    ],
+  },
+  {
+    id:'t7',group:'Ideação e Estruturação',label:'Idear conceitos',step3Mode:'audience',
+    persona:'Você é um product designer e estrategista de inovação com experiência em conceituação de produto assistida por IA. Suas referências são IDEO Design Thinking, Ten Types of Innovation (Doblin) e o framework de Capacidades de IA do CMU HCII (2023). Você usa IA como infraestrutura cognitiva — não como feature.',
+    tarefa:'Gere conceitos a partir dos HMWs priorizados em duas etapas distintas:\n\nEtapa 1 — Geração livre: gere antes de filtrar. Explore volume e diversidade de direções. Não avalie viabilidade nesta etapa.\n\nEtapa 2 — Filtro: após gerar, aplique o critério: IA só faz sentido quando altera estrutura de decisão ou fluxo de trabalho. Se um conceito não gera valor sem citar IA, ele não é um conceito — é uma demo. Elimine-o. Desenvolva os sobreviventes com o template completo.\n\nSe o input não contiver HMWs ou oportunidades priorizadas, sinalize antes de começar.',
+    outputBase:'Entregue os top 3 conceitos candidatos, cada um com o template completo preenchido. Ao final, uma tabela comparativa com matriz impacto × esforço dos três.',
+    techniques:[
+      {id:'template-conceito',label:'Template de conceito IA',tooltip:'Estrutura cada conceito com problema, primitivas de IA, dados, ação, valor e riscos',block:'Para cada conceito preencha todos os campos:\n— Nome do conceito: identificador curto e descritivo\n— Descrição: o que é, em 2 frases\n— Necessidade do usuário: dor ou necessidade que endereça (referência aos achados de pesquisa)\n— Capacidade(s) de IA: Detect | Identify | Estimate | Forecast | Compare | Discover | Generate | Act\n— Dados necessários: fonte, qualidade mínima, volume, frequência, governança\n— Ação do sistema: o que o sistema faz em termos de comportamento observável\n— Mudança operacional: o que muda no processo, na decisão ou no trabalho de quem usa\n— Valor criado: o que o usuário ganha que não tinha antes\n— Risco introduzido: técnico, operacional, ético, regulatório\n— Nível epistêmico: Ideia | Conceito | Possível solução | Solução'},
+      {id:'filtro-ia',label:'Filtro de capacidades IA',tooltip:'Avalia viabilidade de cada conceito em duas camadas: hoje e com IA imperfeita',block:'Para cada conceito, aplique o filtro em duas camadas:\n\nCamada 1 — Viabilidade atual:\n— Executa com confiança hoje: classificação, geração de texto, síntese, extração, comparação, automação digital com supervisão (agentes de browser, workflows)\n— Requer supervisão humana: julgamento ético, decisões de alto risco, contexto não estruturado, ação autônoma em ambientes físicos\n— Experimental: raciocínio causal robusto, planejamento autônomo de longo prazo, ação sem supervisão em ambientes físicos\n\nCamada 2 — Valor sem IA perfeita:\n— Esperar IA perfeita é estratégia de não-inovação\n— Onde IA imperfeita já gera valor? (reduz tempo, erro, amplia escala)\n— Onde o humano ainda é fallback necessário?\n\nEntregue por conceito: executável hoje | requer supervisão | prematuro.'},
+      {id:'matriz-ie-7',label:'Matriz impacto × esforço',tooltip:'Compara conceitos por potencial de impacto e custo de implementação',block:'Compare os conceitos:\n— Impacto: Alto (necessidade central, efeito sistêmico, escala) | Médio (melhoria localizada) | Baixo (cosmético)\n— Esforço: Alto (infraestrutura de dados, integração, mudança cultural) | Médio (redesign de processo) | Baixo (protótipo com dados existentes)\nTabela: Conceito | Impacto | Esforço | Justificativa | Recomendação. Destaque o conceito recomendado.'},
+      {id:'crazy8s',label:'Crazy 8s',tooltip:'Gera 8 direções de solução diversas antes de convergir nos 3 candidatos',block:'Gere 8 direções de solução diferentes para o HMW principal — não 8 variações da mesma direção. Explore abordagens diversas sem restrição de método ou tecnologia. Após gerar as 8, verifique se cada uma é mapeável para ao menos uma das 8 primitivas cognitivas de IA. Selecione as 3 mais promissoras para desenvolver no template de conceito.'},
+      {id:'worst-idea',label:'Worst idea',tooltip:'Técnica de inversão: gera as piores ideias para revelar direções não óbvias',block:'Use a técnica de inversão:\n— Liste as 5 piores soluções para o HMW (maximizam a dor, criam novos problemas, são absurdas)\n— Para cada pior ideia, inverta: o que seria o oposto direto?\n— Avalie se algum oposto revela direção que não apareceu na geração direta\n— Registre os insights de inversão como input para o template de conceito'},
+    ],
+  },
+  {
+    id:'t8',group:'Ideação e Estruturação',label:'Pré-especificar produto',step3Mode:'audience',
+    persona:'Você é um product designer e arquiteto de informação com experiência em estruturação de produtos digitais antes da prototipação. Suas referências são Information Architecture (Morville & Rosenfeld) e Shape Up (Basecamp).',
+    tarefa:'Estruture o produto antes da prototipação. Entregue o mínimo necessário para a prototipação ser executada com clareza. Sinalize decisões abertas que precisam de validação antes de prototipar. Não prototype no texto — descreva estrutura, não visual.\n\nSe o input não contiver o conceito selecionado ou os fluxos principais do produto, sinalize o que está faltando antes de continuar.',
+    outputBase:'Entregue em sequência:\n1. Escopo funcional — o que o produto faz, para quem, com quais restrições\n2. Sitemap — hierarquia de telas em formato estruturado\n3. Fluxos principais — em formato numerado, cobrindo feliz + alternativos + erros\n4. Decisões abertas — o que precisa ser validado antes de prototipar, com quem e por quê',
+    techniques:[
+      {id:'geracao-prd',label:'Geração de PRD',tooltip:'Estrutura o escopo funcional em formato PRD simplificado',block:'Estruture o escopo funcional:\n— Objetivo: o problema que o produto resolve em uma frase\n— Usuário principal: quem usa, em que contexto, com qual frequência\n— Funcionalidades: Deve ter (core) | Bom ter | Fora do escopo (explicitamente excluído)\n— Restrições: técnicas, de prazo, de integração, de DS\n— Decisões abertas: numeradas por prioridade, com responsável indicado'},
+      {id:'mapeamento-fluxos',label:'Mapeamento de fluxos',tooltip:'Descreve múltiplos fluxos do produto em formato numerado — escopo amplo',block:'Descreva cada fluxo em formato numerado cobrindo múltiplos caminhos:\n— Passo: [ator] faz [ação] → [sistema responde]\n— Ramificação: se [condição], então [caminho alternativo]\n— Erro: se [o que falha], então [como o sistema responde]\nCubra fluxo feliz completo antes de mapear alternativos. Marque [DECISÃO ABERTA] nos passos sem comportamento definido.\nUse para cobrir múltiplos fluxos do produto — escopo amplo, sem entrar em detalhe de uma tarefa específica.'},
+      {id:'sitemap',label:'Estruturação de sitemap',tooltip:'Organiza as telas do produto em hierarquia navegável',block:'Organize as telas em hierarquia:\n— Nível 1: seções principais (navegação global)\n— Nível 2: telas dentro de cada seção\n— Nível 3: estados ou subitens quando relevante (modal, drawer, estado vazio, estado de erro)\nPara cada tela de nível 2: objetivo da tela em uma frase.'},
+      {id:'user-flow',label:'User flow',tooltip:'Descreve o fluxo de uma tarefa específica do usuário — escopo restrito, alto detalhe',block:'Descreva o fluxo de uma tarefa específica do usuário:\n— Início: ponto de entrada (de onde o usuário vem, em qual contexto)\n— Passos: ação do usuário → resposta do sistema\n— Ramificações: condições que levam a caminhos diferentes\n— Fim: estado de conclusão ou saída\nUse para uma tarefa específica — escopo restrito, alto nível de detalhe. Cubra fluxo feliz + 1 alternativo + 1 estado de erro.'},
+    ],
+  },
+  {
+    id:'t9',group:'Prototipação',label:'Prototipar com Design System',step3Mode:'deliverable',
+    persona:'Você é um product designer especialista em prototipação baseada em código e design systems. Suas referências são Atomic Design (Brad Frost), Design Systems (Nathan Curtis), NNG Prototyping e as diretrizes do Carbon Design System (IBM). O Design System GCB publicado em '+DS_BASE+' é sua referência principal e obrigatória. Antes de gerar qualquer código, consulte os arquivos do DS da marca indicada usando as URLs fornecidas na seção <ds-reference>.',
+    tarefa:'Antes de começar, consulte obrigatoriamente:\n1. O arquivo CONTEXT.md do DS: '+DS_BASE+'/CONTEXT.md — leia inteiro, contém tokens, regras, aliases e gaps conhecidos\n2. O arquivo de fundamentos da marca indicada — contém todos os tokens CSS\n3. O arquivo de componentes web da marca — contém todas as classes CSS\n4. Se Mendix: use o shell da marca como base (copie o HTML inteiro e substitua o conteúdo de .content)\n5. Se SAP: use o shell SAP da marca como base\n\nAs URLs exatas dos arquivos serão fornecidas na seção <ds-reference> do prompt.\n\nGere interfaces em HTML com CSS e JavaScript apenas quando necessário, baseadas nos artefatos fornecidos. Siga as diretrizes do Design System da marca e os princípios abaixo.\n\nSe o input não especificar qual Design System usar (Vivix, Atiaia ou Corporativo), sinalize [AGUARDANDO: marca do Design System — Vivix, Atiaia ou Corporativo] e não gere nenhum código até que seja informado.\n\nSe o input não contiver protótipo, fluxos ou telas a implementar, sinalize com [AGUARDANDO] antes de continuar. Se uma decisão de comportamento não estiver clara, sinalize com <!-- DECISÃO ABERTA: [descreva] --> antes de continuar.\n\nPrincípios obrigatórios:\n— Redução da carga cognitiva: apresente informações progressivamente\n— HTML5 semântico: use tags corretas (main, section, nav, article, header, footer)\n— Acessibilidade WCAG: contraste mínimo 4.5:1, foco visível, labels em todos os campos\n— Responsivo: funcional em desktop e mobile\n— Acordeões para informações extensas, abas para conteúdos por assunto',
+    techniques:[
+      {id:'code-proto',label:'Code-based prototype',tooltip:'Protótipo gerado em HTML/CSS navegável no browser com comentários e anotações',block:'Gere o protótipo em HTML/CSS navegável no browser:\n— Comentários nos trechos principais explicando decisão de componente ou layout\n— Bloco de anotações por tela ao final: <!-- ANOTAÇÕES: Tela X — comportamento | estados cobertos | decisões abertas -->\n— CSS embutido no <style>\n— JavaScript apenas para comportamentos essenciais (toggle, validação, navegação entre estados)'},
+      {id:'html-ds',label:'HTML/CSS com DS',tooltip:'Código que usa os tokens e componentes do Design System da marca como base obrigatória',block:'Use os tokens e componentes do DS da marca como base:\n— Aplique variáveis de cor, tipografia e espaçamento do DS\n— Não recrie componentes existentes no DS\n— Quando usar componente externo: <!-- DS GAP: usando [referência] para [componente], pois não está no DS da marca -->'},
+      {id:'estados',label:'Estados de interface',tooltip:'Cobre todas as variações: vazio, carregando, preenchido, erro, sucesso, desabilitado',block:'Cubra todos os estados para cada componente interativo:\n— Vazio: estado zero, sem dados\n— Carregando: skeleton ou spinner\n— Preenchido: estado padrão com dados reais\n— Erro: mensagem inline, próxima ao campo ou ação que falhou\n— Sucesso: confirmação visual clara\n— Desabilitado: aparência e comportamento de elemento não interativo\nNão entregue apenas o fluxo feliz.'},
+    ],
+    deliverables:[
+      {id:'d9a',label:'Protótipo completo',tooltip:'HTML/CSS navegável cobrindo todos os fluxos: feliz, alternativos e estados de erro',block:'Entregue código completo cobrindo fluxo feliz, fluxos alternativos e estados de erro. Comentários nos trechos principais e bloco de anotações por tela ao final.'},
+      {id:'d9b',label:'Tela específica',tooltip:'Código de uma tela ou componente isolado com todos os estados',block:'Entregue o código de uma tela ou componente isolado com todos os estados: vazio, carregando, preenchido, erro, sucesso, desabilitado. Comentário explicando cada estado e quando é acionado.'},
+      {id:'d9c',label:'Estados de interface',tooltip:'Todas as variações de uma tela para cada situação possível de uso',block:'Entregue todas as variações de uma tela organizadas em seções nomeadas por estado. Descrição de quando cada estado é acionado.'},
+      {id:'d9x',label:'Outro',tooltip:'Descreva o entregável que você precisa',block:null},
+    ],
+  },
+  {
+    id:'t10',group:'Especificação',label:'Documentos de especificação',step3Mode:'deliverable',journey:'especif',
+    persona:'Você é um Business Analyst Sênior especializado em levantamento e especificação de requisitos, atuando desde o discovery até a entrega. Suas referências incluem BABOK (IIBA) para estruturação da análise, User Stories (Cohn) para definição orientada a valor, Specification by Example e BDD (Adzic/Dan North) para detalhamento e validação por meio de cenários testáveis, além de Example Mapping para refinamento e Story Mapping para visão de produto. Você conhece o contexto do Projeto Fio: existe um Design System em código publicado em '+DS_BASE+' cobrindo as marcas Vivix, Atiaia e Corporativo, e os protótipos foram produzidos com esse DS. Seu papel é acelerar o trabalho do especificador — não substituir seu julgamento.\n\nQuando o entregável escolhido for a especificação completa em documento HTML, use o seguinte padrão visual: sidebar fixa à esquerda com navegação por âncora e legenda de confiança, header com nome da solução e metadados (data, versão, plataforma, marca), conteúdo em seções numeradas por letra, tabelas com badges de confiança, tabs quando houver mais de uma tela, seção final "Requisitos em Aberto" e seção "Regras de Negócio Sugeridas pela IA" separadas. Use os tokens de cor da marca do projeto — nunca cores fixas ou inventadas:\n— Vivix: primária #00b2a9, escura #005751\n— Atiaia: primária #009cde, escura #071d49\n— Corporativo: primária #ec7d07, escura #004952\nSe a marca não foi informada, pergunte antes de gerar o HTML.',
+    tarefa:'Gere os blocos de especificação a partir do protótipo fornecido. Se o protótipo foi fornecido: gere imediatamente os blocos deriváveis (Contexto resumido, Solução proposta TO BE, Detalhamento de telas, Regras de negócio sugeridas, Restrições técnicas e de UX). Se não foi fornecido: liste os artefatos necessários antes de começar.\n\nO bloco de contexto é apenas 1 parágrafo direto explicando do que se trata a solução — não é discovery, não tem subseções, não tem tabela de stakeholders, não tem ganhos financeiros. Ganhos, stakeholders, impacto e objetivos estratégicos são discovery e vão para Itens em Aberto quando perguntados e não respondidos.\n\nUse três marcadores de confiança em cada afirmação:\n— ✅ Confirmado — visto diretamente no protótipo\n— 〜 Inferido — padrão identificado com base razoável\n— ❓ Em aberto — sem informação suficiente para afirmar\n\nO que você nunca gera sozinho: insights de pesquisa, jornadas de usuário, hipóteses de design, AS IS do processo, arquitetura de integração entre sistemas, modelo ER completo, contratos de API, perfis/permissões reais e critérios de aceite fora do que o protótipo evidencia. Se não está no protótipo nem foi informado, vai para Itens em aberto — nunca inventado ou estruturado como se fosse entregável pronto.',
+    techniques:[
+      {id:'contexto-resumo',label:'Contexto resumido',tooltip:'Um parágrafo direto explicando do que se trata a solução, sem discovery',block:'Escreva 1 parágrafo (5 a 8 linhas) explicando do que se trata a solução, para que serve e qual problema resolve, com base no que o protótipo e a documentação evidenciam. Sem subseções, sem tabela, sem números de ganho financeiro. Se o objetivo da solução não estiver claro no input, registre isso como pergunta em Itens em Aberto em vez de inferir.'},
+      {id:'tobe',label:'TO BE detalhado',tooltip:'Descreve o estado futuro com fluxo completo, decisões fixas e em aberto',block:'Gere o TO BE com:\n— Fluxo feliz: passo a passo do usuário com resposta do sistema em cada etapa\n— Fluxos alternativos: condições que levam a caminhos diferentes, com ramificação explícita\n— Fluxos de erro: o que pode falhar, como o sistema responde, como o usuário recupera\n— Out of scope: o que os limites do protótipo indicam que não está coberto\n— Comportamentos de UX que impactam lógica técnica: animações, transições, ordenações, filtros\n— Decisões fixas vs. abertas: o que é requisito inegociável versus o que pode ser adaptado'},
+      {id:'det-telas',label:'Detalhamento de telas',tooltip:'Especifica campos, validações, estados e ações — separa requisitos definidos de em aberto',block:'Para cada tela, separe em dois blocos:\n\n**Requisitos definidos** — regras, especificações e comportamentos totalmente claros a nível visual e de código:\n— Finalidade: o que o usuário pode fazer\n— Campos: nome | tipo | obrigatório (sim/não) | valor padrão\n— Validações: regra | mensagem de erro | quando é disparada\n— Ações disponíveis: nome | o que dispara | estado resultante\n— Estados possíveis: vazio, carregando, preenchido, erro, sucesso, desabilitado\n— Textos de feedback: mensagens de erro, confirmação e alerta exatos\n\n**Requisitos em aberto** — regras que precisam de mais contexto ou geram dúvida para implementação:\n— O que não está claro e por quê\n— Condicionais que dependem de perfil, permissão ou estado anterior sem definição no protótipo\n— Comportamentos que precisam de decisão de stakeholder ou time técnico'},
+      {id:'restricoes',label:'Restrições técnicas e de UX',tooltip:'Registra DS utilizado, desvios do padrão, dispositivos cobertos e limitações',block:'Registre:\n— DS utilizado: nome e versão\n— Desvios do padrão do DS: o que foi customizado e por quê\n— Dispositivos e resoluções cobertos\n— Limitações de comportamento: o que o protótipo não cobre mas o produto final deve cobrir'},
+      {id:'regras-negocio',label:'Regras de negócio sugeridas',tooltip:'Infere requisitos de negócio a partir do protótipo e documentação — sempre com marcador 〜 Inferido',block:'Com base no protótipo e documentação fornecidos, elabore uma lista de regras de negócio sugeridas em formato de tabela.\n— Cada regra deve ter marcador 〜 Inferido obrigatório — nunca ✅ Confirmado\n— Agrupe por funcionalidade ou tela\n— Colunas obrigatórias: ID da regra | Descrição da regra | Onde se aplica (tela ou funcionalidade) | Base da inferência (o que no protótipo levou a essa sugestão) | Risco se estiver errada | Status (Apontada pelo analista / Sugerida pela IA)\n— IDs sequenciais no formato RN-IA-101, RN-IA-102...\n— Estas sugestões serão revisadas pelo especificador humano antes de avançar para desenvolvimento'},
+      {id:'checklist-entrada',label:'Checklist de entrada',tooltip:'Perguntas obrigatórias que a IA faz antes de fechar a especificação',block:'Antes de considerar a especificação completa, verifique se as seguintes perguntas foram respondidas. Se não foram, registre-as na seção Itens em aberto:\n— Qual é o problema de negócio ou dor do usuário que originou essa demanda?\n— Qual área é a cliente interna e quem são os stakeholders?\n— Qual é o impacto esperado e como será medido?\n— Há restrições de negócio conhecidas (prazo, orçamento, regulatório)?\n— Quais dados formam a estrutura-base para funcionamento da solução?\n— Há detalhes implícitos não evidentes no protótipo?'},
+    ],
+    deliverables:[
+      {id:'d10a',label:'Especificação completa (documento HTML)',tooltip:'Documento técnico completo no template visual padrão, com contexto resumido, regras de negócio sugeridas e checklist de entrada',block:'Entregue a especificação como documento HTML autocontido, seguindo o template visual padrão (sidebar de navegação, header com metadados, badges de confiança, tokens de cor da marca do projeto). Estrutura:\n(1) Identificação — nome da solução, versão, data, plataforma (Mendix/SAP BTP/Web/Power BI), marca\n(2) Contexto — 1 parágrafo direto do que se trata a solução e qual problema resolve, sem subseções nem tabela\n(3) Solução proposta TO BE — fluxo completo (feliz + alternativos + erros), out of scope, decisões fixas vs. abertas\n(4) Detalhamento de telas — por tela (usar tabs se houver mais de uma), separar em \"Requisitos definidos\" e \"Requisitos em aberto\", com campos, validações, ações e estados em tabela\n(5) Restrições técnicas e de UX — DS e versão, desvios identificados, dispositivos cobertos, limitações\n(6) Regras de negócio sugeridas — tabela com ID | Descrição | Onde se aplica | Base da inferência | Risco | Status, todas com marcador 〜 Inferido\n(7) Itens em aberto + Checklist de entrada — tabela com pergunta/pendência e categoria (Negócio, Dados, Técnico, UX, Funcional). Inclui as perguntas obrigatórias não respondidas: problema de negócio, stakeholders, impacto esperado, restrições, dados-base, detalhes implícitos\n\nA seção 7 é obrigatória. Se não houver nada em aberto, registre explicitamente que a especificação está completa. Perfis/permissões, integrações, arquitetura de sistemas e modelo ER completo NÃO são gerados por este entregável — se perguntados e não respondidos, entram na seção 7 como pendência técnica para tratativa com o time de arquitetura/BA.'},
+      {id:'d10b',label:'Detalhamento de telas',tooltip:'Somente a seção 4: requisitos definidos e em aberto por tela',block:'Entregue somente o detalhamento de telas. Para cada tela, separe em \"Requisitos definidos\" (regras claras, campos, validações, estados) e \"Requisitos em aberto\" (o que precisa de decisão). Formato de tabela. Se houver mais de uma tela, organize em tabs.'},
+      {id:'d10c',label:'Restrições técnicas e de UX',tooltip:'DS utilizado, desvios do padrão, dispositivos cobertos e limitações de comportamento',block:'Entregue somente as restrições: DS e versão, desvios identificados, dispositivos e resoluções cobertos, limitações de comportamento.'},
+      {id:'d10e',label:'Regras de negócio sugeridas',tooltip:'Lista de requisitos de negócio inferidos do protótipo para revisão humana',block:'Entregue somente as regras de negócio sugeridas, em formato de tabela. Cada regra com marcador 〜 Inferido, agrupada por funcionalidade. Colunas: ID da regra (formato RN-IA-101) | Descrição da regra | Onde se aplica | Base da inferência | Risco se estiver errada | Status (Apontada pelo analista / Sugerida pela IA). O especificador humano revisa antes de avançar.'},
+      {id:'d10x',label:'Outro',tooltip:'Descreva o entregável que você precisa',block:null},
+    ],
+  }
+];
+
+
+/* ============================================================
+   MOTOR DA JORNADA DE ESPECIFICAÇÃO — portado de especif.html
+   Identificadores prefixados com ESP_/esp para não colidir.
+   ============================================================ */
+const ESP_AREAS=[
+ {id:"digitais",nome:"Soluções Digitais",cor:"#4A90D9",topics:[
+   {id:"app-web-mobile",nome:"Aplicações web e mobile",ds:"Especificação funcional de apps web/mobile",
+    c:{t:"Detalhamento de Telas e Navegação",i:["Finalidade de cada tela","Campos: tipo, obrigatoriedade, máscara/formato","Ações disponíveis e o que cada uma dispara","Estados: vazio, carregando, preenchido, erro, sucesso, desabilitado","Comportamentos condicionais e textos de erro/confirmação","Mapa de navegação entre telas"]},
+    d:{t:"Documentação Funcional e Modelo ER",i:["Fluxos funcionais (feliz, alternativo, erro)","Modelo ER com legenda (PK/FK/NN/UQ)","Entidades, atributos e relacionamentos","Exemplos de payload quando aplicável"]},
+    q:["Dispositivos e resoluções alvo?","Qual DS e versão? Há desvios do padrão?","Opera offline/online?"],pii:false},
+   {id:"portal-auto",nome:"Portais do cliente / autoatendimento",ds:"Self-service e área logada do cliente",
+    c:{t:"Jornada de Autoatendimento e Telas",i:["Catálogo de serviços disponíveis ao cliente","Autenticação/identificação do usuário","Telas e ações self-service","Estados de cada tela"]},
+    d:{t:"Regras de Elegibilidade e Dados do Cliente",i:["O que o cliente pode/não pode fazer","Dados exibidos vs. editáveis","Modelo de dados do cliente","Integrações de consulta"]},
+    q:["Nível de autenticação exigido?","O que é self-service vs. exige atendente?","SLA de resposta esperado?"],pii:true},
+   {id:"jornadas",nome:"Jornadas digitais",ds:"Onboarding, contratação, pós-venda",
+    c:{t:"Etapas da Jornada (Story Mapping)",i:["Passo a passo por fase (onboarding/contratação/pós-venda)","Pontos de decisão","Abandono e retomada de jornada"]},
+    d:{t:"Regras por Etapa e Gatilhos de Comunicação",i:["Validações por etapa","Documentos exigidos","Disparos de e-mail/SMS/push","SLA por etapa"]},
+    q:["Quais canais envolvidos?","Onde ocorre drop-off hoje?","Retomada de jornada é permitida?"],pii:true},
+   {id:"rpa",nome:"RPA e automação de processos",ds:"Robôs de automação (attended/unattended)",
+    c:{t:"Processo AS IS e Passos Automatizáveis",i:["Mapeamento do processo manual atual","Steps a automatizar","Entradas e saídas","Sistemas acessados pelo robô"]},
+    d:{t:"Gatilhos, Exceções e Tratamento de Erros",i:["Triggers (agendado/evento)","Cenários de exceção","Escalonamento human-in-the-loop","Logs e reprocessamento"]},
+    q:["Attended ou unattended?","Volume e frequência de execução?","Credenciais/cofre de senhas e SLA do bot?"],pii:false},
+   {id:"chatbot",nome:"Chatbots e assistentes virtuais",ds:"Bots conversacionais e virtual agents",
+    c:{t:"Fluxos Conversacionais e Intenções",i:["Intents e entidades","Fluxos de diálogo e mensagens","Fallback","Handoff para humano"]},
+    d:{t:"Integrações NLU/Backend e Base de Conhecimento",i:["Motor NLU","Integrações de consulta/ação","Base de conhecimento","Métricas (contenção, CSAT)"]},
+    q:["Quais canais (WhatsApp/web/app)?","Escopo de intenções?","Handoff para humano em quais casos?"],pii:false},
+   {id:"workflow",nome:"Fluxos de aprovação e workflows",ds:"Workflows com alçadas e roteamento",
+    c:{t:"Fluxo de Aprovação, Alçadas e Papéis",i:["Etapas do fluxo","Alçadas por valor/tipo","Papéis aprovadores","Paralelo vs. sequencial"]},
+    d:{t:"Regras de Roteamento, SLA e Escalonamento",i:["Roteamento condicional","SLA por etapa","Escalonamento e delegação","Trilha de auditoria"]},
+    q:["Existe matriz de alçadas oficial?","Substituição de aprovador (férias)?","Reprovação reinicia o fluxo?"],pii:false},
+ ]},
+ {id:"dados",nome:"Dados",cor:"#38A169",topics:[
+   {id:"pipeline",nome:"Pipelines de dados (ETL/ELT)",ds:"Ingestão e transformação de dados",
+    c:{t:"Fontes, Ingestão e Transformações",i:["Sistemas fonte","Modo (batch/streaming)","Regras de transformação","Camadas (raw/staged/curated)"]},
+    d:{t:"Orquestração, Agendamento e Qualidade",i:["Orquestrador","Agendamento e dependências","SLA de carga","Regras de qualidade e reprocessamento"]},
+    q:["Volume e janela de carga?","Full ou incremental?","Ferramenta de orquestração?"],pii:false},
+   {id:"dw-lake",nome:"Data warehouse / lake / lakehouse",ds:"Arquitetura de armazenamento analítico",
+    c:{t:"Arquitetura de Armazenamento e Camadas",i:["Modelo (medallion/star/vault)","Zonas de dado","Particionamento","Formatos"]},
+    d:{t:"Governança de Modelagem e Acesso",i:["Modelagem dimensional","Políticas de acesso","Retenção","Catálogo"]},
+    q:["Plataforma (Databricks/Synapse/BigQuery)?","Volume esperado?","Padrão de modelagem?"],pii:false},
+   {id:"bi",nome:"Dashboards e BI (Power BI)",ds:"Relatórios e painéis analíticos",
+    c:{t:"Visões, Visuais e Interações",i:["Páginas do relatório","Visuais por indicador","Filtros/segmentações","Drill-down e drill-through"]},
+    d:{t:"Modelo Semântico, Medidas e Atualização",i:["Dataset e relacionamentos","Medidas DAX","RLS (row level security)","Refresh schedule e fontes"]},
+    q:["KPIs prioritários?","Granularidade e histórico?","RLS por perfil? Frequência de refresh?"],pii:false},
+   {id:"modelo-er",nome:"Modelo de dados e ER",ds:"Modelagem entidade-relacionamento",
+    c:{t:"Entidades, Atributos e Relacionamentos",i:["Entidades do domínio","Atributos com tipo","Cardinalidades","Chaves (PK/FK)"]},
+    d:{t:"Diagrama ER e Dicionário de Dados",i:["Diagrama com legenda (PK/FK/NN/UQ)","Dicionário de dados","Normalização","Índices"]},
+    q:["Normalizado ou dimensional?","Volumetria por entidade?","Soft delete/versionamento?"],pii:false},
+   {id:"kpis",nome:"Indicadores e KPIs de negócio",ds:"Definição e cálculo de indicadores",
+    c:{t:"Definição de Indicadores",i:["Nome do indicador","Fórmula","Granularidade","Dimensões e meta"]},
+    d:{t:"Fonte, Cálculo e Frequência",i:["Fonte do dado","Regra de cálculo","Frequência de apuração","Responsável (owner)"]},
+    q:["Baseline atual e meta?","Granularidade temporal?","Quem é o dono do KPI?"],pii:false},
+   {id:"governanca",nome:"Governança e catálogo de dados",ds:"Domínios, owners e catálogo",
+    c:{t:"Domínios, Owners e Catálogo",i:["Domínios de dados","Data owners/stewards","Itens do catálogo","Classificação"]},
+    d:{t:"Políticas, Linhagem e Classificação",i:["Políticas de uso","Linhagem de dados","Classificação de sensibilidade (inclui LGPD)","Retenção"]},
+    q:["Ferramenta de catálogo?","Classificação de dados sensíveis definida?","Papéis de stewardship?"],pii:true},
+   {id:"qualidade",nome:"Qualidade de dados",ds:"Validação e deduplicação",
+    c:{t:"Dimensões e Regras de Qualidade",i:["Completude/unicidade/validade/consistência","Regras por atributo","Deduplicação (match/merge)"]},
+    d:{t:"Monitoramento e Não-Conformidades",i:["Thresholds aceitáveis","Alertas","Quarentena/correção","Indicadores de qualidade"]},
+    q:["Regras de match/merge?","Thresholds aceitáveis?","Ação em registro reprovado?"],pii:false},
+   {id:"ia-ml",nome:"Modelos analíticos e IA/ML",ds:"Modelos preditivos e machine learning",
+    c:{t:"Objetivo do Modelo e Dados de Treino",i:["Problema (classificação/regressão/cluster)","Features","Fonte e janela de treino","Variável alvo"]},
+    d:{t:"Métricas, Deploy e Monitoramento",i:["Métricas de avaliação","Estratégia de deploy","Drift e retraining","Explicabilidade"]},
+    q:["Métrica de sucesso do negócio?","Volume de dados rotulados?","Requisitos de explicabilidade/latência?"],pii:false},
+ ]},
+ {id:"sistemas",nome:"Sistemas",cor:"#3182CE",topics:[
+   {id:"erp-sap",nome:"Requisitos para ERP (SAP)",ds:"SAP e módulos (MM/SD/FI/CO...)",
+    c:{t:"Processo, Módulo e Transações",i:["Processo de negócio","Módulo(s) SAP","Transações/Fiori apps","Papéis"]},
+    d:{t:"Customizações, Config e Autorizações",i:["Config (SPRO) vs. dev (RICEFW)","Objetos de autorização","Impactos em módulos correlatos"]},
+    q:["Standard ou customização?","Versão SAP (ECC/S4)?","Donos funcionais por módulo?"],pii:false},
+   {id:"integracao-api",nome:"Integrações entre sistemas",ds:"APIs, middleware, SAP BTP",
+    c:{t:"Sistemas, Contratos e Fluxo de Integração",i:["Origem e destino","Síncrono/assíncrono","Contrato (endpoints/payloads) — ❓ se não fornecido","Middleware/BTP"]},
+    d:{t:"Mapeamento De-Para, Erros e Idempotência",i:["De-para de campos","Tratamento de erro/retry","Idempotência","Segurança (OAuth/mTLS)"]},
+    q:["Contrato de API disponível?","Volume e latência?","Padrão (REST/SOAP/eventos) e reprocesso?"],pii:false},
+   {id:"legado",nome:"Customizações e evoluções de legados",ds:"Evolução de sistemas legados",
+    c:{t:"Sistema Legado e Escopo da Evolução",i:["Sistema e módulo impactado","Comportamento atual vs. desejado","Restrições da stack"]},
+    d:{t:"Impactos, Regressão e Compatibilidade",i:["Pontos de impacto","Risco de regressão","Compatibilidade","Débito técnico"]},
+    q:["Documentação do legado existe?","Janela de manutenção?","Dependências a jusante?"],pii:false},
+   {id:"migracao",nome:"Migração de dados entre sistemas",ds:"De-para, carga e reconciliação",
+    c:{t:"Escopo, Origem e Destino",i:["Entidades a migrar","Sistema origem/destino","Volume","De-para de estrutura"]},
+    d:{t:"Estratégia, Validação e Cutover",i:["Estratégia (big bang/faseada)","Regras de transformação","Validação/reconciliação","Cutover e rollback"]},
+    q:["Volume e janela?","Critérios de reconciliação?","Histórico migra ou arquiva?"],pii:false},
+ ]},
+ {id:"infra",nome:"Infraestrutura",cor:"#805AD5",topics:[
+   {id:"rede",nome:"Arquitetura de rede",ds:"Topologia, segmentação e roteamento",
+    c:{t:"Topologia e Segmentação",i:["Topologia","VLANs/sub-redes","Segmentação","Roteamento"]},
+    d:{t:"Segurança, Redundância e Capacidade",i:["Firewall e regras","Redundância","QoS","Largura de banda"]},
+    q:["Sites envolvidos?","Requisitos de latência?","Segmentação OT/IT?"],pii:false},
+   {id:"cloud",nome:"Cloud / híbrido / on-premise",ds:"Modelo de implantação e landing zone",
+    c:{t:"Modelo de Implantação e Serviços",i:["Cloud/híbrido/on-prem","Provedor","Serviços (IaaS/PaaS)","Landing zone"]},
+    d:{t:"Rede, Segurança e Custos",i:["Conectividade (VPN/ExpressRoute)","IAM","FinOps/custos","Tags"]},
+    q:["Provedor(es) alvo?","Requisitos de residência de dados?","Modelo de custo?"],pii:false},
+   {id:"observabilidade",nome:"Monitoramento e observabilidade",ds:"Métricas, logs, traces e SLO",
+    c:{t:"Métricas, Logs e Traces",i:["O que monitorar","Métricas/logs/traces","Fontes","Dashboards"]},
+    d:{t:"Alertas, SLO e Resposta",i:["Thresholds","SLO/SLI","Roteamento de alertas","On-call"]},
+    q:["Ferramenta (Grafana/Datadog/etc.)?","SLOs definidos?","Destinos de alerta?"],pii:false},
+   {id:"conectividade-planta",nome:"Conectividade de plantas e sites remotos",ds:"Enlaces industriais e resiliência",
+    c:{t:"Sites, Enlaces e Redundância",i:["Plantas/sites","Tipo de enlace","Redundância","Latência"]},
+    d:{t:"Convergência OT/IT e Resiliência",i:["Segregação OT/IT","Failover","Operação offline","Priorização"]},
+    q:["Quantos sites e criticidade?","Links disponíveis?","Requisitos OT de tempo real?"],pii:false},
+   {id:"containers",nome:"Virtualização e containers",ds:"VMware, Kubernetes, OpenShift",
+    c:{t:"Plataforma e Orquestração",i:["Hypervisor/K8s","Clusters","Imagens","Registries"]},
+    d:{t:"Rede, Storage e Segurança de Containers",i:["CNI","Volumes persistentes","Políticas","Scanning de imagem"]},
+    q:["Plataforma alvo?","Workloads stateful?","Política de imagens?"],pii:false},
+ ]},
+ {id:"servicedesk",nome:"Service Desk",cor:"#DD6B20",topics:[
+   {id:"itil",nome:"Processos ITIL",ds:"Incidentes, requisições, mudanças, problemas",
+    c:{t:"Processo ITIL Alvo e Fluxo",i:["Incidente/requisição/mudança/problema","Estados","Papéis"]},
+    d:{t:"Regras, CAB e Classificação",i:["Categorização","CAB para mudanças","RCA para problemas","KPIs"]},
+    q:["Quais processos no escopo?","CAB necessário?","Integração com CMDB?"],pii:false},
+   {id:"kb",nome:"Base de conhecimento",ds:"Artigos, taxonomia e curadoria",
+    c:{t:"Estrutura e Categorização de Artigos",i:["Tipos de artigo","Taxonomia","Ciclo de vida"]},
+    d:{t:"Fluxo de Publicação e Curadoria",i:["Criação/revisão/aprovação","Versionamento","Feedback e uso"]},
+    q:["KCS adotado?","Quem cura o conteúdo?","Artigos internos vs. públicos?"],pii:false},
+   {id:"auto-chamados",nome:"Automação de chamados e autoatendimento",ds:"Auto-classificação e resolução",
+    c:{t:"Cenários de Automação e Self-service",i:["Chamados automatizáveis","Catálogo self-service","Gatilhos"]},
+    d:{t:"Roteamento e Resolução Automática",i:["Auto-classificação","Roteamento","Resolução automática","Escalonamento"]},
+    q:["Top ofensores de volume?","Integrações para ação automática?","Contenção esperada?"],pii:false},
+   {id:"integra-itsm",nome:"Integração da ferramenta de ITSM",ds:"ITSM × sistemas externos",
+    c:{t:"Sistemas Integrados e Fluxo",i:["ITSM × sistemas (monitoramento/RH/CMDB)","Direção","Eventos"]},
+    d:{t:"Mapeamento de Campos e Sincronização",i:["De-para","Sync (uni/bidirecional)","Tratamento de erro"]},
+    q:["Ferramenta ITSM?","Contratos de integração disponíveis?","Sync tempo real ou batch?"],pii:false},
+ ]},
+ {id:"seguranca",nome:"Segurança da Informação",cor:"#E53E3E",topics:[
+   {id:"iam-pam",nome:"Controle de acesso (IAM/PAM)",ds:"Identidades, papéis e acessos privilegiados",
+    c:{t:"Perfis, Papéis e Acessos",i:["Identidades","Papéis (RBAC/ABAC)","Contas privilegiadas","Ciclo de vida"]},
+    d:{t:"Provisionamento, MFA e Recertificação",i:["Provisionamento/deprovisionamento","MFA","Cofre PAM","Recertificação de acesso"]},
+    q:["Fonte de identidade (AD/IdP)?","Matriz de papéis?","Periodicidade de recertificação?"],pii:true},
+   {id:"politicas",nome:"Políticas e regras de segurança",ds:"Controles e enforcement",
+    c:{t:"Escopo e Controles da Política",i:["Domínio","Controles","Abrangência","Exceções"]},
+    d:{t:"Enforcement e Conformidade",i:["Como aplicar","Monitoramento","Evidências","Sanções"]},
+    q:["Framework de referência?","Processo de exceção?","Quem aprova a política?"],pii:false},
+   {id:"lgpd-iso",nome:"Conformidade (LGPD, ISO 27001)",ds:"Adequação regulatória",
+    c:{t:"Requisitos Regulatórios Aplicáveis",i:["Artigos/controles aplicáveis","Bases legais","Dados pessoais tratados"]},
+    d:{t:"Controles, Evidências e Auditoria",i:["Controles de conformidade","Evidências","Gaps","Plano de adequação"]},
+    q:["Dados pessoais/sensíveis tratados?","Base legal definida?","DPO envolvido?"],pii:true},
+   {id:"ot",nome:"Segurança OT/industrial",ds:"Plantas de vidro/energia, modelo Purdue",
+    c:{t:"Ativos OT e Zonas (Purdue)",i:["Ativos industriais","Zonas/conduítes","Protocolos","Criticidade"]},
+    d:{t:"Segregação, Monitoramento e Resposta",i:["Segregação IT/OT","Monitoramento passivo","Resposta sem parar produção"]},
+    q:["Inventário OT existe?","Protocolos em uso?","Tolerância a parada?"],pii:false},
+   {id:"vulnerabilidades",nome:"Gestão de vulnerabilidades",ds:"Varredura, priorização e SLA",
+    c:{t:"Escopo de Varredura e Ativos",i:["Ativos","Frequência","Ferramentas","Cobertura"]},
+    d:{t:"Priorização e Remediação (SLA)",i:["Scoring (CVSS/risco)","SLA de correção","Exceções","Reteste"]},
+    q:["Cobertura de ativos?","SLA por severidade?","Janela de correção?"],pii:false},
+   {id:"auditoria",nome:"Trilhas de auditoria e logs",ds:"Logs, SIEM e retenção",
+    c:{t:"Eventos Auditáveis e Retenção",i:["Eventos a registrar","Campos","Retenção","Integridade"]},
+    d:{t:"Coleta, Correlação e Alerta (SIEM)",i:["Coleta","SIEM/correlação","Casos de uso","Alertas"]},
+    q:["Requisitos regulatórios de retenção?","SIEM em uso?","Eventos críticos?"],pii:false},
+   {id:"dlp",nome:"DLP e proteção de dados sensíveis",ds:"Detecção e bloqueio de vazamento",
+    c:{t:"Dados Sensíveis e Canais",i:["Classes de dados","Canais (e-mail/web/endpoint)","Rotulagem"]},
+    d:{t:"Políticas DLP e Resposta",i:["Regras de detecção","Ações (bloquear/alertar)","Tratamento de falso positivo"]},
+    q:["Classificação de dados existe?","Canais no escopo?","Ação padrão (monitorar vs. bloquear)?"],pii:true},
+   {id:"resposta-incidentes",nome:"Resposta a incidentes",ds:"CSIRT e playbooks",
+    c:{t:"Tipos de Incidente e Playbooks",i:["Categorias","Severidade","Playbooks","Papéis (CSIRT)"]},
+    d:{t:"Fluxo de Resposta e Comunicação",i:["Detecção→contenção→erradicação→recuperação","Comunicação","Lições aprendidas"]},
+    q:["CSIRT definido?","SLA por severidade?","Requisitos de notificação (ANPD)?"],pii:true},
+ ]},
+ {id:"inovacao",nome:"Inovação",cor:"#00A3A3",topics:[
+   {id:"poc-mvp",nome:"PoC e MVPs",ds:"Provas de conceito e produtos mínimos",
+    c:{t:"Hipótese e Escopo Mínimo",i:["Hipótese a validar","Escopo mínimo","Fora de escopo","Timebox"]},
+    d:{t:"Critérios de Sucesso e Decisão",i:["Métricas de validação","Critério go/no-go","Próximos passos"]},
+    q:["Hipótese central?","Critério de sucesso mensurável?","Prazo do experimento?"],pii:false},
+   {id:"iot",nome:"Pilotos IoT / sensores",ds:"Telemetria, medição e automação",
+    c:{t:"Sensores, Telemetria e Conectividade",i:["Grandezas medidas","Sensores","Protocolo","Frequência"]},
+    d:{t:"Ingestão, Processamento e Ação",i:["Gateway/ingestão","Edge vs. cloud","Regras/alertas","Atuação"]},
+    q:["Grandezas e precisão?","Conectividade no local?","Edge processing necessário?"],pii:false},
+   {id:"gen-ai",nome:"Soluções com IA generativa",ds:"LLMs, RAG e guardrails",
+    c:{t:"Caso de Uso e Fonte de Conhecimento",i:["Caso de uso","RAG/fine-tuning","Fontes","Guardrails"]},
+    d:{t:"Avaliação, Custo e Segurança",i:["Métricas de qualidade","Custo por token","Vazamento de PII","Human-in-the-loop"]},
+    q:["Fonte de conhecimento?","Tolerância a alucinação?","Dados sensíveis no prompt?"],pii:true},
+   {id:"digital-twin",nome:"Gêmeos digitais (digital twin)",ds:"Espelhamento de ativo físico",
+    c:{t:"Ativo Físico e Modelo Virtual",i:["Ativo modelado","Variáveis","Fidelidade","Fonte de dados em tempo real"]},
+    d:{t:"Simulação e Sincronização",i:["Sincronização física-virtual","Simulação/cenários","Casos de uso"]},
+    q:["Ativo a espelhar?","Dados em tempo real disponíveis?","Objetivo (monitorar/prever/simular)?"],pii:false},
+   {id:"auto-inteligente",nome:"Automação inteligente",ds:"RPA + IA cognitiva",
+    c:{t:"Processo e Componentes Cognitivos",i:["Processo","Combinação RPA+IA (OCR/NLP/ML)","Decisões"]},
+    d:{t:"Orquestração e Human-in-the-loop",i:["Orquestração","Exceções","Supervisão humana","Aprendizado"]},
+    q:["Processo alvo?","Volume?","Nível de decisão delegada à IA?"],pii:false},
+   {id:"aval-plataforma",nome:"Novas plataformas em avaliação",ds:"Comparativo e recomendação técnica",
+    c:{t:"Critérios de Avaliação e Casos de Teste",i:["Requisitos","Critérios ponderados","Casos de teste"]},
+    d:{t:"Comparativo e Recomendação",i:["Matriz comparativa","TCO","Riscos","Recomendação"]},
+    q:["Plataformas candidatas?","Critérios must-have?","Orçamento/prazo de decisão?"],pii:false},
+ ]},
+ {id:"processos",nome:"Processos",cor:"#6B46C1",topics:[
+   {id:"asis-tobe",nome:"Mapeamento e redesenho (AS IS / TO BE)",ds:"Diagnóstico e redesenho de processo",
+    c:{t:"Processo AS IS",i:["Atividades atuais — ❓ nunca inventar; se ausente vai para Em aberto","Atores","Gargalos","Sistemas"]},
+    d:{t:"Processo TO BE e Ganhos",i:["Redesenho","Automações","Ganhos","Plano de transição"]},
+    q:["AS IS já está documentado?","Donos do processo?","Gargalos conhecidos?"],pii:false},
+   {id:"bpmn",nome:"Automação de processos (BPM/BPMN)",ds:"Modelagem e motor de processos",
+    c:{t:"Diagrama BPMN e Raias",i:["Pools/lanes","Atividades","Gateways","Eventos"]},
+    d:{t:"Regras, Formulários e Integrações",i:["Regras de negócio","Formulários","Integrações","SLA"]},
+    q:["Motor BPM alvo?","Nível de automação?","Integrações necessárias?"],pii:false},
+   {id:"sla-processos",nome:"Indicadores e SLAs de processos",ds:"KPIs e medição de processo",
+    c:{t:"Indicadores de Processo",i:["KPIs (lead time/throughput)","Definição","Meta"]},
+    d:{t:"SLA, Medição e Governança",i:["SLA por etapa","Ponto de medição","Responsável","Alerta"]},
+    q:["Baseline atual?","Metas?","Fonte de medição?"],pii:false},
+   {id:"alcadas",nome:"Fluxos de aprovação e alçadas",ds:"Matriz de alçadas e delegação",
+    c:{t:"Matriz de Alçadas e Papéis",i:["Níveis","Limites","Papéis","Delegação"]},
+    d:{t:"Roteamento, SLA e Auditoria",i:["Roteamento condicional","SLA","Escalonamento","Trilha"]},
+    q:["Matriz de alçadas oficial?","Substituição de aprovador?","Segregação de funções?"],pii:false},
+   {id:"pop",nome:"Padronização e POPs",ds:"Procedimentos operacionais padrão",
+    c:{t:"Escopo do Procedimento",i:["Processo","Atividades padronizadas","Papéis","Entradas/saídas"]},
+    d:{t:"Instruções e Controle de Versão",i:["Passo a passo","Exceções","Versionamento","Treinamento"]},
+    q:["Variações regionais?","Nível de detalhe do POP?","Quem aprova?"],pii:false},
+   {id:"controles-internos",nome:"Controles internos e conformidade",ds:"Riscos, controles e SoD",
+    c:{t:"Riscos e Pontos de Controle",i:["Riscos","Controles","Frequência","Evidências"]},
+    d:{t:"Segregação de Funções e Testes",i:["SoD (segregation of duties)","Testes de efetividade","Não-conformidades","Remediação"]},
+    q:["Matriz de riscos existe?","Requisitos regulatórios?","Periodicidade de teste?"],pii:false},
+   {id:"handoffs",nome:"Integração processos ↔ sistemas",ds:"Handoffs sistêmicos entre áreas",
+    c:{t:"Handoffs e Pontos de Sistema",i:["Passagens entre áreas","Sistemas por etapa","Dados trocados"]},
+    d:{t:"Regras de Handoff e Rastreabilidade",i:["Gatilhos","Validações na passagem","Rastreabilidade","Erros"]},
+    q:["Sistemas envolvidos por etapa?","Handoffs manuais hoje?","SLA de passagem?"],pii:false},
+   {id:"change",nome:"Gestão de mudança de processos",ds:"Adoção, comunicação e treinamento",
+    c:{t:"Impacto da Mudança e Stakeholders",i:["Mudança","Impactados","Resistências","Prontidão"]},
+    d:{t:"Plano de Adoção e Comunicação",i:["Treinamento","Comunicação","Suporte","Métricas de adoção"]},
+    q:["Quem é impactado?","Patrocinador?","Métrica de adoção?"],pii:false},
+ ]},
+];
+
+/* ============ PROMPT-BASE ============ */
+const ESP_BASE_PERSONA=`Você é um Business Analyst Sênior especializado em levantamento e especificação de requisitos e projetos digitais, atuando desde o discovery até a entrega. Suas referências incluem BABOK (IIBA), User Stories (Cohn), Specification by Example e BDD (Adzic/Dan North), Example Mapping, Story Mapping e abordagens Lean e Dual Track Agile.
+
+Seu papel é transformar os artefatos e informações repassados em especificação de negócios e técnica. Especificações completas, claras, objetivas e acionáveis. Você acelera o trabalho do especificador — não substitui o julgamento humano.
+
+Português brasileiro. Direto e técnico. Sem floreio.`;
+const ESP_BASE_A=`A) CONTEXTO, PROBLEMA DE NEGÓCIO E RESULTADOS ESPERADOS
+• Contexto do negócio • Dor/problema principal • Objetivo geral • Stakeholders envolvidos
+• Impactos atuais (financeiros, operacionais, experiência, risco)
+• Ganhos financeiros, ganho em horas de trabalho e risco financeiro mitigado — mensal e anual
+• Objetivos estratégicos atendidos`;
+const ESP_BASE_B=`B) ARQUITETURA DA SOLUÇÃO E/OU DIAGRAMAS/FLUXOS
+• TO BE (solução proposta) • Visão geral da arquitetura (parágrafo) • Desenho arquitetural no início
+• Interação entre sistemas e integrações • Fluxo de dados e eventos • Componentes principais
+• Princípios arquiteturais • Restrições técnicas, pontos críticos e riscos técnicos`;
+const ESP_BASE_E=`E) REQUISITOS FUNCIONAIS E NÃO FUNCIONAIS
+• Breve menção do que são requisitos funcionais + parágrafo do que o sistema deve fazer
+• Requisitos funcionais numerados e rastreáveis (RF-001...) • Requisitos não funcionais (RNF-001...)
+• Funções e ações • Dependências entre funcionalidades
+• As regras de negócio vão no bloco próprio de REGRAS DE NEGÓCIO SUGERIDAS, referenciadas por ID`;
+const ESP_BASE_F=`F) INFORMAÇÕES COMPLEMENTARES
+• Perfis e permissões • Integrações e dependências • Critérios de aceite`;
+const ESP_BASE_OBS=`OBSERVAÇÕES A CONSIDERAR
+• TO BE: fluxo completo (feliz + alternativos + erros), out of scope inferido, UX que impacta lógica técnica, decisões fixas vs. abertas.
+• Regras de negócio e requisitos técnicos: parte mais importante — base para desenvolvimento/parametrização, linkada aos demais tópicos.
+• Restrições técnicas e de UX: DS e versão, desvios do DS, dispositivos e resoluções.
+• Requisitos definidos (claros) x em aberto (precisam de contexto) x sugeridos pela IA (para estudo humano).`;
+const ESP_BASE_NUNCA=`NUNCA GERE SOZINHO: insights de pesquisa, jornadas de usuário, hipóteses de design, AS IS do processo, integrações e contratos de API. Se não está no insumo nem foi informado, vai para "Requisitos em aberto".`;
+const ESP_BASE_CONF=`NÍVEL DE CONFIANÇA POR AFIRMAÇÃO
+✅ Confirmado — visto no insumo   〜 Inferido — padrão razoável   ❓ Em aberto — sem informação suficiente
+O bloco "Requisitos em aberto" é OBRIGATÓRIO. Se não houver nada, registre que a especificação está completa.`;
+const ESP_BASE_LGPD=`AVISO DE CONFORMIDADE (LGPD)
+Esta especificação envolve dados pessoais e/ou sensíveis. Inclua no documento: "Caso o seu projeto envolva dados pessoais ou dados pessoais sensíveis, comunique ao time de Segurança da Informação através do e-mail seginfo@gcb.com.br." Trate classificação, base legal e minimização nas seções pertinentes.`;
+const ESP_BASE_CLOSER=`[PROTÓTIPO / INSUMOS: cole aqui ou anexe]
+[Especificações já realizadas: escreva aqui ou anexe]`;
+
+/* Referência obrigatória do DS para qualquer saída visual. */
+const ESP_BASE_DS=`──────── DESIGN SYSTEM DE REFERÊNCIA ────────
+Índice do Design System GCB: ${DS_BASE}/ds
+Contexto para IA (tokens, regras, aliases e gaps): ${DS_BASE}/CONTEXT.md
+
+Leia o índice antes de produzir qualquer artefato visual e siga a marca do projeto
+(Corporativo, Atiaia Energia ou VIVIX). Use os tokens de cor, a tipografia e os
+componentes da marca — nunca cores fixas ou inventadas. Se a marca não tiver sido
+informada no contexto, pergunte antes de gerar o arquivo.`;
+
+/* ---- blocos dos TÓPICOS (Etapa 2) ---- */
+const ESP_BASE_RN=`REGRAS DE NEGÓCIO SUGERIDAS
+• Bloco exclusivo de REGRAS DE NEGÓCIO — tabela: ID | Descrição | Onde é aplicada | Status (analista / IA)
+• Origem de cada regra: confirmada no insumo, inferida ou sugerida pela IA
+• Impacto de cada regra nos requisitos, nas telas e nas integrações
+• Regras conflitantes, ambíguas ou sem dono vão para "Requisitos em aberto"`;
+const ESP_BASE_TOBE=`TO BE DETALHADO
+• Fluxo completo: caminho feliz, alternativos e de erro • Atores e responsabilidades por etapa
+• Pontos de decisão e critérios • Automações, handoffs e pontos de integração
+• Out of scope inferido • Decisões já fechadas vs. decisões em aberto`;
+const ESP_BASE_TELAS=`DETALHAMENTO DE TELAS
+• Finalidade de cada tela • Campos: tipo, obrigatoriedade, máscara/formato e validações
+• Ações disponíveis e o que cada uma dispara
+• Estados: vazio, carregando, preenchido, erro, sucesso, desabilitado
+• Comportamentos condicionais e textos de erro/confirmação • Mapa de navegação entre telas`;
+const ESP_BASE_RESTR=`RESTRIÇÕES TÉCNICAS DE SISTEMAS E DE UX
+• Restrições da stack e dos sistemas envolvidos • Limites de integração, performance e disponibilidade
+• Design System e versão; desvios do padrão e justificativa
+• Dispositivos, resoluções e requisitos de acessibilidade
+• Requisitos de segurança e conformidade que limitam a solução`;
+const ESP_BASE_CHECK=`CHECKLIST DE ENTRADA
+• Insumos recebidos x insumos faltantes • Clareza do problema e do objetivo
+• Stakeholders e donos identificados • Sistemas e integrações mapeados
+• Dados, volumetria e ambientes disponíveis • Riscos e dependências conhecidos
+• Veredito: pronto para especificar OU precisa de mais insumos (liste exatamente o que falta)`;
+
+/* ============ ETAPA 2 — TÓPICOS ============ */
+const ESP_TOP_OBRIG=[
+ {id:"contexto-resumido",nome:"Contexto resumido",bloco:ESP_BASE_A},
+ {id:"arquitetura",nome:"Arquitetura da Solução e/ou Diagramas/Fluxos",bloco:ESP_BASE_B},
+ {id:"requisitos",nome:"Requisitos Funcionais e Não funcionais",bloco:ESP_BASE_E},
+ {id:"regras-negocio",nome:"Regras de negócio sugeridas",bloco:ESP_BASE_RN},
+];
+const ESP_TOP_OPC=[
+ {id:"tobe",nome:"TO BE detalhado",bloco:ESP_BASE_TOBE},
+ {id:"telas",nome:"Detalhamento de telas",bloco:ESP_BASE_TELAS},
+ {id:"restricoes",nome:"Restrições técnicas de sistemas e de UX",bloco:ESP_BASE_RESTR},
+ {id:"checklist",nome:"Checklist de entrada",bloco:ESP_BASE_CHECK},
+];
+
+/* ============ ETAPA 4 — ENTREGÁVEL ============ */
+const ESP_ENTREGAVEIS=[
+ {id:"completa",nome:"Especificação completa",
+  instr:"Gere a ESPECIFICAÇÃO COMPLETA: todos os tópicos selecionados desenvolvidos em profundidade, com itens numerados e rastreáveis (RF-001, RNF-001, RN-001) e tabelas quando fizer sentido."},
+ {id:"simplificada",nome:"Especificação simplificada",
+  instr:"Gere uma ESPECIFICAÇÃO SIMPLIFICADA: objetiva e enxuta, em tópicos curtos, mantendo apenas o essencial de cada bloco selecionado — sem perder requisitos, regras de negócio e pontos em aberto."},
+];
+
+/* Formato do arquivo de saída — escolha independente da profundidade. */
+const ESP_FORMATOS=[
+ {id:"doc",nome:"Documento (.docx)",
+  instr:"Entregue como documento Word (.docx) real, com sumário navegável, títulos hierárquicos, tabelas formatadas e numeração de páginas."},
+ {id:"ppt",nome:"Apresentação (.pptx)",
+  instr:"Entregue como apresentação (.pptx) real: capa, agenda, um bloco por tópico selecionado, tabelas resumidas e slide final de pontos em aberto. Texto enxuto por slide — o detalhamento vai nas notas do apresentador."},
+ {id:"pdf",nome:"PDF",
+  instr:"Entregue como PDF paginado, com sumário, títulos hierárquicos e tabelas formatadas."},
+ {id:"html",nome:"HTML",
+  instr:"Entregue como documento HTML autocontido seguindo o padrão visual do Design System GCB indicado no bloco DESIGN SYSTEM DE REFERÊNCIA: sidebar fixa com navegação por âncora, header com metadados, seções numeradas, tabelas com badges de confiança e tabs quando houver mais de uma tela."},
+ {id:"outro",nome:"Outro",instr:""},
+];
+
+function espFindTopic(id){for(const a of ESP_AREAS){const t=a.topics.find(x=>x.id===id);if(t)return{area:a,topic:t};}return null;}
+function espPerguntas(sel,multi){
+  const base=["Qual é o problema de negócio ou dor do usuário que originou essa demanda?","Qual área é a cliente interna e quem são os stakeholders?","Qual é o impacto esperado e como será medido?","Há restrições de negócio conhecidas?","Quais dados formam a estrutura-base para funcionamento da solução?","Há mais detalhes que estão implícitos e não evidentes?"];
+  const esp=[];sel.forEach(s=>s.topic.q.forEach(q=>esp.push((multi?`(${s.topic.nome}) `:"")+q)));
+  let o=["PERGUNTAS OBRIGATÓRIAS ANTES DE FECHAR A ESPECIFICAÇÃO","Gerais:"];base.forEach(q=>o.push("  - "+q));
+  if(esp.length){o.push("Específicas do(s) tipo(s):");esp.forEach(q=>o.push("  - "+q));}
+  return o.join("\n");
+}
+function espBuildPortatil(ids,ctx,tops,ent,outro,fmt,fmtOutro,tipoOutro,topicoOutro){
+  const sel=ids.map(espFindTopic).filter(Boolean),pii=sel.some(s=>s.topic.pii);
+  const tOutro=(tipoOutro||"").trim();
+  const nEscopos=sel.length+(tOutro?1:0), multi=nEscopos>1;
+  const outroTxt=(outro||"").trim();
+  const entNome = ent.id==="outro" ? (outroTxt?`Outro — ${outroTxt}`:"Outro (não especificado)") : ent.nome;
+  const entInstr = ent.id==="outro"
+    ? (outroTxt?`Entregue exatamente este artefato: ${outroTxt}. Use os tópicos selecionados como base e mantenha a marcação de confiança.`
+              :"Entregue o artefato solicitado pelo especificador, usando os tópicos selecionados como base.")
+    : ent.instr;
+
+  let p=[ESP_BASE_PERSONA,"","════════════════════════════════════════"];
+  p.push(multi?`TIPO DE ESPECIFICAÇÃO — COMBINADA (${nEscopos} escopos)`:"TIPO DE ESPECIFICAÇÃO");
+  p.push("════════════════════════════════════════");
+  sel.forEach((s,i)=>p.push(`  ${i+1}. ${s.area.nome} › ${s.topic.nome}`));
+  if(tOutro)p.push(`  ${sel.length+1}. Fora das áreas mapeadas › ${tOutro}`);
+  p.push("");
+  p.push("──────── TÓPICOS DA ESPECIFICAÇÃO ────────");
+  ESP_TOP_OBRIG.forEach(t=>p.push(`  [obrigatório] ${t.nome}`));
+  const topOutro=(topicoOutro||"").trim();
+  const opc=ESP_TOP_OPC.filter(t=>tops.has(t.id));
+  if(topOutro)opc.push({id:"__outro",nome:`Outro — ${topOutro}`,
+    bloco:`OUTRO TÓPICO (definido pelo especificador)\n• ${topOutro}\n• Desenvolva este bloco com a mesma profundidade dos demais e use a mesma marcação de confiança.\n• Se faltar insumo para cobri-lo, registre o que falta em "Requisitos em aberto".`});
+  if(opc.length)opc.forEach(t=>p.push(`  [opcional] ${t.nome}`));
+  else p.push("  (nenhum tópico opcional selecionado)");
+  p.push("");
+  p.push("──────── ENTREGÁVEL ────────",`  Profundidade: ${entNome}`,`  ${entInstr}`);
+  if(fmt){
+    const fOutro=(fmtOutro||"").trim();
+    const fNome = fmt.id==="outro" ? (fOutro?`Outro — ${fOutro}`:"Outro (não especificado)") : fmt.nome;
+    const fInstr = fmt.id==="outro"
+      ? (fOutro?`Entregue exatamente neste formato: ${fOutro}.`
+              :"Entregue no formato solicitado pelo especificador.")
+      : fmt.instr;
+    p.push(`  Formato: ${fNome}`,`  ${fInstr}`);
+  }
+  p.push("");
+  if(ctx.trim()){p.push("──────── CONTEXTO DO DESAFIO (fornecido) ────────",ctx.trim(),"");}
+  else{p.push("──────── CONTEXTO ────────","[Cole aqui o contexto do desafio/projeto antes de rodar.]","");}
+  p.push("════════════ EXECUÇÃO EM 2 FASES ════════════");
+  p.push("FASE 1 — Proposta de C e D (valide antes de prosseguir):");
+  p.push("Com base no CONTEXTO acima e no(s) tipo(s) selecionado(s), PROPONHA o conteúdo dos tópicos C e D adaptado ao caso real. Use a rubrica abaixo como referência — adapte, especialize e acrescente o que o contexto exigir; marque inferências com 〜 e lacunas com ❓. Ao final da Fase 1, PARE e peça minha validação de C e D.");
+  p.push("");
+  p.push("Rubrica de referência por escopo:");
+  sel.forEach((s,idx)=>{const pfx=multi?`[Escopo ${idx+1}: ${s.topic.nome}] `:"";
+    p.push(`  ${pfx}C) ${s.topic.c.t}: ${s.topic.c.i.join("; ")}`);
+    p.push(`  ${pfx}D) ${s.topic.d.t}: ${s.topic.d.i.join("; ")}`);});
+  p.push("");
+  p.push("FASE 2 — Após minha validação de C e D, gere o entregável na estrutura abaixo, incorporando o C e D aprovados e respeitando o formato do ENTREGÁVEL escolhido.");
+  if(multi)p.push('Inclua um subtópico "Interações entre escopos" (handoffs, dados e integrações entre os escopos).');
+  p.push("");
+  p.push("════════════ ESTRUTURA DA ENTREGA ════════════");
+  const partes=[];
+  ESP_TOP_OBRIG.forEach(t=>{
+    partes.push(t.bloco);
+    if(t.id==="arquitetura")partes.push("(C e D preenchidos conforme validado na Fase 1)");
+  });
+  opc.forEach(t=>partes.push(t.bloco));
+  partes.push(ESP_BASE_F);
+  partes.forEach(b=>p.push(b,""));
+  p.push("════════════════════════════════════════");
+  p.push(ESP_BASE_OBS,"",ESP_BASE_NUNCA,"",espPerguntas(sel,multi),"");
+  if(pii)p.push(ESP_BASE_LGPD,"");
+  p.push(ESP_BASE_CONF,"",ESP_BASE_DS,"",ESP_BASE_CLOSER);
+  return p.join("\n");
+}
+
+
+/* ============================================================
+   JORNADA DE ESPECIFICAÇÃO — UI
+   Fluxo (após escolher a tarefa): Contexto → Tópicos →
+   Tipo de especificação da área → Entregável → prompt portátil.
+   ============================================================ */
+const espState={tipos:new Set(),opcionais:new Set(),topicoOutro:'',entregavelId:'completa',formatoId:'doc',formatoOutro:'',tipoOutro:'',outro:'',filtro:null,busca:''};
+
+function isEspJourney(){const t=getTask();return !!(t&&t.journey==='especif');}
+function espReset(){
+  espState.tipos.clear();espState.opcionais.clear();
+  espState.entregavelId='completa';espState.formatoId='doc';espState.formatoOutro='';
+  espState.tipoOutro='';espState.topicoOutro='';espState.outro='';espState.filtro=null;espState.busca='';
+  const to=document.getElementById('esp-topico-outro');if(to)to.value='';
+  const t=document.getElementById('esp-tipo-outro');if(t)t.value='';
+  const fo=document.getElementById('esp-formato-outro');if(fo){fo.value='';fo.style.display='none';}
+  const b=document.getElementById('esp-search');if(b)b.value='';
+  const o=document.getElementById('esp-outro');if(o){o.value='';o.style.display='none';}
+}
+
+/* ---- Tópicos ---- */
+function espRenderTopicos(){
+  const ob=document.getElementById('esp-top-obrig');
+  ob.innerHTML=ESP_TOP_OBRIG.map(t=>
+    `<div class="technique-item esp-locked" title="Sempre incluído no prompt">
+       <div class="technique-check" style="background:var(--brand);border-color:var(--brand)"><span class="technique-check-mark" style="display:block">✓</span></div>
+       <div class="technique-body"><div class="technique-label">${esc(t.nome)}</div></div>
+       <span class="esp-tag">sempre incluído</span>
+     </div>`).join('');
+  const op=document.getElementById('esp-top-opc');
+  op.innerHTML=ESP_TOP_OPC.map(t=>{
+    const on=espState.opcionais.has(t.id);
+    return `<div class="technique-item${on?' selected':''}" onclick="espToggleTopico('${t.id}')">
+      <div class="technique-check"><span class="technique-check-mark">✓</span></div>
+      <div class="technique-body"><div class="technique-label">${esc(t.nome)}</div></div>
+    </div>`;}).join('');
+}
+function espToggleTopico(id){
+  espState.opcionais.has(id)?espState.opcionais.delete(id):espState.opcionais.add(id);
+  espRenderTopicos();
+}
+
+/* ---- Tipo de especificação da área ---- */
+function espRenderFiltros(){
+  const el=document.getElementById('esp-filters');
+  let h=`<button class="esp-chip${espState.filtro===null?' on':''}" onclick="espSetFiltro(null)">Todas as áreas</button>`;
+  h+=ESP_AREAS.map(a=>`<button class="esp-chip${espState.filtro===a.id?' on':''}" onclick="espSetFiltro('${a.id}')">
+      <span class="dot" style="background:${a.cor}"></span>${esc(a.nome)}</button>`).join('');
+  el.innerHTML=h;
+}
+function espSetFiltro(id){espState.filtro=id;espRenderFiltros();espRenderAreas();}
+function espOnSearch(v){espState.busca=v.toLowerCase().trim();espRenderAreas();}
+
+function espMatch(a,t){
+  if(espState.filtro&&a.id!==espState.filtro)return false;
+  const q=espState.busca;
+  if(!q)return true;
+  return (t.nome+' '+t.ds+' '+a.nome).toLowerCase().includes(q);
+}
+function espVisibleIds(){
+  const out=[];
+  ESP_AREAS.forEach(a=>a.topics.forEach(t=>{if(espMatch(a,t))out.push(t.id);}));
+  return out;
+}
+function espRenderAreas(){
+  const el=document.getElementById('esp-areas');
+  let h='',any=false;
+  ESP_AREAS.forEach(a=>{
+    const ts=a.topics.filter(t=>espMatch(a,t));
+    if(!ts.length)return;
+    any=true;
+    h+=`<div class="esp-area"><h4><span class="barr" style="background:${a.cor}"></span>${esc(a.nome)}<span class="qtd">${ts.length} tipo${ts.length>1?'s':''}</span></h4><div class="esp-cards">`;
+    h+=ts.map(t=>{
+      const on=espState.tipos.has(t.id);
+      return `<div class="esp-card${on?' on':''}" onclick="espToggleTipo('${t.id}')" title="${esc(t.ds)}">
+        <div class="ck"><span>✓</span></div>
+        <div><div class="nm">${esc(t.nome)}</div><div class="dsc">${esc(t.ds)}</div>${t.pii?'<span class="pii">DADOS PESSOAIS</span>':''}</div>
+      </div>`;}).join('');
+    h+='</div></div>';
+  });
+  el.innerHTML=any?h:'<div class="esp-empty">Nenhum tipo encontrado para esta busca.</div>';
+  espRenderTray();
+}
+function espRenderTray(){
+  const el=document.getElementById('esp-tray');
+  const n=espState.tipos.size;
+  const temOutro=!!espState.tipoOutro.trim();
+  el.innerHTML=`<b>${n}</b> tipo${n===1?'':'s'} selecionado${n===1?'':'s'}`+
+    (temOutro?' <span style="color:var(--tx3)">+ 1 fora das áreas mapeadas</span>':'')+
+    ((n||temOutro)?'':' <span style="color:var(--tx3)">— escolha ao menos um, ou descreva em \'Fora das áreas mapeadas\'</span>');
+  updateNextBtn();
+}
+function espToggleTipo(id){
+  espState.tipos.has(id)?espState.tipos.delete(id):espState.tipos.add(id);
+  espRenderAreas();
+}
+function espSelectVisible(){espVisibleIds().forEach(id=>espState.tipos.add(id));espRenderAreas();}
+function espClearAll(){espState.tipos.clear();espRenderAreas();}
+
+/* ---- Entregável ---- */
+function espRenderEntregaveis(){
+  const el=document.getElementById('esp-entregaveis');
+  el.innerHTML=ESP_ENTREGAVEIS.map(e=>{
+    const on=espState.entregavelId===e.id;
+    return `<div class="deliverable-item${on?' selected':''}" onclick="espSelectEntregavel('${e.id}')">
+      <div class="deliverable-radio"><div class="deliverable-radio-dot"></div></div>
+      <div class="deliverable-body">
+        <div class="deliverable-label">${esc(e.nome)}</div>
+        ${e.instr?`<div class="deliverable-tooltip">${esc(e.instr)}</div>`:''}
+      </div>
+    </div>`;}).join('');
+  const o=document.getElementById('esp-outro');
+  if(o)o.style.display=espState.entregavelId==='outro'?'block':'none';
+}
+function espSelectEntregavel(id){espState.entregavelId=id;espRenderEntregaveis();updateNextBtn();}
+
+function espOnTipoOutro(v){espState.tipoOutro=v;espRenderTray();}
+
+function espRenderFormatos(){
+  const el=document.getElementById('esp-formatos');
+  el.innerHTML=ESP_FORMATOS.map(f=>{
+    const on=espState.formatoId===f.id;
+    return `<div class="deliverable-item${on?' selected':''}" onclick="espSelectFormato('${f.id}')">
+      <div class="deliverable-radio"><div class="deliverable-radio-dot"></div></div>
+      <div class="deliverable-body">
+        <div class="deliverable-label">${esc(f.nome)}</div>
+        ${f.instr?`<div class="deliverable-tooltip">${esc(f.instr)}</div>`:''}
+      </div>
+    </div>`;}).join('');
+  const o=document.getElementById('esp-formato-outro');
+  if(o)o.style.display=espState.formatoId==='outro'?'block':'none';
+}
+function espSelectFormato(id){espState.formatoId=id;espRenderFormatos();updateNextBtn();}
+
+/* ---- Geração ---- */
+function espGenerate(){
+  const ctxEl=document.getElementById('context-input');
+  let ctx=ctxEl?ctxEl.value:'';
+  if(bState.annexes){
+    const extra='O contexto do projeto está nos documentos anexados a esta conversa.';
+    ctx=ctx.trim()?extra+'\n\n'+ctx.trim():extra;
+  }
+  const ent=ESP_ENTREGAVEIS.find(e=>e.id===espState.entregavelId)||ESP_ENTREGAVEIS[0];
+  const fmt=ESP_FORMATOS.find(f=>f.id===espState.formatoId)||ESP_FORMATOS[0];
+  const ids=[...espState.tipos];
+  const prompt=espBuildPortatil(ids,ctx,espState.opcionais,ent,espState.outro,fmt,espState.formatoOutro,espState.tipoOutro,espState.topicoOutro);
+  const sel=ids.map(espFindTopic).filter(Boolean);
+  const task=getTask();
+  const opc=ESP_TOP_OPC.filter(t=>espState.opcionais.has(t.id)).map(t=>t.nome);
+  if(espState.topicoOutro.trim())opc.push(`Outro — ${espState.topicoOutro.trim()}`);
+  const rows=`<div class="result-summary-row">Tarefa: <span>${esc(task.label)}</span></div>
+    <div class="result-summary-row">Tipos: <span>${esc([...sel.map(x=>x.topic.nome), ...(espState.tipoOutro.trim()?[espState.tipoOutro.trim()]:[])].join(', ')||'—')}</span></div>
+    <div class="result-summary-row">Opcionais: <span>${opc.length?esc(opc.join(', ')):'nenhum'}</span></div>
+    <div class="result-summary-row">Entregável: <span>${esc(ent.nome)}</span></div>
+    <div class="result-summary-row">Formato: <span>${esc(fmt.id==='outro'&&espState.formatoOutro.trim()?espState.formatoOutro.trim():fmt.nome)}</span></div>`;
+  /* reconstrói o painel inteiro — renderResult() também substitui o innerHTML de #bs-result,
+     então não dá para depender de filhos declarados no HTML sobreviverem à sessão. */
+  document.getElementById('bs-result').innerHTML=
+    `<div class="result-summary"><div class="result-summary-label">Resumo</div>${rows}</div>`+
+    `<div class="bp-label" style="margin-bottom:8px">Prompt portátil (2 fases)</div>`+
+    `<pre class="prompt-pre" id="prompt-out-esp">${esc(prompt)}</pre>`+
+    `<button class="btn-copy" onclick="copyPromptById('prompt-out-esp',this)">Copiar prompt</button>`;
+  showBuilderStep('result');
+}
+
+
+/* ── Builder State ── */
+let bState={step:1,taskId:null,techniques:[],audiences:[],audienceOther:'',deliverableId:null,deliverableOther:'',annexes:false};
+
+function getTask(){return BUILDER_DATA.find(t=>t.id===bState.taskId);}
+function taskStep3Mode(){const t=getTask();return t?t.step3Mode:'audience';}
+function hasTaskTechniques(task){return!!(task&&task.techniques&&task.techniques.length>0);}
+
+function openBuilder(){
+  resetBuilder();
+  document.getElementById('builder-overlay').classList.add('open');
+}
+function closeBuilder(){document.getElementById('builder-overlay').classList.remove('open');}
+function onBuilderBg(e){if(e.target===document.getElementById('builder-overlay'))closeBuilder();}
+
+function resetBuilder(){
+  bState={step:1,taskId:null,techniques:[],audiences:[],audienceOther:'',deliverableId:null,deliverableOther:'',annexes:false};
+  espReset();
+  showBuilderStep(1);
+  renderTaskList();
+  const ci=document.getElementById('context-input');
+  if(ci)ci.value='';
+}
+
+/* Sequência de passos da jornada corrente.
+   Padrão: Tarefa → Técnicas → Para quem/Entregável → Contexto
+   Especificação: Tarefa → Contexto → Tópicos → Tipo de especificação → Entregável */
+const ESP_STEPS=[
+  {key:'1',       label:'Tarefa'},
+  {key:'4',       label:'Contexto'},
+  {key:'esp-topicos',   label:'Tópicos'},
+  {key:'esp-tipo',      label:'Tipo'},
+  {key:'esp-entregavel',label:'Entregável'},
+];
+function builderSteps(){
+  const t=getTask();
+  if(t&&t.journey==='especif')return ESP_STEPS;
+  const mode=t?t.step3Mode:'audience';
+  const s3=mode==='audience'?'Para quem':mode==='deliverable'?'Entregável':'Contexto';
+  const out=[{key:'1',label:'Tarefa'}];
+  if(hasTaskTechniques(t))out.push({key:'2',label:'Técnicas'});
+  out.push({key:'3',label:s3});
+  if(mode!=='skip')out.push({key:'4',label:'Contexto'});
+  return out;
+}
+function stepIndex(){
+  const steps=builderSteps();
+  const i=steps.findIndex(x=>x.key===String(bState.step));
+  return i<0?0:i;
+}
+function renderStepBar(){
+  const steps=builderSteps();
+  const cur=bState.step==='result'?steps.length:stepIndex();
+  const bar=document.getElementById('builder-stepbar');
+  if(!bar)return;
+  bar.innerHTML=steps.map((st,i)=>{
+    const cls=i<cur?'done':(i===cur?'active':'');
+    return `<div class="bsi ${cls}"><div class="bsi-dot">${i+1}</div>${esc(st.label)}</div>`;
+  }).join('<div class="bsi-line"></div>');
+}
+
+function showBuilderStep(step){
+  bState.step=step;
+  const key=String(step);
+  ['1','2','3','4','esp-topicos','esp-tipo','esp-entregavel','result'].forEach(k=>{
+    const el=document.getElementById('bs-'+k);
+    if(el)el.classList.toggle('active',k===key);
+  });
+  renderStepBar();
+  const lg=document.getElementById('esp-lgpd');
+  if(lg)lg.style.display=isEspJourney()?'block':'none';
+  const footer=document.getElementById('builder-footer');
+  if(step==='result'){
+    footer.innerHTML='<button class="btn-secondary" onclick="resetBuilder()">← Novo prompt</button>';
+    return;
+  }
+  footer.innerHTML=
+    '<button class="btn-secondary" id="btn-back" onclick="builderBack()" style="display:none">← Voltar</button>'+
+    '<button class="btn-primary" id="btn-next" onclick="builderNext()">Avançar →</button>';
+  document.getElementById('btn-back').style.display=stepIndex()>0?'':'none';
+  updateNextBtn();
+}
+
+function updateNextBtn(){
+  const btn=document.getElementById('btn-next');
+  if(!btn)return;
+  const steps=builderSteps(),i=stepIndex(),last=i===steps.length-1,key=String(bState.step);
+  btn.textContent=last?'Gerar prompt →':'Avançar →';
+  if(key==='1'){btn.disabled=!bState.taskId;return;}
+  if(key==='3'){
+    const mode=taskStep3Mode();
+    if(mode==='audience'){btn.disabled=bState.audiences.length===0;return;}
+    if(mode==='deliverable'){btn.disabled=!bState.deliverableId;return;}
+  }
+  if(key==='esp-tipo'){btn.disabled=espState.tipos.size===0&&!espState.tipoOutro.trim();return;}
+  if(key==='esp-entregavel'){btn.disabled=!espState.entregavelId;return;}
+  btn.disabled=false;
+}
+
+function renderStep(key){
+  if(key==='1')renderTaskList();
+  else if(key==='2')renderTechniqueList();
+  else if(key==='3'){
+    const mode=taskStep3Mode();
+    if(mode==='audience')renderAudienceList();
+    else if(mode==='deliverable')renderDeliverableList();
+  }
+  else if(key==='esp-topicos')espRenderTopicos();
+  else if(key==='esp-tipo'){espRenderFiltros();espRenderAreas();}
+  else if(key==='esp-entregavel'){espRenderEntregaveis();espRenderFormatos();}
+}
+
+function builderNext(){
+  const steps=builderSteps(),i=stepIndex(),key=String(bState.step);
+  if(key==='1'&&!bState.taskId)return;
+  if(key==='3'){
+    const mode=taskStep3Mode();
+    if(mode==='audience'&&bState.audiences.length===0)return;
+    if(mode==='deliverable'&&!bState.deliverableId)return;
+  }
+  if(key==='esp-tipo'&&espState.tipos.size===0&&!espState.tipoOutro.trim())return;
+  if(i===steps.length-1){
+    if(isEspJourney())espGenerate();else generatePrompt();
+    return;
+  }
+  const next=steps[i+1].key;
+  showBuilderStep(next);
+  renderStep(next);
+}
+
+function builderBack(){
+  const steps=builderSteps(),i=stepIndex();
+  if(i<=0)return;
+  const prev=steps[i-1].key;
+  showBuilderStep(prev);
+  renderStep(prev);
+}
+
+/* ── Step 1: Task list ── *//* ── Step 1: Task list ── */
+function renderTaskList(){
+  const groups={};
+  BUILDER_DATA.forEach(t=>{
+    if(!groups[t.group])groups[t.group]=[];
+    groups[t.group].push(t);
+  });
+  let h='';
+  Object.entries(groups).forEach(([gname,tasks])=>{
+    h+=`<div class="task-group"><div class="task-group-label">${gname}</div>`;
+    tasks.forEach(t=>{
+      const sel=bState.taskId===t.id;
+      h+=`<div class="task-item${sel?' selected':''}" onclick="selectTask('${t.id}')">
+        <span class="task-item-label">${t.label}</span>
+        <span class="task-item-arrow">›</span>
+      </div>`;
+    });
+    h+='</div>';
+  });
+  document.getElementById('task-list').innerHTML=h;
+}
+
+function selectTask(id){
+  bState.taskId=id;
+  bState.techniques=[];
+  bState.audiences=[];
+  bState.deliverableId=null;
+  espReset();
+  renderTaskList();
+  setTimeout(()=>{
+    const steps=builderSteps();
+    if(steps.length<2)return;
+    const next=steps[1].key;
+    showBuilderStep(next);
+    renderStep(next);
+  },120);
+}
+
+/* ── Step 2: Techniques ── */
+function renderTechniqueList(){
+  const task=getTask();
+  if(!task)return;
+  let h='';
+  task.techniques.forEach(t=>{
+    const sel=bState.techniques.includes(t.id);
+    h+=`<div class="technique-item${sel?' selected':''}" onclick="toggleTechnique('${t.id}')">
+      <div class="technique-check"><span class="technique-check-mark">✓</span></div>
+      <div class="technique-body">
+        <div class="technique-label">${t.label}</div>
+        <div class="technique-tooltip">${t.tooltip}</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('technique-list').innerHTML=h;
+}
+
+function toggleTechnique(id){
+  const idx=bState.techniques.indexOf(id);
+  if(idx>=0)bState.techniques.splice(idx,1);
+  else bState.techniques.push(id);
+  renderTechniqueList();
+}
+
+/* ── Step 3a: Audience ── */
+function renderAudienceList(){
+  let h='';
+  AUDIENCES.forEach(a=>{
+    const sel=bState.audiences.includes(a.id);
+    h+=`<div class="deliverable-item${sel?' selected':''}" onclick="toggleAudience('${a.id}')">
+      <div class="technique-check"><span class="technique-check-mark">✓</span></div>
+      <div class="deliverable-body">
+        <div class="deliverable-label">${a.label}</div>
+        <div class="deliverable-tooltip">${a.desc}</div>
+        ${a.id==='outro'&&sel?`<textarea class="other-input" id="audience-other-text" placeholder="Descreva o público-alvo..." rows="2">${bState.audienceOther}</textarea>`:''}
+      </div>
+    </div>`;
+  });
+  document.getElementById('deliverable-list').innerHTML=h;
+  const lblEl=document.getElementById('step3-label');
+  if(lblEl)lblEl.textContent='Para quem é este documento?';
+  setTimeout(()=>{
+    const ot=document.getElementById('audience-other-text');
+    if(ot){
+      ot.addEventListener('click',e=>e.stopPropagation());
+      ot.addEventListener('input',e=>{bState.audienceOther=e.target.value;});
+    }
+  },0);
+  updateNextBtn();
+}
+
+function toggleAudience(id){
+  const idx=bState.audiences.indexOf(id);
+  if(idx>=0)bState.audiences.splice(idx,1);
+  else bState.audiences.push(id);
+  if(id==='outro'&&!bState.audiences.includes('outro'))bState.audienceOther='';
+  renderAudienceList();
+  updateNextBtn();
+}
+
+/* ── Step 3b: Deliverable ── */
+function renderDeliverableList(){
+  const task=getTask();
+  if(!task||!task.deliverables)return;
+  let h='';
+  task.deliverables.forEach(d=>{
+    const sel=bState.deliverableId===d.id;
+    h+=`<div class="deliverable-item${sel?' selected':''}" onclick="selectDeliverable('${d.id}', event)">
+      <div class="deliverable-radio"><div class="deliverable-radio-dot"></div></div>
+      <div class="deliverable-body">
+        <div class="deliverable-label">${d.label}</div>
+        <div class="deliverable-tooltip">${d.tooltip}</div>
+        ${d.id.endsWith('x')&&sel?`<textarea class="other-input" id="other-text" placeholder="Descreva o entregável..." rows="3">${bState.deliverableOther}</textarea>`:''}
+      </div>
+    </div>`;
+  });
+  document.getElementById('deliverable-list').innerHTML=h;
+  const lblEl=document.getElementById('step3-label');
+  if(lblEl)lblEl.textContent='Qual é o entregável esperado?';
+  setTimeout(()=>{
+    const ot=document.getElementById('other-text');
+    if(ot){
+      ot.addEventListener('input',e=>{bState.deliverableOther=e.target.value;});
+      ot.addEventListener('click',e=>e.stopPropagation());
+      ot.focus();
+    }
+  },0);
+  updateNextBtn();
+}
+
+function selectDeliverable(id,e){
+  if(e&&e.target.closest('#other-text'))return;
+  bState.deliverableId=id;
+  bState.deliverableOther='';
+  renderDeliverableList();
+  updateNextBtn();
+}
+
+/* ── Generate prompt ── */
+function buildTechBlock(task){
+  if(!bState.techniques.length)return'';
+  const lines=bState.techniques.map(tid=>task.techniques.find(x=>x.id===tid)?.block).filter(Boolean).join('\n\n');
+  return`\n<tecnicas>\n${lines}\n</tecnicas>`;
+}
+
+function buildOutputBlock(task,audienceId,audienceOtherText){
+  const base=task.outputBase||'';
+  if(task.step3Mode==='deliverable'){
+    const d=task.deliverables?.find(x=>x.id===bState.deliverableId);
+    if(!d)return'';
+    const block=d.block?d.block:(bState.deliverableOther||'[Descreva o entregável]');
+    return`\n<output>\n${block}\n</output>`;
+  }
+  if(task.step3Mode==='skip'){
+    return`\n<output>\n${base}\n</output>`;
+  }
+  // audience mode
+  const aud=AUDIENCES.find(a=>a.id===audienceId);
+  const audLabel=audienceId==='outro'?(audienceOtherText||'Outro'):aud?.label||'';
+  const audBlock=audienceId==='outro'?`Adapte o documento para: ${audienceOtherText||'público não especificado'}.`:(aud?.block||'');
+  return`\n<output>\nDocumento destinado a: ${audLabel}\n${audBlock}\n\n${base}\n</output>`;
+}
+
+function buildInputBlock(){
+  const ctx=document.getElementById('context-input')?.value.trim()||'';
+  let content;
+  if(bState.annexes&&ctx)content=`O contexto do projeto está nos documentos anexados a esta conversa.\n\n${ctx}`;
+  else if(bState.annexes)content='O contexto do projeto está nos documentos anexados a esta conversa.';
+  else content=ctx||'[Cole aqui o briefing, os dados, o protótipo ou qualquer insumo relevante]';
+  return`\n<input>\n${content}\n</input>`;
+}
+
+function buildSinglePrompt(task,audienceId,audienceOtherText){
+  let dsRef='';
+  if(task.id==='t9'){
+    const ctx=document.getElementById('context-input')?.value||'';
+    const dsBase=DS_BASE;
+    const brands=[
+      {key:'vivix',prefix:'v-',name:'VIVIX'},
+      {key:'atiaia',prefix:'a-',name:'Atiaia Energia'},
+      {key:'corporativo',prefix:'',name:'Corporativo'}
+    ];
+    let detected=null;
+    for(const b of brands){
+      if(ctx.toLowerCase().includes(b.key)){detected=b;break;}
+    }
+    if(detected){
+      const p=detected.prefix;
+      dsRef=`\n\n<ds-reference>\nDesign System GCB — ${detected.name}\n\nLeia estes arquivos antes de gerar código (use web fetch):\n1. Contexto geral: ${dsBase}/CONTEXT.md\n2. Fundamentos (tokens): ${dsBase}/${p}fundamentos.html\n3. Componentes Web: ${dsBase}/${p}componentes-web.html\n4. Shell Mendix (se protótipo Mendix): ${dsBase}/${p}mendix-shell.html\n5. Shell SAP (se protótipo SAP): ${dsBase}/${p}sap-shell.html\n6. Mapeamento Mendix: ${dsBase}/${p}mendix.html\n\nUse o shell como base para protótipos Mendix/SAP.\nPara protótipos Web — crie HTML novo com tokens de fundamentos + classes de componentes-web.\n</ds-reference>`;
+    } else {
+      dsRef=`\n\n<ds-reference>\nDesign System GCB: ${dsBase}\nContexto geral: ${dsBase}/CONTEXT.md\n\n[AGUARDANDO: marca do Design System — Vivix, Atiaia ou Corporativo. Informe a marca para que as URLs corretas sejam incluídas.]\n</ds-reference>`;
+    }
+  }
+  return`<persona>\n${task.persona}\n</persona>\n\n<tarefa>\n${task.tarefa}\n</tarefa>${buildTechBlock(task)}${dsRef}${buildOutputBlock(task,audienceId,audienceOtherText)}${buildInputBlock()}`;
+}
+
+function generatePrompt(){
+  const btn=document.getElementById('btn-next');
+  if(btn){btn.disabled=true;btn.textContent='Gerando...';}
+  setTimeout(()=>{
+    const task=getTask();
+    if(!task){
+      if(btn){btn.disabled=false;updateNextBtn();}
+      return;
+    }
+    const mode=task.step3Mode;
+    let prompts=[];
+    if(mode==='audience'){
+      const others=bState.audienceOther;
+      bState.audiences.forEach(aid=>{
+        const aud=AUDIENCES.find(a=>a.id===aid);
+        prompts.push({label:aid==='outro'?(others||'Outro'):aud?.label||aid,text:buildSinglePrompt(task,aid,others)});
+      });
+      if(!prompts.length)prompts.push({label:'Geral',text:buildSinglePrompt(task,'','')});
+    } else {
+      prompts.push({label:task.label,text:buildSinglePrompt(task,'','')});
+    }
+    renderResult(task,prompts);
+    showBuilderStep('result');
+  },50);
+}
+
+function renderResult(task,prompts){
+  const mode=task.step3Mode;
+  const selTechs=bState.techniques.map(tid=>task.techniques.find(x=>x.id===tid)?.label).filter(Boolean).join(', ')||'Nenhuma';
+  let summaryRows=`<div class="result-summary-row">Tarefa: <span>${task.label}</span></div>
+    <div class="result-summary-row">Técnicas: <span>${selTechs}</span></div>`;
+  if(mode==='audience')summaryRows+=`<div class="result-summary-row">Audiências: <span>${prompts.map(p=>p.label).join(', ')}</span></div>`;
+  const summaryHtml=`<div class="result-summary"><div class="result-summary-label">Resumo</div>${summaryRows}</div>`;
+
+  let promptsHtml='';
+  prompts.forEach((p,i)=>{
+    const pid=`prompt-out-${i}`;
+    promptsHtml+=`
+      <div style="margin-bottom:20px">
+        ${prompts.length>1?`<div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);font-family:var(--mono);margin-bottom:6px">${p.label}</div>`:''}
+        <pre class="prompt-pre" id="${pid}">${esc(p.text)}</pre>
+        <button class="btn-copy" onclick="copyPromptById('${pid}',this)">Copiar prompt${prompts.length>1?' — '+p.label:''}</button>
+      </div>`;
+  });
+
+  document.getElementById('bs-result').innerHTML=summaryHtml+`<div class="bp-label" style="margin-bottom:8px">Prompt${prompts.length>1?'s':''} gerado${prompts.length>1?'s':''}</div>`+promptsHtml;
+}
+
+function copyPromptById(pid,btn){
+  const el=document.getElementById(pid);
+  if(!el)return;
+  const text=el.textContent;
+  const done=()=>{const o=btn.textContent;btn.textContent='✓ Copiado!';btn.style.cssText='background:rgba(22,163,74,.12);color:#15803d;border-color:rgba(22,163,74,.3)';setTimeout(()=>{btn.textContent=o;btn.style.cssText='';},2000);};
+  if(navigator.clipboard)navigator.clipboard.writeText(text).then(done).catch(()=>fbCopy(text,done));else fbCopy(text,done);
+}
+
+function toggleAnnexes(){
+  bState.annexes=!bState.annexes;
+  const opt=document.getElementById('annexes-option');
+  const chk=document.getElementById('annexes-check');
+  const ta=document.getElementById('context-input');
+  if(opt)opt.classList.toggle('selected',bState.annexes);
+  if(chk)chk.classList.toggle('selected',bState.annexes);
+  if(ta){ta.disabled=bState.annexes;ta.style.opacity=bState.annexes?'.4':'1';}
+}
+
+function fbCopy(text,cb){const ta=document.createElement('textarea');ta.value=text;Object.assign(ta.style,{position:'fixed',opacity:'0',top:'-9999px'});document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);cb();}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ── Build Grid ── */
+function buildGrid(){
+  let h='';
+  h+='<div class="grid-row"><div class="corner-col">Fase / Raia</div>';
+  PHASES.forEach(ph=>{
+    h+=`<div class="col-hdr" style="width:${CW}px;min-width:${CW}px">
+      <span class="col-n">FASE ${ph.n}</span>
+      <span class="col-lbl">${ph.label}</span>
+      <span class="col-mode ${ph.mode}">${ph.mode==='convergir'?'◆':'◇'} ${ph.mode}</span>
+    </div>`;
+  });
+  h+='</div>';
+
+  ROWS.forEach(row=>{
+    h+='<div class="grid-row">';
+    h+=`<div class="row-lbl">
+      <div class="row-bar" style="background:${row.color}"></div>
+      <div class="row-name">${row.label}</div>
+      <div class="row-sub">${row.sub}</div>
+    </div>`;
+    PHASES.forEach(ph=>{
+      if(row.id==='r_ent'){
+        const items=DELIVERABLES[ph.id]||[];
+        h+=`<div class="cell" style="width:${CW}px;min-width:${CW}px;background:rgba(107,114,128,.015)"><div class="tag-list">`;
+        items.forEach(t=>h+=`<span class="tag t-out">${t}</span>`);
+        h+='</div></div>';
+      } else if(row.id==='r_dir'){
+        const d=DIRECTIVES[ph.id];
+        h+=`<div class="cell-dir" style="width:${CW}px;min-width:${CW}px">
+          <div class="cell-dir-label">Pergunta central</div>
+          <div class="cell-dir-q">${d?d.q:''}</div>
+          <div class="cell-dir-label">Use quando</div>
+          <div class="cell-dir-w">${d?d.w:''}</div>
+        </div>`;
+      } else if(row.id==='r_tec'){
+        const items=TECHNIQUES[ph.id]||[];
+        h+=`<div class="cell" style="width:${CW}px;min-width:${CW}px;background:rgba(13,148,136,.015)"><div class="tag-list">`;
+        items.forEach(t=>h+=`<span class="tag t-tec" onclick="showTechModal('${t.id}','${ph.id}')">${t.label}</span>`);
+        h+='</div></div>';
+      }
+    });
+    h+='</div>';
+  });
+
+  document.getElementById('gw').innerHTML=h;
+}
+
+/* ── Content modal ── */
+/* ── Technique modal ── */
+function showTechModal(techId,phaseId){
+  const techs=TECHNIQUES[phaseId]||[];
+  const t=techs.find(x=>x.id===techId);
+  if(!t)return;
+  const phase=PHASES.find(p=>p.id===phaseId);
+  let h=`<div class="modal-badge" style="background:var(--teal-l);color:var(--teal);border-color:var(--teal-m)">Técnica · ${phase?phase.label:''}</div>`;
+  h+=`<div class="modal-title">${t.label}</div>`;
+  h+=`<div class="modal-body">${t.desc}</div>`;
+  openModal(h);
+}
+function openModal(html){document.getElementById('modal-content').innerHTML=html;document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function onModalBg(e){if(e.target===document.getElementById('modal'))closeModal();}
+function toggleLeg(btn){const h=document.getElementById('legend').classList.toggle('hidden');btn.classList.toggle('on',!h);}
+
+/* ── Pan / Zoom ── */
+let scale=.72,panX=28,panY=28,drag=false,ox=0,oy=0;
+const vp=document.getElementById('vp'),cv=document.getElementById('cv');
+function applyT(anim){
+  if(anim){cv.style.transition='transform .16s cubic-bezier(.25,.46,.45,.94)';setTimeout(()=>cv.style.transition='',200);}
+  else cv.style.transition='none';
+  cv.style.transform=`translate(${panX}px,${panY}px) scale(${scale})`;
+  document.getElementById('zv').textContent=Math.round(scale*100)+'%';
+}
+vp.addEventListener('wheel',e=>{
+  e.preventDefault();
+  if(e.metaKey||e.ctrlKey){
+    const r=vp.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+    const f=e.deltaY<0?1.08:.925,ns=Math.min(3,Math.max(.15,scale*f));
+    panX=mx-(mx-panX)*(ns/scale);panY=my-(my-panY)*(ns/scale);scale=ns;
+  } else {panX-=e.deltaX;panY-=e.deltaY;}
+  applyT(false);
+},{passive:false});
+vp.addEventListener('mousedown',e=>{if(e.target.closest('.builder-fab-stack,.builder-fab,.builder-box,.modal-box,.hbtn,.zbar-btn,.t-tec'))return;drag=true;ox=e.clientX-panX;oy=e.clientY-panY;vp.classList.add('grabbing');});
+document.addEventListener('mousemove',e=>{if(!drag)return;panX=e.clientX-ox;panY=e.clientY-oy;applyT(false);});
+document.addEventListener('mouseup',()=>{drag=false;vp.classList.remove('grabbing');});
+let pinching=false,pd0=0,ps0=0,pcx=0,pcy=0,ppx=0,ppy=0,tDrag=false,tOX=0,tOY=0;
+function tdist(t){const dx=t[0].clientX-t[1].clientX,dy=t[0].clientY-t[1].clientY;return Math.sqrt(dx*dx+dy*dy);}
+vp.addEventListener('touchstart',e=>{
+  if(e.target.closest('.builder-fab-stack,.builder-fab,.builder-box'))return;
+  if(e.touches.length===1){tDrag=true;pinching=false;tOX=e.touches[0].clientX-panX;tOY=e.touches[0].clientY-panY;}
+  else if(e.touches.length===2){tDrag=false;pinching=true;pd0=tdist(e.touches);ps0=scale;const r=vp.getBoundingClientRect();pcx=(e.touches[0].clientX+e.touches[1].clientX)/2-r.left;pcy=(e.touches[0].clientY+e.touches[1].clientY)/2-r.top;ppx=panX;ppy=panY;}
+  e.preventDefault();
+},{passive:false});
+vp.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  if(pinching&&e.touches.length===2){const d=tdist(e.touches),ns=Math.min(3,Math.max(.15,ps0*(d/pd0)));panX=pcx-(pcx-ppx)*(ns/ps0);panY=pcy-(pcy-ppy)*(ns/ps0);scale=ns;applyT(false);}
+  else if(tDrag&&e.touches.length===1){panX=e.touches[0].clientX-tOX;panY=e.touches[0].clientY-tOY;applyT(false);}
+},{passive:false});
+vp.addEventListener('touchend',e=>{if(e.touches.length<2)pinching=false;if(e.touches.length===0)tDrag=false;},{passive:true});
+function dz(d){const r=vp.getBoundingClientRect(),mx=r.width/2,my=r.height/2;const ns=Math.min(3,Math.max(.15,scale+d));panX=mx-(mx-panX)*(ns/scale);panY=my-(my-panY)*(ns/scale);scale=ns;applyT(true);}
+function resetV(){scale=.72;panX=28;panY=28;applyT(true);}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();closeBuilder();}
+  if(e.key==='0'&&!e.target.tagName.match(/INPUT|TEXTAREA/))resetV();
+});
+
+buildGrid();
+applyT(false);
+</script>
+
+<script>
+/* Acessibilidade: torna os cards de seleção (divs com onclick) operáveis por teclado.
+   Mantém o markup existente — apenas injeta role/tabindex/aria-checked e trata Enter/Espaço. */
+(function(){
+  var SEL = '.technique-item:not(.esp-locked), .deliverable-item, .esp-card';
+  var RADIO = '.deliverable-item:has(.deliverable-radio)';
+  function roleOf(el){
+    /* radio = escolha única; checkbox = múltipla escolha */
+    try { return el.matches(RADIO) ? 'radio' : 'checkbox'; }
+    catch (e) { return 'checkbox'; }   /* navegador sem suporte a :has() */
+  }
+  function stamp(root){
+    (root.querySelectorAll ? root.querySelectorAll(SEL) : []).forEach(function(el){
+      if (!el.hasAttribute('role')) el.setAttribute('role', roleOf(el));
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+      el.setAttribute('aria-checked', el.classList.contains('selected') ? 'true' : 'false');
+    });
+  }
+  function run(){ stamp(document); }
+  document.addEventListener('keydown', function(e){
+    if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+    var el = e.target.closest && e.target.closest(SEL);
+    if (!el) return;
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+    e.preventDefault();
+    el.click();
+  });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+  var queued = false;
+  new MutationObserver(function(){
+    if (queued) return;
+    queued = true;
+    setTimeout(function(){ queued = false; run(); }, 0);
+  }).observe(document.documentElement, {childList:true, subtree:true});
+})();
+</script>
+</body>
+</html>

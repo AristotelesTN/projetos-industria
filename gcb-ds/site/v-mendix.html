@@ -1,0 +1,2563 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=ai-legible&utm_source=comment&utm_medium=referral&utm_id=782bdad0-ac75-44d4-8b10-176ebb1cb13d
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="hosting-provider" content="Netlify">
+<meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=782bdad0-ac75-44d4-8b10-176ebb1cb13d">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VIVIX · Design System GCB — Diretrizes Mendix e mapeamento de componentes GCB → Atlas UI.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Design System GCB">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:title" content="Mendix - VIVIX | Design System GCB">
+    <meta property="og:description" content="VIVIX · Design System GCB — Diretrizes Mendix e mapeamento de componentes GCB → Atlas UI.">
+    <meta property="og:url" content="https://gcb-ds.netlify.app/v-mendix.html">
+    <meta property="og:image" content="https://gcb-ds.netlify.app/assets/og/og-ds.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Design System GCB — Corporativo, Atiaia Energia e VIVIX">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Mendix - VIVIX | Design System GCB">
+    <meta name="twitter:description" content="VIVIX · Design System GCB — Diretrizes Mendix e mapeamento de componentes GCB → Atlas UI.">
+    <meta name="twitter:image" content="https://gcb-ds.netlify.app/assets/og/og-ds.png">
+    <title>Mendix - VIVIX | Design System GCB</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/icone-brennand.svg">
+    
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+        /* ========================================
+           RESET E VARIÁVEIS
+        ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Cores Corporativo */
+            --color-primary: #00b2a9;
+            --color-secondary-1: #005751;
+            --color-secondary-2: #e1e000;
+            --color-neutral-light: #f5f5f5;
+            --color-neutral-dark: #005751;
+            
+            /* Cores Semânticas */
+            --color-success: #24a148;
+            --color-warning: #f1c21b;
+            --color-error: #bb0000;
+            --color-info: #007acc;
+            
+            /* Cor de Interação */
+            --color-interactive: #0f62fe;
+            
+            /* Tokens */
+            --spacing-01: 2px;
+            --spacing-02: 4px;
+            --spacing-03: 8px;
+            --spacing-04: 12px;
+            --spacing-05: 16px;
+            --spacing-06: 24px;
+            --spacing-07: 32px;
+            --spacing-08: 40px;
+            --spacing-09: 48px;
+            --spacing-10: 64px;
+            
+            /* Elevações */
+            --elevation-01: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --elevation-02: 0 2px 6px rgba(0, 0, 0, 0.16);
+            --elevation-03: 0 4px 12px rgba(0, 0, 0, 0.20);
+            --elevation-04: 0 8px 24px rgba(0, 0, 0, 0.24);
+            
+            /* Bordas */
+            --radius-sm: 2px;
+            --radius-md: 4px;
+            --radius-lg: 8px;
+            --radius-full: 9999px;
+            
+            /* Animações */
+            --transition-fast: 100ms;
+            --transition-base: 200ms;
+            --transition-slow: 400ms;
+            --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* UI */
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-weight-regular: 400;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 600;
+            --ui-background: #ffffff;
+            --ui-01: #f4f4f4;
+            --ui-02: #ffffff;
+            --text-primary: #161616;
+            --text-secondary: #525252;
+            --text-disabled: #8d8d8d;
+            --border-subtle: #e0e0e0;
+            --border-strong: #8d8d8d;
+            --focus-color: #0f62fe;
+            --success-color: #24a148;
+            --error-color: #da1e28;
+            --warning-color: #f1c21b;
+            
+            /* Grayscale */
+            --gray-50: #fafafa;
+            --gray-100: #f5f5f5;
+            --gray-200: #eeeeee;
+            --gray-300: #e0e0e0;
+            --gray-400: #bdbdbd;
+            --gray-500: #9e9e9e;
+            --gray-600: #757575;
+            --gray-700: #616161;
+            --gray-800: #424242;
+            --gray-900: #212121;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--ui-background);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        /* ========================================
+           LAYOUT
+        ======================================== */
+        .page-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            background: var(--ui-02);
+            border-right: 1px solid var(--border-subtle);
+            padding: var(--spacing-06);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            margin-bottom: var(--spacing-07);
+        }
+
+        .sidebar-logo {
+            height: 32px;
+            margin-bottom: var(--spacing-04);
+        }
+
+        .sidebar-title {
+            font-size: 1.125rem;
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--spacing-02);
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .sidebar-back {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-03);
+            padding: var(--spacing-04);
+            margin-bottom: var(--spacing-06);
+            background: var(--ui-01);
+            border-radius: 4px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .sidebar-back:hover {
+            background: var(--border-subtle);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: var(--spacing-02);
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: var(--spacing-03) var(--spacing-04);
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--ui-01);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav a.active {
+            background: var(--color-primary);
+            color: white;
+            font-weight: 500;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: var(--spacing-08) var(--spacing-10);
+            max-width: 1280px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            gap: var(--spacing-03);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-07);
+        }
+
+        .breadcrumb a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-05);
+        }
+
+        .page-description {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-09);
+            max-width: 768px;
+        }
+
+        /* ========================================
+           SEÇÕES
+        ======================================== */
+        .section {
+            margin-bottom: var(--spacing-10);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-06);
+            padding-bottom: var(--spacing-04);
+            border-bottom: 2px solid var(--border-subtle);
+        }
+
+        .subsection-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: var(--spacing-08);
+            margin-bottom: var(--spacing-05);
+        }
+
+        /* ========================================
+           ALERTAS
+        ======================================== */
+        .alert {
+            padding: var(--spacing-05);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-06);
+            display: flex;
+            gap: var(--spacing-04);
+        }
+
+        .alert-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .alert.info {
+            background: rgba(0, 122, 204, 0.1);
+            border-left: 4px solid var(--color-info);
+            color: #003d66;
+        }
+
+        .alert.warning {
+            background: rgba(241, 194, 27, 0.1);
+            border-left: 4px solid var(--color-warning);
+            color: #8f6b00;
+        }
+
+        .alert.critical {
+            background: rgba(218, 30, 40, 0.1);
+            border-left: 4px solid var(--error-color);
+            color: #750e13;
+        }
+
+        .alert.success {
+            background: rgba(36, 161, 72, 0.1);
+            border-left: 4px solid var(--color-success);
+            color: #0f5223;
+        }
+
+        /* ========================================
+           CARDS
+        ======================================== */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-06);
+            margin-bottom: var(--spacing-08);
+        }
+
+        .principle-card {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-06);
+            transition: all var(--transition-base);
+        }
+
+        .principle-card:hover {
+            border-color: var(--border-strong);
+            box-shadow: var(--elevation-02);
+        }
+
+        .principle-icon {
+            width: 48px;
+            height: 48px;
+            background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-04);
+        }
+
+        .principle-icon i {
+            font-size: 24px;
+            color: var(--color-primary);
+        }
+
+        .principle-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-03);
+        }
+
+        .principle-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ========================================
+           TABELAS
+        ======================================== */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: var(--spacing-07);
+            font-size: 0.875rem;
+        }
+
+        .comparison-table th {
+            background: var(--ui-01);
+            padding: var(--spacing-04);
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-subtle);
+        }
+
+        .comparison-table td {
+            padding: var(--spacing-04);
+            border-bottom: 1px solid var(--border-subtle);
+            vertical-align: top;
+        }
+
+        .comparison-table tr:hover {
+            background: var(--gray-50);
+        }
+
+        .do {
+            color: var(--color-success);
+        }
+
+        .dont {
+            color: var(--error-color);
+        }
+
+        /* ========================================
+           CÓDIGO
+        ======================================== */
+        .code-block {
+            background: var(--gray-900);
+            color: #e0e0e0;
+            padding: var(--spacing-05);
+            border-radius: var(--radius-md);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            margin-bottom: var(--spacing-06);
+            line-height: 1.6;
+        }
+
+        .code-inline {
+            background: var(--gray-200);
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.875em;
+        }
+
+        /* ========================================
+           BOTÕES
+        ======================================== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-03);
+            padding: var(--spacing-04) var(--spacing-05);
+            font-family: var(--font-family);
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-base) var(--easing-standard);
+            text-decoration: none;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--color-secondary-1);
+            transform: translateY(-1px);
+            box-shadow: var(--elevation-02);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text-primary);
+            border-color: var(--border-subtle);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-100);
+            border-color: var(--border-strong);
+        }
+
+        .btn i {
+            font-size: 18px;
+        }
+
+        /* ========================================
+           COLOR SWATCHES
+        ======================================== */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--spacing-05);
+            margin-bottom: var(--spacing-08);
+        }
+
+        .color-card {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .color-swatch {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.125rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .color-info {
+            padding: var(--spacing-05);
+        }
+
+        .color-name {
+            font-weight: 600;
+            margin-bottom: var(--spacing-02);
+        }
+
+        .color-code {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-03);
+            cursor: pointer;
+            padding: var(--spacing-03) var(--spacing-04);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            background: white;
+            transition: all var(--transition-base) var(--easing-standard);
+            margin-bottom: var(--spacing-03);
+        }
+
+        .color-code:hover {
+            background: var(--gray-100);
+            border-color: var(--border-strong);
+        }
+
+        .color-code-hex {
+            flex: 1;
+        }
+
+        .color-code-icon {
+            font-size: 16px;
+            color: var(--text-secondary);
+            transition: color var(--transition-base) var(--easing-standard);
+        }
+
+        .color-code:hover .color-code-icon {
+            color: var(--text-primary);
+        }
+
+        .color-usage {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* ========================================
+           WIREFRAMES
+        ======================================== */
+        .wireframe-container {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-06);
+            margin-bottom: var(--spacing-07);
+        }
+
+        .wireframe-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-05);
+        }
+
+        /* ========================================
+           TOAST NOTIFICATION
+        ======================================== */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #161616;
+            color: white;
+            padding: 16px 20px;
+            border-radius: 4px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.show {
+            display: flex;
+        }
+
+        .toast.success {
+            background: #24a148;
+        }
+
+        .toast i {
+            font-size: 20px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ========================================
+           ACORDEÕES DE EXEMPLO
+        ======================================== */
+        .example-accordion {
+            margin: var(--spacing-06) 0;
+        }
+
+        .example-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-04) var(--spacing-05);
+            background: var(--ui-01);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        .example-toggle:hover {
+            background: var(--gray-100);
+            border-color: var(--border-strong);
+        }
+
+        .example-toggle i {
+            font-size: 20px;
+            transition: transform var(--transition-base);
+        }
+
+        .example-toggle.active i {
+            transform: rotate(180deg);
+        }
+
+        .example-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            border: 1px solid var(--border-subtle);
+            border-top: none;
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+        }
+
+        .example-content.active {
+            max-height: 800px;
+            padding: var(--spacing-05);
+            background: white;
+        }
+
+        /* ========================================
+           RESPONSIVIDADE
+        ======================================== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .main-content {
+                padding: var(--spacing-06) var(--spacing-06);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-wrapper {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid var(--border-subtle);
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a class='sidebar-back' href='ds.html'>
+                <i class="ph ph-arrow-left"></i>
+                Design System
+            </a>
+            
+            <div class="sidebar-header">
+                <img src="assets/logos/vivix-simbolo-v.svg" alt="Símbolo VIVIX" class="sidebar-logo">
+                <div class="sidebar-title">Mendix</div>
+                <div class="sidebar-subtitle">VIVIX</div>
+            </div>
+
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href='v-fundamentos.html'>Fundamentos</a></li>
+                    <li><a href='v-componentes-web.html'>Componentes Web</a></li>
+                    <li><a href='v-componentes-powerbi.html'>Power BI</a></li>
+                    <li><a class='active' href='v-mendix.html'>Mendix</a></li>
+                    <li><a href='v-sap-btp.html'>SAP BTP</a></li>
+                </ul>
+                
+                <div style="margin-top: var(--spacing-06); padding-top: var(--spacing-06); border-top: 1px solid var(--border-subtle);">
+                    <div style="font-size: 0.75rem; font-weight: var(--font-weight-semibold); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--spacing-03);">Nesta página</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="v-mendix.html#introducao">Introdução</a></li>
+                        <li><a href="v-mendix.html#principios">Princípios Fundamentais</a></li>
+                        <li><a href="v-mendix.html#mapeamento">Mapeamento GCB → Mendix</a></li>
+                        <li><a href="v-mendix.html#theme-config">Theme Configuration</a></li>
+                        <li><a href="v-mendix.html#componentes">Componentes Customizados</a></li>
+                        <li><a href="v-mendix.html#data-components">Data Components</a></li>
+                        <li><a href="v-mendix.html#form-components">Form Components</a></li>
+                        <li><a href="v-mendix.html#layout-templates">Layout Templates</a></li>
+                        <li><a href="v-mendix.html#interactive-patterns">Interactive Patterns</a></li>
+                        <li><a href="v-mendix.html#states-feedback">States & Feedback</a></li>
+                        <li><a href="v-mendix.html#responsive">Responsive Guidelines</a></li>
+                        <li><a href="v-mendix.html#nao-fazer">Anti-patterns</a></li>
+                        <li><a href="v-mendix.html#checklist">Checklist de Qualidade</a></li>
+                        <li><a href="v-mendix.html#recursos">Recursos e Referências</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href='ds.html'>Design System</a>
+                <span>/</span>
+                <span>VIVIX</span>
+                <span>/</span>
+                <span>Mendix</span>
+            </nav>
+
+            <h1 class="page-title">Mendix Low-Code Platform</h1>
+            <p class="page-description">
+                Diretrizes para desenvolvimento de aplicações Mendix com identidade visual GCB. Estas orientações respeitam as limitações técnicas da plataforma e seguem as melhores práticas de customização via theme configuration.
+            </p>
+
+            <!-- ========================================
+                 INTRODUÇÃO
+            ======================================== -->
+            <section id="introducao" class="section">
+                <h2 class="section-title">Introdução</h2>
+
+                <div class="alert info">
+                    <i class="ph-fill ph-info alert-icon"></i>
+                    <div>
+                        <strong>Filosofia: Configuration over Customization</strong><br>
+                        Mendix utiliza o Atlas UI Design System como base. Nossa abordagem prioriza configuração de tema e uso de widgets nativos ao invés de custom CSS. Isso garante manutenibilidade, responsividade e facilita atualizações da plataforma.
+                    </div>
+                </div>
+
+                <p style="margin-bottom: var(--spacing-06);">
+                    <strong>Mendix Atlas UI</strong> é o design system nativo da plataforma, baseado em princípios de design consistentes e componentes reutilizáveis. Nossa estratégia é <strong>customizar via theme settings</strong>, nunca criar soluções paralelas que dificultem manutenção.
+                </p>
+
+                <div class="alert warning">
+                    <i class="ph-fill ph-warning alert-icon"></i>
+                    <div>
+                        <strong>Limitações Técnicas:</strong> Mendix não suporta web fonts personalizadas (como Prometo Bold) fora do contexto de custom styling avançado. A tipografia será limitada às fontes do sistema + Inter (disponível no Atlas UI).
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 PRINCÍPIOS FUNDAMENTAIS
+            ======================================== -->
+            <section id="principios" class="section">
+                <h2 class="section-title">Princípios Fundamentais</h2>
+
+                <div class="card-grid">
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-layout"></i>
+                        </div>
+                        <h3 class="principle-title">Use Atlas UI como Base</h3>
+                        <p class="principle-description">
+                            Não reinvente componentes. O Atlas UI já é otimizado para responsividade e acessibilidade. Customize apenas o necessário via theme settings.
+                        </p>
+                        <a href="https://docs.mendix.com/howto/front-end/atlas-ui/" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 0.875rem; color: var(--color-interactive); text-decoration: none;">
+                            <i class="ph ph-arrow-square-out"></i>
+                            Atlas UI Documentation
+                        </a>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-palette"></i>
+                        </div>
+                        <h3 class="principle-title">Customização via Theme</h3>
+                        <p class="principle-description">
+                            Altere cores, espaçamentos e border-radius através das variáveis de tema. Evite CSS custom que pode quebrar em atualizações da plataforma.
+                        </p>
+                        <a href="https://docs.mendix.com/howto/front-end/customize-styling-new/" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 0.875rem; color: var(--color-interactive); text-decoration: none;">
+                            <i class="ph ph-arrow-square-out"></i>
+                            Customize Styling Guide
+                        </a>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-puzzle-piece"></i>
+                        </div>
+                        <h3 class="principle-title">Widgets Nativos First</h3>
+                        <p class="principle-description">
+                            Priorize widgets nativos do Mendix. Use widgets do Marketplace apenas quando aprovados e mantidos ativamente pela comunidade.
+                        </p>
+                        <a href="https://marketplace.mendix.com/" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 0.875rem; color: var(--color-interactive); text-decoration: none;">
+                            <i class="ph ph-arrow-square-out"></i>
+                            Mendix Marketplace
+                        </a>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-devices"></i>
+                        </div>
+                        <h3 class="principle-title">Mobile-First Responsive</h3>
+                        <p class="principle-description">
+                            Teste todos os layouts em mobile, tablet e desktop. Use o layout grid system do Atlas UI com breakpoints consistentes.
+                        </p>
+                        <a href="https://docs.mendix.com/refguide/layout/" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 0.875rem; color: var(--color-interactive); text-decoration: none;">
+                            <i class="ph ph-arrow-square-out"></i>
+                            Layout Widget Reference
+                        </a>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-gear"></i>
+                        </div>
+                        <h3 class="principle-title">Manutenibilidade</h3>
+                        <p class="principle-description">
+                            Código limpo e documentado. Classes CSS semânticas. Estrutura de pastas organizada para facilitar colaboração entre desenvolvedores.
+                        </p>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-warning-diamond"></i>
+                        </div>
+                        <h3 class="principle-title">Zero Gambiarras</h3>
+                        <p class="principle-description">
+                            Soluções que funcionam hoje mas quebram amanhã são inaceitáveis. Se algo precisa de "hack", busque alternativa dentro das capacidades da plataforma.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 MAPEAMENTO: O QUE DÁ / NÃO DÁ
+            ======================================== -->
+            <section id="mapeamento" class="section">
+                <h2 class="section-title">Mapeamento: Fundamentos GCB → Mendix</h2>
+
+                <h3 class="subsection-title">Cores</h3>
+                
+                <div class="alert success">
+                    <i class="ph-fill ph-check-circle alert-icon"></i>
+                    <div>
+                        <strong>Totalmente Aplicável</strong><br>
+                        Todas as cores GCB podem ser aplicadas via theme customization. Mendix suporta variáveis CSS customizadas.
+                    </div>
+                </div>
+
+                <div class="color-grid">
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #00b2a9;">
+                            <i class="ph-fill ph-paint-bucket" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div class="color-info">
+                            <div class="color-name">Brand Primary</div>
+                            <div class="color-code" onclick="copyHex('#00b2a9', this)">
+                                <span class="color-code-hex">#00b2a9</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Botões primários, CTAs, active states</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #005751;">
+                            <i class="ph-fill ph-circle-half-tilt" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div class="color-info">
+                            <div class="color-name">Brand Dark</div>
+                            <div class="color-code" onclick="copyHex('#005751', this)">
+                                <span class="color-code-hex">#005751</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Headers, navigation, texto de destaque</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #0f62fe;">
+                            <i class="ph-fill ph-cursor-click" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div class="color-info">
+                            <div class="color-name">Interactive Blue</div>
+                            <div class="color-code" onclick="copyHex('#0f62fe', this)">
+                                <span class="color-code-hex">#0f62fe</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Links, focus states, informational</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #24a148;">
+                            <i class="ph-fill ph-check" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div class="color-info">
+                            <div class="color-name">Success</div>
+                            <div class="color-code" onclick="copyHex('#24a148', this)">
+                                <span class="color-code-hex">#24a148</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Confirmações, validações positivas</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #f1c21b;">
+                            <i class="ph-fill ph-warning" style="color: #161616; font-size: 24px;"></i>
+                        </div>
+                        <div class="color-info">
+                            <div class="color-name">Warning</div>
+                            <div class="color-code" onclick="copyHex('#f1c21b', this)">
+                                <span class="color-code-hex">#f1c21b</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Alertas, ações que precisam atenção</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #bb0000;">
+                            <i class="ph-fill ph-x" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div class="color-info">
+                            <div class="color-name">Error</div>
+                            <div class="color-code" onclick="copyHex('#bb0000', this)">
+                                <span class="color-code-hex">#bb0000</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Erros, validações negativas, exclusões</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">Tipografia</h3>
+
+                <div class="alert warning">
+                    <i class="ph-fill ph-warning alert-icon"></i>
+                    <div>
+                        <strong>Parcialmente Aplicável</strong><br>
+                        <strong>Inter:</strong> Disponível nativamente no Atlas UI<br>
+                        <strong>Prometo Bold:</strong> Não suportada sem workarounds complexos<br>
+                        <strong>IBM Plex Mono:</strong> Não suportada (use monospace do sistema)
+                    </div>
+                </div>
+
+                <p style="margin-bottom: var(--spacing-06);">
+                    <strong>Solução recomendada:</strong> Use <strong>Inter</strong> como fonte principal. É moderna, tem boa legibilidade e já está integrada ao Atlas UI. Para contextos onde Prometo Bold seria ideal (títulos principais), considere usar Inter Semibold/Bold.
+                </p>
+
+                <div class="code-block">// Theme customization - Typography
+theme: {
+  fontFamily: {
+    primary: 'Inter, -apple-system, sans-serif',
+    heading: 'Inter, -apple-system, sans-serif',
+    mono: 'Menlo, Monaco, monospace'
+  },
+  fontSize: {
+    h1: '2rem',    // 32px
+    h2: '1.5rem',  // 24px
+    h3: '1.25rem', // 20px
+    body: '1rem',  // 16px
+    small: '0.875rem' // 14px
+  }
+}</div>
+
+                <h3 class="subsection-title">Ícones</h3>
+
+                <div class="alert critical">
+                    <i class="ph-fill ph-x-circle alert-icon"></i>
+                    <div>
+                        <strong>Não Aplicável Diretamente</strong><br>
+                        Phosphor Icons não é suportado nativamente. Mendix usa <strong>Glyphicons</strong> (Atlas UI v2) ou <strong>Font Awesome</strong> (via marketplace).
+                    </div>
+                </div>
+
+                <p style="margin-bottom: var(--spacing-06);">
+                    <strong>Solução recomendada:</strong> Use <strong>Font Awesome</strong> (disponível via Building Block "Icon"). Para manter consistência visual, crie uma tabela de equivalência Phosphor → Font Awesome para os ícones mais usados.
+                </p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Contexto GCB</th>
+                            <th>Phosphor Icon</th>
+                            <th>Font Awesome Equivalente</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Navegação & Shell -->
+                        <tr><td colspan="3" style="background:var(--ui-01);font-size:11px;font-weight:600;color:var(--text-disabled);text-transform:uppercase;letter-spacing:.5px;padding:8px 16px;">Navegação &amp; Shell</td></tr>
+                        <tr>
+                            <td>Home / Início</td>
+                            <td><code>ph-house</code></td>
+                            <td><code>fa-home</code></td>
+                        </tr>
+                        <tr>
+                            <td>Menu / Hambúrguer</td>
+                            <td><code>ph-list</code></td>
+                            <td><code>fa-bars</code></td>
+                        </tr>
+                        <tr>
+                            <td>Dashboard / Grid</td>
+                            <td><code>ph-squares-four</code></td>
+                            <td><code>fa-th-large</code></td>
+                        </tr>
+                        <tr>
+                            <td>Sair / Logout</td>
+                            <td><code>ph-sign-out</code></td>
+                            <td><code>fa-sign-out-alt</code></td>
+                        </tr>
+                        <tr>
+                            <td>Voltar</td>
+                            <td><code>ph-arrow-left</code></td>
+                            <td><code>fa-arrow-left</code></td>
+                        </tr>
+                        <tr>
+                            <td>Seta dropdown / caret</td>
+                            <td><code>ph-caret-down</code></td>
+                            <td><code>fa-chevron-down</code></td>
+                        </tr>
+                        <tr>
+                            <td>Breadcrumb separador</td>
+                            <td><code>ph-caret-right</code></td>
+                            <td><code>fa-chevron-right</code></td>
+                        </tr>
+
+                        <!-- Ações CRUD -->
+                        <tr><td colspan="3" style="background:var(--ui-01);font-size:11px;font-weight:600;color:var(--text-disabled);text-transform:uppercase;letter-spacing:.5px;padding:8px 16px;">Ações CRUD</td></tr>
+                        <tr>
+                            <td>Adicionar / Novo</td>
+                            <td><code>ph-plus</code></td>
+                            <td><code>fa-plus</code></td>
+                        </tr>
+                        <tr>
+                            <td>Editar</td>
+                            <td><code>ph-pencil-simple</code></td>
+                            <td><code>fa-edit</code></td>
+                        </tr>
+                        <tr>
+                            <td>Excluir</td>
+                            <td><code>ph-trash</code></td>
+                            <td><code>fa-trash-alt</code></td>
+                        </tr>
+                        <tr>
+                            <td>Salvar</td>
+                            <td><code>ph-floppy-disk</code></td>
+                            <td><code>fa-save</code></td>
+                        </tr>
+                        <tr>
+                            <td>Copiar</td>
+                            <td><code>ph-copy</code></td>
+                            <td><code>fa-copy</code></td>
+                        </tr>
+                        <tr>
+                            <td>Fechar / X</td>
+                            <td><code>ph-x</code></td>
+                            <td><code>fa-times</code></td>
+                        </tr>
+                        <tr>
+                            <td>Mais opções (⋯)</td>
+                            <td><code>ph-dots-three</code></td>
+                            <td><code>fa-ellipsis-h</code></td>
+                        </tr>
+                        <tr>
+                            <td>Exportar</td>
+                            <td><code>ph-export</code></td>
+                            <td><code>fa-file-export</code></td>
+                        </tr>
+                        <tr>
+                            <td>Download</td>
+                            <td><code>ph-download-simple</code></td>
+                            <td><code>fa-download</code></td>
+                        </tr>
+                        <tr>
+                            <td>Upload / Anexo</td>
+                            <td><code>ph-upload-simple</code></td>
+                            <td><code>fa-upload</code></td>
+                        </tr>
+                        <tr>
+                            <td>Filtrar</td>
+                            <td><code>ph-funnel</code></td>
+                            <td><code>fa-filter</code></td>
+                        </tr>
+                        <tr>
+                            <td>Ordenar</td>
+                            <td><code>ph-arrows-down-up</code></td>
+                            <td><code>fa-sort</code></td>
+                        </tr>
+
+                        <!-- Status & Feedback -->
+                        <tr><td colspan="3" style="background:var(--ui-01);font-size:11px;font-weight:600;color:var(--text-disabled);text-transform:uppercase;letter-spacing:.5px;padding:8px 16px;">Status &amp; Feedback</td></tr>
+                        <tr>
+                            <td>Sucesso / Check</td>
+                            <td><code>ph-check-circle</code></td>
+                            <td><code>fa-check-circle</code></td>
+                        </tr>
+                        <tr>
+                            <td>Erro / X círculo</td>
+                            <td><code>ph-x-circle</code></td>
+                            <td><code>fa-times-circle</code></td>
+                        </tr>
+                        <tr>
+                            <td>Aviso / Warning</td>
+                            <td><code>ph-warning</code></td>
+                            <td><code>fa-exclamation-triangle</code></td>
+                        </tr>
+                        <tr>
+                            <td>Informação</td>
+                            <td><code>ph-info</code></td>
+                            <td><code>fa-info-circle</code></td>
+                        </tr>
+                        <tr>
+                            <td>Carregando</td>
+                            <td><code>ph-spinner</code></td>
+                            <td><code>fa-spinner fa-spin</code></td>
+                        </tr>
+
+                        <!-- Dados & Conteúdo -->
+                        <tr><td colspan="3" style="background:var(--ui-01);font-size:11px;font-weight:600;color:var(--text-disabled);text-transform:uppercase;letter-spacing:.5px;padding:8px 16px;">Dados &amp; Conteúdo</td></tr>
+                        <tr>
+                            <td>Pesquisar</td>
+                            <td><code>ph-magnifying-glass</code></td>
+                            <td><code>fa-search</code></td>
+                        </tr>
+                        <tr>
+                            <td>Tabela / Lista</td>
+                            <td><code>ph-table</code></td>
+                            <td><code>fa-table</code></td>
+                        </tr>
+                        <tr>
+                            <td>Gráfico / Relatório</td>
+                            <td><code>ph-chart-bar</code></td>
+                            <td><code>fa-chart-bar</code></td>
+                        </tr>
+                        <tr>
+                            <td>Documento / Pedido</td>
+                            <td><code>ph-clipboard-text</code></td>
+                            <td><code>fa-clipboard-list</code></td>
+                        </tr>
+                        <tr>
+                            <td>Calendário / Data</td>
+                            <td><code>ph-calendar</code></td>
+                            <td><code>fa-calendar-alt</code></td>
+                        </tr>
+                        <tr>
+                            <td>Pacote / Produto</td>
+                            <td><code>ph-package</code></td>
+                            <td><code>fa-box</code></td>
+                        </tr>
+                        <tr>
+                            <td>Caminhão / Entrega</td>
+                            <td><code>ph-truck</code></td>
+                            <td><code>fa-truck</code></td>
+                        </tr>
+
+                        <!-- Usuário & Sistema -->
+                        <tr><td colspan="3" style="background:var(--ui-01);font-size:11px;font-weight:600;color:var(--text-disabled);text-transform:uppercase;letter-spacing:.5px;padding:8px 16px;">Usuário &amp; Sistema</td></tr>
+                        <tr>
+                            <td>Usuário / Perfil</td>
+                            <td><code>ph-user</code></td>
+                            <td><code>fa-user</code></td>
+                        </tr>
+                        <tr>
+                            <td>Usuários / Time</td>
+                            <td><code>ph-users</code></td>
+                            <td><code>fa-users</code></td>
+                        </tr>
+                        <tr>
+                            <td>Configurações de usuário</td>
+                            <td><code>ph-user-gear</code></td>
+                            <td><code>fa-user-cog</code></td>
+                        </tr>
+                        <tr>
+                            <td>Notificações</td>
+                            <td><code>ph-bell</code></td>
+                            <td><code>fa-bell</code></td>
+                        </tr>
+                        <tr>
+                            <td>Configurações</td>
+                            <td><code>ph-gear</code></td>
+                            <td><code>fa-cog</code></td>
+                        </tr>
+                        <tr>
+                            <td>Ajuda / Dúvida</td>
+                            <td><code>ph-question</code></td>
+                            <td><code>fa-question-circle</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subsection-title">Espaçamentos & Grid</h3>
+
+                <div class="alert success">
+                    <i class="ph-fill ph-check-circle alert-icon"></i>
+                    <div>
+                        <strong>Totalmente Aplicável</strong><br>
+                        O grid de 8px do GCB é compatível com o spacing system do Atlas UI. Use classes de spacing do Mendix: <code>spacing-inner-small</code>, <code>spacing-inner-medium</code>, etc.
+                    </div>
+                </div>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>GCB Token</th>
+                            <th>Valor</th>
+                            <th>Atlas UI Class</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>--spacing-03</code></td>
+                            <td>8px</td>
+                            <td><code>spacing-inner-small</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>--spacing-05</code></td>
+                            <td>16px</td>
+                            <td><code>spacing-inner-medium</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>--spacing-06</code></td>
+                            <td>24px</td>
+                            <td><code>spacing-inner-large</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>--spacing-08</code></td>
+                            <td>40px</td>
+                            <td><code>spacing-outer-medium</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ========================================
+                 THEME CONFIGURATION
+            ======================================== -->
+            <section id="theme-config" class="section">
+                <h2 class="section-title">Theme Configuration</h2>
+
+                <p style="margin-bottom: var(--spacing-06);">
+                    Customize o tema Mendix através do arquivo <code>settings.json</code> no diretório <code>theme/</code> do seu projeto. Abaixo está a configuração recomendada para aplicar as cores GCB:
+                </p>
+
+                <div class="code-block">{
+  "brandPrimary": "#00b2a9",
+  "brandSuccess": "#24a148",
+  "brandWarning": "#f1c21b",
+  "brandDanger": "#bb0000",
+  "brandInfo": "#0f62fe",
+  
+  "grayPrimary": "#161616",
+  "grayDark": "#525252",
+  "gray": "#8d8d8d",
+  "grayLight": "#e0e0e0",
+  "grayLighter": "#f5f5f5",
+  
+  "backgroundPrimary": "#ffffff",
+  "backgroundSecondary": "#f4f4f4",
+  
+  "borderRadiusDefault": "4px",
+  "borderRadiusLarge": "8px",
+  
+  "fontFamily": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  "fontSize": "16px",
+  "fontSizeSmall": "14px",
+  "fontSizeLarge": "20px",
+  "fontSizeH1": "32px",
+  "fontSizeH2": "24px",
+  "fontSizeH3": "20px",
+  
+  "spacingSmall": "8px",
+  "spacingMedium": "16px",
+  "spacingLarge": "24px",
+  "spacingExtraLarge": "40px"
+}</div>
+
+                <div class="alert info">
+                    <i class="ph-fill ph-info alert-icon"></i>
+                    <div>
+                        <strong>Importante:</strong> Após alterar <code>settings.json</code>, execute <code>npm run build</code> para recompilar o tema. Sempre teste em todos os breakpoints (mobile, tablet, desktop).
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 COMPONENTES CUSTOMIZADOS
+            ======================================== -->
+            <section id="componentes" class="section">
+                <h2 class="section-title">Componentes Customizados</h2>
+
+                <h3 class="subsection-title">Login Screen</h3>
+
+                <div class="wireframe-container">
+                    <div class="wireframe-title">Tela de Login GCB</div>
+                    
+                    <svg viewBox="0 0 800 520" style="width: 100%; max-width: 800px; margin: 0 auto; display: block;">
+                        <!-- Background -->
+                        <rect width="800" height="520" fill="#fafafa"/>
+                        
+                        <!-- Logo GCB (dois círculos laranjas) -->
+                        <circle cx="396" cy="50" r="16" fill="#00b2a9" opacity="0.7"/>
+                        <circle cx="404" cy="50" r="16" fill="#00b2a9"/>
+                        
+                        <!-- Title (sem tarja) -->
+                        <text x="400" y="110" text-anchor="middle" fill="#005751" font-size="20" font-weight="700" font-family="Inter">Nome da Solução</text>
+                        
+                        <!-- Email label -->
+                        <text x="250" y="165" fill="#525252" font-size="13" font-weight="500">Usuário (e-mail):</text>
+                        
+                        <!-- Email input -->
+                        <rect x="250" y="175" width="300" height="44" rx="4" fill="white" stroke="#e0e0e0" stroke-width="1.5"/>
+                        <text x="262" y="202" fill="#8d8d8d" font-size="13">usuario@exemplo.com</text>
+                        
+                        <!-- Password label -->
+                        <text x="250" y="250" fill="#525252" font-size="13" font-weight="500">Senha:</text>
+                        
+                        <!-- Password input (sem ícone olho) -->
+                        <rect x="250" y="260" width="300" height="44" rx="4" fill="white" stroke="#e0e0e0" stroke-width="1.5"/>
+                        <!-- Password dots -->
+                        <circle cx="265" cy="282" r="3" fill="#8d8d8d"/>
+                        <circle cx="280" cy="282" r="3" fill="#8d8d8d"/>
+                        <circle cx="295" cy="282" r="3" fill="#8d8d8d"/>
+                        <circle cx="310" cy="282" r="3" fill="#8d8d8d"/>
+                        <circle cx="325" cy="282" r="3" fill="#8d8d8d"/>
+                        <circle cx="340" cy="282" r="3" fill="#8d8d8d"/>
+                        <circle cx="355" cy="282" r="3" fill="#8d8d8d"/>
+                        <circle cx="370" cy="282" r="3" fill="#8d8d8d"/>
+                        <circle cx="385" cy="282" r="3" fill="#8d8d8d"/>
+                        <circle cx="400" cy="282" r="3" fill="#8d8d8d"/>
+                        
+                        <!-- Forgot password link -->
+                        <text x="400" y="335" text-anchor="middle" fill="#00b2a9" font-size="13" font-weight="500" style="text-decoration: underline;">Esqueci minha senha</text>
+                        
+                        <!-- Primary button -->
+                        <rect x="250" y="360" width="300" height="48" rx="4" fill="#00b2a9"/>
+                        <text x="400" y="389" text-anchor="middle" fill="white" font-size="15" font-weight="600">Acessar</text>
+                        
+                        <!-- Microsoft SSO button -->
+                        <rect x="250" y="425" width="300" height="48" rx="4" fill="white" stroke="#e0e0e0" stroke-width="1.5"/>
+                        <!-- Microsoft logo -->
+                        <g transform="translate(270, 441)">
+                            <rect x="0" y="0" width="7" height="7" fill="#f35325"/>
+                            <rect x="8" y="0" width="7" height="7" fill="#81bc06"/>
+                            <rect x="0" y="8" width="7" height="7" fill="#05a6f0"/>
+                            <rect x="8" y="8" width="7" height="7" fill="#ffba08"/>
+                        </g>
+                        <text x="400" y="454" text-anchor="middle" fill="#525252" font-size="13" font-weight="500">Acessar com a conta Microsoft</text>
+                    </svg>
+                </div>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Diretrizes Login:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li>Logo GCB centralizada no topo (32px altura, dois círculos laranjas)</li>
+                    <li>Título em verde escuro <code>#005751</code> usando Inter Bold ou Semibold (exemplo: "Nome da Solução")</li>
+                    <li>Inputs com 300px largura, 44px altura, border <code>#e0e0e0</code>, border-radius 4px</li>
+                    <li>Botão primário laranja <code>#00b2a9</code> com hover <code>#005751</code>, 300px largura, 48px altura</li>
+                    <li>Link "Esqueci minha senha" em laranja <code>#00b2a9</code></li>
+                    <li>SSO Microsoft como botão secundário (branco com borda), logo 4 quadrados 7x7px, 300px largura</li>
+                    <li>Largura total: 800px (igual layout de navegação), centralizado verticalmente</li>
+                </ul>
+
+                <h3 class="subsection-title">Navigation (Sidebar + Header)</h3>
+
+                <div class="wireframe-container">
+                    <div class="wireframe-title">Layout Principal com Navegação</div>
+                    
+                    <svg viewBox="0 0 800 520" style="width: 100%; max-width: 800px; margin: 0 auto; display: block;">
+                        <!-- Header -->
+                        <rect width="800" height="60" fill="#005751"/>
+                        <text x="24" y="38" fill="white" font-size="17" font-weight="700" font-family="Inter">Nome da Solução</text>
+                        
+                        <!-- Header icons (right) - apenas 2 ícones alinhados -->
+                        <!-- Gear icon (configurações) -->
+                        <g transform="translate(730, 30)">
+                            <circle cx="0" cy="0" r="9" fill="none" stroke="white" stroke-width="1.5"/>
+                            <circle cx="0" cy="0" r="4" fill="none" stroke="white" stroke-width="1.5"/>
+                            <line x1="0" y1="-9" x2="0" y2="-12" stroke="white" stroke-width="1.5"/>
+                            <line x1="0" y1="9" x2="0" y2="12" stroke="white" stroke-width="1.5"/>
+                            <line x1="9" y1="0" x2="12" y2="0" stroke="white" stroke-width="1.5"/>
+                            <line x1="-9" y1="0" x2="-12" y2="0" stroke="white" stroke-width="1.5"/>
+                        </g>
+                        
+                        <!-- User icon (perfil) -->
+                        <g transform="translate(770, 30)">
+                            <circle cx="0" cy="0" r="11" fill="none" stroke="white" stroke-width="1.5"/>
+                            <circle cx="0" cy="-3" r="4" fill="white"/>
+                            <path d="M -6,9 Q 0,4 6,9" fill="white"/>
+                        </g>
+                        
+                        <!-- Sidebar -->
+                        <rect y="60" width="240" height="460" fill="#fafafa" stroke="#e0e0e0" stroke-width="1"/>
+                        
+                        <!-- Nav item 1 (ativo) -->
+                        <rect x="16" y="80" width="208" height="40" rx="4" fill="#00b2a9"/>
+                        <!-- House icon -->
+                        <g transform="translate(32, 100)" fill="white">
+                            <path d="M 0,-8 L -8,0 L -6,0 L -6,8 L 6,8 L 6,0 L 8,0 Z" fill="white"/>
+                            <rect x="-2" y="2" width="4" height="6" fill="#00b2a9"/>
+                        </g>
+                        <text x="56" y="105" fill="white" font-size="14" font-weight="600">Início</text>
+                        
+                        <!-- Nav item 2 (inativo) -->
+                        <rect x="16" y="130" width="208" height="40" rx="4" fill="transparent"/>
+                        <!-- Chart icon -->
+                        <g transform="translate(32, 150)" fill="none" stroke="#00b2a9" stroke-width="1.5">
+                            <rect x="-6" y="2" width="3" height="6"/>
+                            <rect x="-1" y="-2" width="3" height="10"/>
+                            <rect x="4" y="-6" width="3" height="14"/>
+                        </g>
+                        <text x="56" y="155" fill="#525252" font-size="14" font-weight="500">Acompanhamento</text>
+                        
+                        <!-- Nav item 3 (inativo) -->
+                        <rect x="16" y="180" width="208" height="40" rx="4" fill="transparent"/>
+                        <!-- Calendar icon -->
+                        <g transform="translate(32, 200)">
+                            <rect x="-7" y="-6" width="14" height="12" rx="1" fill="none" stroke="#00b2a9" stroke-width="1.5"/>
+                            <line x1="-4" y1="-6" x2="-4" y2="-8" stroke="#00b2a9" stroke-width="1.5"/>
+                            <line x1="4" y1="-6" x2="4" y2="-8" stroke="#00b2a9" stroke-width="1.5"/>
+                            <line x1="-7" y1="-2" x2="7" y2="-2" stroke="#00b2a9" stroke-width="1.5"/>
+                            <circle cx="-3" cy="1" r="1" fill="#00b2a9"/>
+                            <circle cx="3" cy="1" r="1" fill="#00b2a9"/>
+                            <circle cx="-3" cy="4" r="1" fill="#00b2a9"/>
+                        </g>
+                        <text x="56" y="205" fill="#525252" font-size="14" font-weight="500">Planejamento</text>
+                        
+                        <!-- Content area -->
+                        <rect x="240" y="60" width="560" height="460" fill="white"/>
+                        <text x="264" y="105" fill="#161616" font-size="22" font-weight="700">Título da Página</text>
+                        
+                        <!-- Content cards -->
+                        <rect x="264" y="130" width="512" height="90" rx="6" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+                        <rect x="264" y="235" width="512" height="90" rx="6" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+                        <rect x="264" y="340" width="248" height="90" rx="6" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+                        <rect x="528" y="340" width="248" height="90" rx="6" fill="#f5f5f5" stroke="#e0e0e0" stroke-width="1"/>
+                    </svg>
+                </div>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Diretrizes Navigation:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li><strong>Header:</strong> Verde escuro <code>#005751</code>, altura 60px, título branco à esquerda, ícones utilitários à direita</li>
+                    <li><strong>Sidebar:</strong> Fundo cinza claro <code>#fafafa</code>, largura 220px (desktop), ícones laranjas</li>
+                    <li><strong>Item ativo:</strong> Background laranja <code>#00b2a9</code>, texto branco, ícone branco</li>
+                    <li><strong>Item inativo:</strong> Texto cinza <code>#525252</code>, ícone laranja outline, hover background <code>#f5f5f5</code></li>
+                    <li><strong>Mobile:</strong> Sidebar colapsa em hamburger menu, header permanece fixo</li>
+                </ul>
+
+                <h3 class="subsection-title">Buttons</h3>
+
+                <div style="display: flex; gap: var(--spacing-05); flex-wrap: wrap; margin-bottom: var(--spacing-07); align-items: center;">
+                    <button class="btn btn-primary">
+                        <i class="ph-fill ph-check"></i>
+                        Primary Button
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i class="ph ph-x"></i>
+                        Secondary Button
+                    </button>
+                </div>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Uso</th>
+                            <th>Mendix Class</th>
+                            <th>Customização</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Primary</strong></td>
+                            <td>Ação principal (Salvar, Enviar, Confirmar)</td>
+                            <td><code>btn-primary</code></td>
+                            <td>Background: <code>#00b2a9</code>, Hover: <code>#005751</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Secondary</strong></td>
+                            <td>Ações secundárias (Cancelar, Voltar)</td>
+                            <td><code>btn-default</code></td>
+                            <td>Background: <code>white</code>, Border: <code>#e0e0e0</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Danger</strong></td>
+                            <td>Ações destrutivas (Excluir)</td>
+                            <td><code>btn-danger</code></td>
+                            <td>Background: <code>#bb0000</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Link</strong></td>
+                            <td>Navegação terciária</td>
+                            <td><code>btn-link</code></td>
+                            <td>Color: <code>#0f62fe</code> (interactive blue)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ========================================
+                 DATA COMPONENTS
+            ======================================== -->
+            <section id="data-components" class="section">
+                <h2 class="section-title">Data Components</h2>
+
+                <h3 class="subsection-title">Data Grid</h3>
+
+                <p style="margin-bottom: var(--spacing-05);">
+                    O Data Grid é o componente mais usado em Mendix. Use para exibir listas de dados tabulares com paginação, ordenação e ações por linha.
+                </p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Elemento</th>
+                            <th style="width: 70%;">Diretriz GCB</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Header</strong></td>
+                            <td>Background: <code>#f5f5f5</code>, texto <code>#161616</code> bold, border-bottom <code>#e0e0e0</code> 2px</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Rows</strong></td>
+                            <td>Background alternado: branco / <code>#fafafa</code>, hover <code>#f5f5f5</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Borders</strong></td>
+                            <td>Apenas horizontais, <code>#e0e0e0</code> 1px</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Paginação</strong></td>
+                            <td>Bottom aligned, botões secondary style, mostrar "X de Y resultados"</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Actions</strong></td>
+                            <td>Ícones <code>ph-pencil-simple</code> (editar), <code>ph-trash</code> (excluir), cor <code>#8d8d8d</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Empty State</strong></td>
+                            <td>Ícone <code>ph-folder-open</code>, mensagem "Nenhum registro encontrado"</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="example-accordion">
+                    <div class="example-toggle" onclick="toggleExample(this)">
+                        <span><i class="ph-fill ph-image"></i> Ver exemplo visual</span>
+                        <i class="ph ph-caret-down"></i>
+                    </div>
+                    <div class="example-content">
+                        <svg viewBox="0 0 700 400" style="width: 100%; max-width: 700px; display: block; margin: 0 auto;">
+                            <!-- Background -->
+                            <rect width="700" height="400" fill="white"/>
+                            
+                            <!-- Title -->
+                            <text x="20" y="30" fill="#161616" font-size="18" font-weight="700">Lista de Usuários</text>
+                            
+                            <!-- Header -->
+                            <rect x="20" y="50" width="660" height="40" fill="#f5f5f5"/>
+                            <line x1="20" y1="90" x2="680" y2="90" stroke="#e0e0e0" stroke-width="2"/>
+                            <text x="35" y="75" fill="#161616" font-size="13" font-weight="600">Nome</text>
+                            <text x="250" y="75" fill="#161616" font-size="13" font-weight="600">Email</text>
+                            <text x="450" y="75" fill="#161616" font-size="13" font-weight="600">Status</text>
+                            <text x="600" y="75" fill="#161616" font-size="13" font-weight="600">Ações</text>
+                            
+                            <!-- Row 1 (white) -->
+                            <rect x="20" y="90" width="660" height="45" fill="white"/>
+                            <line x1="20" y1="135" x2="680" y2="135" stroke="#e0e0e0" stroke-width="1"/>
+                            <text x="35" y="117" fill="#161616" font-size="13">João Silva</text>
+                            <text x="250" y="117" fill="#525252" font-size="13">joao@exemplo.com</text>
+                            <rect x="450" y="105" width="60" height="24" rx="12" fill="#e7f5ec"/>
+                            <text x="465" y="121" fill="#0f5223" font-size="12" font-weight="600">Ativo</text>
+                            <!-- Edit icon -->
+                            <g transform="translate(615, 112)">
+                                <rect x="-8" y="-8" width="16" height="16" fill="none" stroke="#8d8d8d" stroke-width="1.5" rx="2"/>
+                                <line x1="-3" y1="3" x2="3" y2="-3" stroke="#8d8d8d" stroke-width="1.5"/>
+                            </g>
+                            <!-- Delete icon -->
+                            <g transform="translate(650, 112)">
+                                <rect x="-7" y="-8" width="14" height="16" fill="none" stroke="#8d8d8d" stroke-width="1.5" rx="2"/>
+                                <line x1="-7" y1="-8" x2="7" y2="-8" stroke="#8d8d8d" stroke-width="1.5"/>
+                                <line x1="-2" y1="-4" x2="-2" y2="4" stroke="#8d8d8d" stroke-width="1.5"/>
+                                <line x1="2" y1="-4" x2="2" y2="4" stroke="#8d8d8d" stroke-width="1.5"/>
+                            </g>
+                            
+                            <!-- Row 2 (fafafa) -->
+                            <rect x="20" y="135" width="660" height="45" fill="#fafafa"/>
+                            <line x1="20" y1="180" x2="680" y2="180" stroke="#e0e0e0" stroke-width="1"/>
+                            <text x="35" y="162" fill="#161616" font-size="13">Maria Santos</text>
+                            <text x="250" y="162" fill="#525252" font-size="13">maria@exemplo.com</text>
+                            <rect x="450" y="150" width="60" height="24" rx="12" fill="#e7f5ec"/>
+                            <text x="465" y="166" fill="#0f5223" font-size="12" font-weight="600">Ativo</text>
+                            <g transform="translate(615, 157)">
+                                <rect x="-8" y="-8" width="16" height="16" fill="none" stroke="#8d8d8d" stroke-width="1.5" rx="2"/>
+                                <line x1="-3" y1="3" x2="3" y2="-3" stroke="#8d8d8d" stroke-width="1.5"/>
+                            </g>
+                            <g transform="translate(650, 157)">
+                                <rect x="-7" y="-8" width="14" height="16" fill="none" stroke="#8d8d8d" stroke-width="1.5" rx="2"/>
+                                <line x1="-7" y1="-8" x2="7" y2="-8" stroke="#8d8d8d" stroke-width="1.5"/>
+                                <line x1="-2" y1="-4" x2="-2" y2="4" stroke="#8d8d8d" stroke-width="1.5"/>
+                                <line x1="2" y1="-4" x2="2" y2="4" stroke="#8d8d8d" stroke-width="1.5"/>
+                            </g>
+                            
+                            <!-- Row 3 (white) -->
+                            <rect x="20" y="180" width="660" height="45" fill="white"/>
+                            <line x1="20" y1="225" x2="680" y2="225" stroke="#e0e0e0" stroke-width="1"/>
+                            <text x="35" y="207" fill="#161616" font-size="13">Pedro Costa</text>
+                            <text x="250" y="207" fill="#525252" font-size="13">pedro@exemplo.com</text>
+                            <rect x="450" y="195" width="70" height="24" rx="12" fill="#fff0e6"/>
+                            <text x="460" y="211" fill="#8f6b00" font-size="12" font-weight="600">Inativo</text>
+                            <g transform="translate(615, 202)">
+                                <rect x="-8" y="-8" width="16" height="16" fill="none" stroke="#8d8d8d" stroke-width="1.5" rx="2"/>
+                                <line x1="-3" y1="3" x2="3" y2="-3" stroke="#8d8d8d" stroke-width="1.5"/>
+                            </g>
+                            <g transform="translate(650, 202)">
+                                <rect x="-7" y="-8" width="14" height="16" fill="none" stroke="#8d8d8d" stroke-width="1.5" rx="2"/>
+                                <line x1="-7" y1="-8" x2="7" y2="-8" stroke="#8d8d8d" stroke-width="1.5"/>
+                                <line x1="-2" y1="-4" x2="-2" y2="4" stroke="#8d8d8d" stroke-width="1.5"/>
+                                <line x1="2" y1="-4" x2="2" y2="4" stroke="#8d8d8d" stroke-width="1.5"/>
+                            </g>
+                            
+                            <!-- Row 4 (fafafa) -->
+                            <rect x="20" y="225" width="660" height="45" fill="#fafafa"/>
+                            <line x1="20" y1="270" x2="680" y2="270" stroke="#e0e0e0" stroke-width="1"/>
+                            <text x="35" y="252" fill="#161616" font-size="13">Ana Oliveira</text>
+                            <text x="250" y="252" fill="#525252" font-size="13">ana@exemplo.com</text>
+                            <rect x="450" y="240" width="60" height="24" rx="12" fill="#e7f5ec"/>
+                            <text x="465" y="256" fill="#0f5223" font-size="12" font-weight="600">Ativo</text>
+                            <g transform="translate(615, 247)">
+                                <rect x="-8" y="-8" width="16" height="16" fill="none" stroke="#8d8d8d" stroke-width="1.5" rx="2"/>
+                                <line x1="-3" y1="3" x2="3" y2="-3" stroke="#8d8d8d" stroke-width="1.5"/>
+                            </g>
+                            <g transform="translate(650, 247)">
+                                <rect x="-7" y="-8" width="14" height="16" fill="none" stroke="#8d8d8d" stroke-width="1.5" rx="2"/>
+                                <line x1="-7" y1="-8" x2="7" y2="-8" stroke="#8d8d8d" stroke-width="1.5"/>
+                                <line x1="-2" y1="-4" x2="-2" y2="4" stroke="#8d8d8d" stroke-width="1.5"/>
+                                <line x1="2" y1="-4" x2="2" y2="4" stroke="#8d8d8d" stroke-width="1.5"/>
+                            </g>
+                            
+                            <!-- Pagination -->
+                            <text x="20" y="305" fill="#525252" font-size="13">Mostrando 1-4 de 47 resultados</text>
+                            
+                            <!-- Pagination buttons -->
+                            <rect x="520" y="285" width="70" height="32" rx="4" fill="white" stroke="#e0e0e0" stroke-width="1"/>
+                            <text x="535" y="306" fill="#525252" font-size="13">Anterior</text>
+                            
+                            <rect x="600" y="285" width="32" height="32" rx="4" fill="#00b2a9"/>
+                            <text x="613" y="306" fill="white" font-size="13" font-weight="600">1</text>
+                            
+                            <rect x="640" y="285" width="32" height="32" rx="4" fill="white" stroke="#e0e0e0" stroke-width="1"/>
+                            <text x="653" y="306" fill="#525252" font-size="13">2</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">List View</h3>
+
+                <p style="margin-bottom: var(--spacing-06);">
+                    Use List View para exibir dados em formato de cards ou listas verticais. Ideal para dashboards e visualizações mobile.
+                </p>
+
+                <div class="alert info">
+                    <i class="ph-fill ph-info alert-icon"></i>
+                    <div>
+                        <strong>Mobile-First:</strong> List View é melhor para mobile que Data Grid. Configure para empilhar em telas < 768px.
+                    </div>
+                </div>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Padrão</th>
+                            <th style="width: 70%;">Implementação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Card Style</strong></td>
+                            <td>Border <code>#e0e0e0</code>, border-radius 4px, padding 16px, gap 12px entre cards</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hover</strong></td>
+                            <td>Border-color <code>#8d8d8d</code>, elevation-01 (shadow sutil)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Load More</strong></td>
+                            <td>Botão secondary "Carregar mais" centralizado abaixo da lista</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="example-accordion">
+                    <div class="example-toggle" onclick="toggleExample(this)">
+                        <span><i class="ph-fill ph-image"></i> Ver exemplo: List View (Cards)</span>
+                        <i class="ph ph-caret-down"></i>
+                    </div>
+                    <div class="example-content">
+                        <svg viewBox="0 0 500 400" style="width: 100%; max-width: 500px; display: block; margin: 0 auto;">
+                            <!-- Background -->
+                            <rect width="500" height="400" fill="#fafafa"/>
+                            
+                            <!-- Card 1 -->
+                            <rect x="30" y="30" width="440" height="90" rx="4" fill="white" stroke="#e0e0e0" stroke-width="1"/>
+                            <circle cx="55" cy="75" r="20" fill="#00b2a9" opacity="0.2"/>
+                            <text x="55" y="80" text-anchor="middle" fill="#00b2a9" font-size="16" font-weight="700">JS</text>
+                            <text x="90" y="65" fill="#161616" font-size="15" font-weight="600">João Silva</text>
+                            <text x="90" y="85" fill="#525252" font-size="13">joao@exemplo.com</text>
+                            <rect x="90" y="92" width="50" height="20" rx="10" fill="#e7f5ec"/>
+                            <text x="100" y="106" fill="#0f5223" font-size="11" font-weight="600">Ativo</text>
+                            <!-- Arrow icon -->
+                            <path d="M 440,75 L 450,75 M 445,70 L 450,75 L 445,80" fill="none" stroke="#8d8d8d" stroke-width="2"/>
+                            
+                            <!-- Card 2 -->
+                            <rect x="30" y="132" width="440" height="90" rx="4" fill="white" stroke="#e0e0e0" stroke-width="1"/>
+                            <circle cx="55" cy="177" r="20" fill="#005751" opacity="0.2"/>
+                            <text x="55" y="182" text-anchor="middle" fill="#005751" font-size="16" font-weight="700">MS</text>
+                            <text x="90" y="167" fill="#161616" font-size="15" font-weight="600">Maria Santos</text>
+                            <text x="90" y="187" fill="#525252" font-size="13">maria@exemplo.com</text>
+                            <rect x="90" y="194" width="50" height="20" rx="10" fill="#e7f5ec"/>
+                            <text x="100" y="208" fill="#0f5223" font-size="11" font-weight="600">Ativo</text>
+                            <path d="M 440,177 L 450,177 M 445,172 L 450,177 L 445,182" fill="none" stroke="#8d8d8d" stroke-width="2"/>
+                            
+                            <!-- Card 3 -->
+                            <rect x="30" y="234" width="440" height="90" rx="4" fill="white" stroke="#e0e0e0" stroke-width="1"/>
+                            <circle cx="55" cy="279" r="20" fill="#00b2a9" opacity="0.2"/>
+                            <text x="55" y="284" text-anchor="middle" fill="#00b2a9" font-size="16" font-weight="700">PC</text>
+                            <text x="90" y="269" fill="#161616" font-size="15" font-weight="600">Pedro Costa</text>
+                            <text x="90" y="289" fill="#525252" font-size="13">pedro@exemplo.com</text>
+                            <rect x="90" y="296" width="60" height="20" rx="10" fill="#fff0e6"/>
+                            <text x="100" y="310" fill="#8f6b00" font-size="11" font-weight="600">Inativo</text>
+                            <path d="M 440,279 L 450,279 M 445,274 L 450,279 L 445,284" fill="none" stroke="#8d8d8d" stroke-width="2"/>
+                            
+                            <!-- Load More Button -->
+                            <rect x="170" y="345" width="160" height="40" rx="4" fill="white" stroke="#e0e0e0" stroke-width="1.5"/>
+                            <text x="250" y="370" text-anchor="middle" fill="#161616" font-size="14" font-weight="500">Carregar mais</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">Template Grid</h3>
+
+                <p style="margin-bottom: var(--spacing-06);">
+                    Template Grid exibe dados em grid responsivo (2, 3 ou 4 colunas). Use para galerias, catálogos de produtos, dashboards de KPIs.
+                </p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Breakpoint</th>
+                            <th style="width: 70%;">Colunas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Desktop (> 1024px)</strong></td>
+                            <td>4 colunas, gap 24px</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tablet (768-1024px)</strong></td>
+                            <td>3 colunas, gap 16px</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mobile (< 768px)</strong></td>
+                            <td>1 coluna, gap 12px</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ========================================
+                 FORM COMPONENTS
+            ======================================== -->
+            <section id="form-components" class="section">
+                <h2 class="section-title">Form Components</h2>
+
+                <h3 class="subsection-title">Text Input</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Estado</th>
+                            <th style="width: 75%;">Estilo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Default</strong></td>
+                            <td>Border <code>#e0e0e0</code> 1.5px, border-radius 4px, padding 12px, altura 44px</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Focus</strong></td>
+                            <td>Border <code>#0f62fe</code> 2px, box-shadow 0 0 0 3px rgba(15, 98, 254, 0.1)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Error</strong></td>
+                            <td>Border <code>#bb0000</code> 2px, mensagem abaixo em vermelho com ícone <code>ph-warning</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Success</strong></td>
+                            <td>Border <code>#24a148</code> 2px, ícone <code>ph-check</code> à direita</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Disabled</strong></td>
+                            <td>Background <code>#f5f5f5</code>, border <code>#e0e0e0</code>, texto <code>#8d8d8d</code>, cursor not-allowed</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="example-accordion">
+                    <div class="example-toggle" onclick="toggleExample(this)">
+                        <span><i class="ph-fill ph-image"></i> Ver exemplo: Form com validações</span>
+                        <i class="ph ph-caret-down"></i>
+                    </div>
+                    <div class="example-content">
+                        <svg viewBox="0 0 500 380" style="width: 100%; max-width: 500px; display: block; margin: 0 auto;">
+                            <!-- Background -->
+                            <rect width="500" height="380" fill="#fafafa"/>
+                            
+                            <!-- Container -->
+                            <rect x="40" y="30" width="420" height="320" fill="white" rx="8" stroke="#e0e0e0" stroke-width="1"/>
+                            
+                            <!-- Title -->
+                            <text x="60" y="65" fill="#161616" font-size="18" font-weight="700">Cadastro de Usuário</text>
+                            
+                            <!-- Nome (Success) -->
+                            <text x="60" y="105" fill="#161616" font-size="13" font-weight="500">Nome *</text>
+                            <rect x="60" y="112" width="380" height="44" rx="4" fill="white" stroke="#24a148" stroke-width="2"/>
+                            <text x="72" y="139" fill="#161616" font-size="13">João Silva</text>
+                            <!-- Check icon -->
+                            <circle cx="420" cy="134" r="10" fill="#24a148"/>
+                            <path d="M 415,134 L 418,137 L 425,130" fill="none" stroke="white" stroke-width="2"/>
+                            
+                            <!-- Email (Error) -->
+                            <text x="60" y="185" fill="#161616" font-size="13" font-weight="500">Email *</text>
+                            <rect x="60" y="192" width="380" height="44" rx="4" fill="white" stroke="#bb0000" stroke-width="2"/>
+                            <text x="72" y="219" fill="#161616" font-size="13">joaoexemplo.com</text>
+                            <!-- Error message -->
+                            <g transform="translate(60, 245)">
+                                <path d="M 0,-6 L -5,4 L 5,4 Z" fill="#bb0000"/>
+                                <text x="10" y="4" fill="#bb0000" font-size="12">Formato de email inválido</text>
+                            </g>
+                            
+                            <!-- Telefone (Default) -->
+                            <text x="60" y="280" fill="#161616" font-size="13" font-weight="500">Telefone</text>
+                            <text x="130" y="280" fill="#525252" font-size="12" font-style="italic">(Opcional)</text>
+                            <rect x="60" y="287" width="380" height="44" rx="4" fill="white" stroke="#e0e0e0" stroke-width="1.5"/>
+                            <text x="72" y="314" fill="#8d8d8d" font-size="13">(11) 99999-9999</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">Select / Dropdown</h3>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Diretrizes:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li>Mesmas medidas de Text Input (44px altura)</li>
+                    <li>Ícone dropdown: <code>ph-caret-down</code> à direita, cor <code>#525252</code></li>
+                    <li>Menu dropdown: background branco, border <code>#e0e0e0</code>, elevation-02</li>
+                    <li>Item hover: background <code>#f5f5f5</code></li>
+                    <li>Item selected: background <code>#00b2a9</code> 10% opacity, texto laranja bold</li>
+                </ul>
+
+                <h3 class="subsection-title">Checkbox & Radio</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Tipo</th>
+                            <th style="width: 75%;">Especificações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Checkbox</strong></td>
+                            <td>20x20px, border <code>#8d8d8d</code> 2px, border-radius 2px<br>Checked: background <code>#00b2a9</code>, ícone <code>ph-check</code> branco</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Radio</strong></td>
+                            <td>20x20px círculo, border <code>#8d8d8d</code> 2px<br>Selected: border <code>#00b2a9</code>, círculo interno 10px <code>#00b2a9</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Label</strong></td>
+                            <td>Alinhado à direita, gap 8px, cor <code>#161616</code>, cursor pointer em toda área clicável</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subsection-title">Date Picker</h3>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Calendário dropdown:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li>Header: mês/ano em verde escuro <code>#005751</code></li>
+                    <li>Dias da semana: texto <code>#525252</code> uppercase, 12px</li>
+                    <li>Dia atual: border laranja <code>#00b2a9</code> 2px</li>
+                    <li>Dia selecionado: background laranja <code>#00b2a9</code>, texto branco</li>
+                    <li>Dias outros meses: texto <code>#8d8d8d</code></li>
+                    <li>Hover: background <code>#f5f5f5</code></li>
+                </ul>
+
+                <h3 class="subsection-title">Validation Messages</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Tipo</th>
+                            <th style="width: 15%;">Ícone</th>
+                            <th style="width: 65%;">Mensagem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Error</strong></td>
+                            <td><code>ph-warning</code></td>
+                            <td>Cor <code>#bb0000</code>, posição: abaixo do input, 12px font-size</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Warning</strong></td>
+                            <td><code>ph-warning-circle</code></td>
+                            <td>Cor <code>#8f6b00</code> (amarelo escuro), opcional: ícone à esquerda</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Helper Text</strong></td>
+                            <td>-</td>
+                            <td>Cor <code>#525252</code>, italic, abaixo do input</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Required</strong></td>
+                            <td>*</td>
+                            <td>Asterisco vermelho <code>#bb0000</code> após label</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ========================================
+                 LAYOUT TEMPLATES
+            ======================================== -->
+            <section id="layout-templates" class="section">
+                <h2 class="section-title">Layout Templates</h2>
+
+                <h3 class="subsection-title">Master Page: Sidebar Navigation</h3>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Estrutura:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-06); line-height: 1.8;">
+                    <li>Header: 60px altura, verde <code>#005751</code>, logo à esquerda, ícones utilitários à direita</li>
+                    <li>Sidebar: 240px largura (desktop), background <code>#fafafa</code>, border-right <code>#e0e0e0</code></li>
+                    <li>Content: padding 40px 64px, max-width 1280px</li>
+                    <li>Mobile: sidebar colapsa em drawer, header permanece fixo</li>
+                </ul>
+
+                <div class="alert info">
+                    <i class="ph-fill ph-lightbulb alert-icon"></i>
+                    <div>
+                        <strong>Dica:</strong> Use o wireframe da seção "Navigation" como referência para implementar no Mendix Studio Pro.
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">Dashboard Layout</h3>
+
+                <p style="margin-bottom: var(--spacing-06);">
+                    Use Template Grid com KPI cards no topo (4 colunas) + gráficos abaixo (2 colunas). Configure breakpoints para empilhar em mobile.
+                </p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Seção</th>
+                            <th style="width: 70%;">Especificação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>KPI Cards</strong></td>
+                            <td>Altura 120px, border <code>#e0e0e0</code>, border-radius 8px, padding 24px, gap 24px</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Chart Containers</strong></td>
+                            <td>Min-height 400px, background branco, border <code>#e0e0e0</code>, padding 24px</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Spacing</strong></td>
+                            <td>Gap entre seções: 32px (vertical), 24px (horizontal)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subsection-title">Form Layout (2 Colunas)</h3>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Quando usar 2 colunas:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-06); line-height: 1.8;">
+                    <li>Formulários com 6+ campos</li>
+                    <li>Desktop only (em mobile empilha para 1 coluna)</li>
+                    <li>Campos relacionados lado a lado (ex: Nome | Sobrenome)</li>
+                </ul>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Especificações:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li>Gap entre colunas: 24px</li>
+                    <li>Gap entre campos: 16px (vertical)</li>
+                    <li>Labels: acima do input (não à esquerda)</li>
+                    <li>Botões de ação: final do formulário, alinhados à direita</li>
+                </ul>
+            </section>
+
+            <!-- ========================================
+                 INTERACTIVE PATTERNS
+            ======================================== -->
+            <section id="interactive-patterns" class="section">
+                <h2 class="section-title">Interactive Patterns</h2>
+
+                <h3 class="subsection-title">Filtros</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Padrão</th>
+                            <th style="width: 70%;">Quando Usar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Filtros no Topo</strong></td>
+                            <td>Para 1-3 filtros simples (select, date range). Alinhados horizontalmente acima do Data Grid.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sidebar de Filtros</strong></td>
+                            <td>Para 4+ filtros ou filtros complexos (múltiplos checkboxes). Sidebar 280px à esquerda do conteúdo.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Modal de Filtros</strong></td>
+                            <td>Mobile only. Botão "Filtrar" abre modal com todos os filtros.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="example-accordion">
+                    <div class="example-toggle" onclick="toggleExample(this)">
+                        <span><i class="ph-fill ph-image"></i> Ver exemplo: Filtros no Topo</span>
+                        <i class="ph ph-caret-down"></i>
+                    </div>
+                    <div class="example-content">
+                        <svg viewBox="0 0 700 280" style="width: 100%; max-width: 700px; display: block; margin: 0 auto;">
+                            <!-- Background -->
+                            <rect width="700" height="280" fill="white"/>
+                            
+                            <!-- Title -->
+                            <text x="20" y="30" fill="#161616" font-size="18" font-weight="700">Usuários</text>
+                            
+                            <!-- Filter 1: Status -->
+                            <text x="20" y="70" fill="#525252" font-size="12" font-weight="500">Status</text>
+                            <rect x="20" y="77" width="180" height="44" rx="4" fill="white" stroke="#e0e0e0" stroke-width="1.5"/>
+                            <text x="32" y="104" fill="#161616" font-size="13">Todos</text>
+                            <path d="M 185,99 L 195,99 M 190,95 L 195,99 L 190,103" fill="none" stroke="#525252" stroke-width="1.5"/>
+                            
+                            <!-- Filter 2: Departamento -->
+                            <text x="220" y="70" fill="#525252" font-size="12" font-weight="500">Departamento</text>
+                            <rect x="220" y="77" width="200" height="44" rx="4" fill="white" stroke="#e0e0e0" stroke-width="1.5"/>
+                            <text x="232" y="104" fill="#161616" font-size="13">Tecnologia</text>
+                            <!-- Badge -->
+                            <rect x="350" y="91" width="50" height="22" rx="11" fill="#00b2a9"/>
+                            <text x="363" y="106" fill="white" font-size="11" font-weight="600">Ativo</text>
+                            <path d="M 405,99 L 415,99 M 410,95 L 415,99 L 410,103" fill="none" stroke="#525252" stroke-width="1.5"/>
+                            
+                            <!-- Filter 3: Data Range -->
+                            <text x="440" y="70" fill="#525252" font-size="12" font-weight="500">Período</text>
+                            <rect x="440" y="77" width="160" height="44" rx="4" fill="white" stroke="#e0e0e0" stroke-width="1.5"/>
+                            <text x="452" y="104" fill="#161616" font-size="13">Último mês</text>
+                            <!-- Calendar icon -->
+                            <g transform="translate(575, 99)">
+                                <rect x="-8" y="-8" width="16" height="16" rx="2" fill="none" stroke="#525252" stroke-width="1.5"/>
+                                <line x1="-4" y1="-8" x2="-4" y2="-10" stroke="#525252" stroke-width="1.5"/>
+                                <line x1="4" y1="-8" x2="4" y2="-10" stroke="#525252" stroke-width="1.5"/>
+                                <line x1="-8" y1="-3" x2="8" y2="-3" stroke="#525252" stroke-width="1.5"/>
+                            </g>
+                            
+                            <!-- Search (right) -->
+                            <rect x="420" y="77" width="260" height="44" rx="4" fill="white" stroke="#e0e0e0" stroke-width="1.5"/>
+                            <!-- Search icon -->
+                            <g transform="translate(438, 99)">
+                                <circle cx="0" cy="0" r="7" fill="none" stroke="#8d8d8d" stroke-width="1.5"/>
+                                <line x1="5" y1="5" x2="9" y2="9" stroke="#8d8d8d" stroke-width="1.5"/>
+                            </g>
+                            <text x="458" y="104" fill="#8d8d8d" font-size="13">Buscar por nome...</text>
+                            
+                            <!-- Divider -->
+                            <line x1="20" y1="145" x2="680" y2="145" stroke="#e0e0e0" stroke-width="1"/>
+                            
+                            <!-- Results info -->
+                            <text x="20" y="175" fill="#525252" font-size="13">247 resultados encontrados</text>
+                            
+                            <!-- Data Grid Preview (simplified) -->
+                            <rect x="20" y="190" width="660" height="40" fill="#f5f5f5"/>
+                            <line x1="20" y1="230" x2="680" y2="230" stroke="#e0e0e0" stroke-width="2"/>
+                            <text x="35" y="215" fill="#161616" font-size="12" font-weight="600">Nome</text>
+                            <text x="250" y="215" fill="#161616" font-size="12" font-weight="600">Email</text>
+                            <text x="500" y="215" fill="#161616" font-size="12" font-weight="600">Depto</text>
+                            
+                            <rect x="20" y="230" width="660" height="40" fill="white"/>
+                            <text x="35" y="255" fill="#161616" font-size="12">João Silva</text>
+                            <text x="250" y="255" fill="#525252" font-size="12">joao@exemplo.com</text>
+                            <text x="500" y="255" fill="#525252" font-size="12">Tecnologia</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="alert warning">
+                    <i class="ph-fill ph-warning alert-icon"></i>
+                    <div>
+                        <strong>Atenção:</strong> Sempre mostre quantos filtros estão ativos. Exemplo: "Filtrar (3)" ou badge laranja com número.
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">Search / Busca</h3>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Especificações:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li>Input: 300px largura (desktop), altura 44px</li>
+                    <li>Ícone: <code>ph-magnifying-glass</code> à esquerda dentro do input, cor <code>#8d8d8d</code></li>
+                    <li>Placeholder: "Buscar por nome, email..." (específico, não genérico)</li>
+                    <li>Posição: topo direito da Data Grid ou List View</li>
+                    <li>Comportamento: busca em tempo real (debounce 300ms) ou botão "Buscar"</li>
+                    <li>Clear: ícone <code>ph-x</code> à direita quando há texto, clique limpa</li>
+                </ul>
+
+                <h3 class="subsection-title">Paginação</h3>
+
+                <p style="margin-bottom: var(--spacing-06);">
+                    Use paginação em Data Grids e List Views com mais de 25 itens. Prefira "Load More" para mobile.
+                </p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Elemento</th>
+                            <th style="width: 70%;">Implementação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Informação</strong></td>
+                            <td>"Mostrando 1-25 de 142 resultados" - alinhado à esquerda</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Controles</strong></td>
+                            <td>Botões Previous/Next + números de página - alinhados à direita</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Página Atual</strong></td>
+                            <td>Background laranja <code>#00b2a9</code>, texto branco, não clicável</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Outras Páginas</strong></td>
+                            <td>Botões secondary style, mostrar no máximo 7 números (1 ... 4 5 6 ... 10)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subsection-title">Breadcrumbs</h3>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Estrutura:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li>Posição: abaixo do header, antes do título da página</li>
+                    <li>Separador: <code>ph-caret-right</code> ou "/" cinza <code>#8d8d8d</code></li>
+                    <li>Links: cor <code>#0f62fe</code> (interactive blue), hover underline</li>
+                    <li>Página atual: texto <code>#525252</code>, não clicável</li>
+                    <li>Máximo: 4 níveis (Home > Seção > Subseção > Atual)</li>
+                </ul>
+            </section>
+
+            <!-- ========================================
+                 STATES & FEEDBACK
+            ======================================== -->
+            <section id="states-feedback" class="section">
+                <h2 class="section-title">States & Feedback</h2>
+
+                <h3 class="subsection-title">Loading States</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Contexto</th>
+                            <th style="width: 70%;">Implementação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Page Load</strong></td>
+                            <td>Spinner centralizado, cor primária <code>#00b2a9</code>, 48px diâmetro</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Button Action</strong></td>
+                            <td>Spinner dentro do botão (20px), botão disabled, texto "Processando..."</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data Grid Load</strong></td>
+                            <td>Skeleton screens: 5 linhas com animação shimmer cinza claro</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Inline Load</strong></td>
+                            <td>Spinner pequeno (16px) ao lado do texto "Carregando..."</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subsection-title">Empty States</h3>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Componentes:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li>Ícone: <code>ph-folder-open</code>, <code>ph-magnifying-glass</code> ou <code>ph-list-dashes</code>, tamanho 64px, cor <code>#8d8d8d</code></li>
+                    <li>Título: "Nenhum [item] encontrado", fonte 20px, cor <code>#161616</code></li>
+                    <li>Descrição: texto auxiliar explicando o estado, 14px, cor <code>#525252</code></li>
+                    <li>Ação (opcional): botão primary "Criar [item]" se aplicável</li>
+                    <li>Centralizado vertical e horizontalmente</li>
+                </ul>
+
+                <h3 class="subsection-title">Error States</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Tipo de Erro</th>
+                            <th style="width: 70%;">Tratamento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Page Error</strong></td>
+                            <td>Ícone <code>ph-warning-octagon</code> 64px vermelho, mensagem "Algo deu errado", botão "Recarregar página"</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Form Validation</strong></td>
+                            <td>Mensagens inline abaixo de cada campo (ver seção Form Components)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Action Failed</strong></td>
+                            <td>Toast notification vermelha <code>#bb0000</code>, duração 4s, ícone <code>ph-x-circle</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Network Error</strong></td>
+                            <td>Banner no topo da página: "Conexão perdida", cor warning <code>#f1c21b</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subsection-title">Success Feedback</h3>
+
+                <p style="margin-bottom: var(--spacing-06);">
+                    Use toast notifications verdes para confirmações de ações (salvar, excluir, enviar). Duração: 2-3 segundos.
+                </p>
+
+                <div class="alert success">
+                    <i class="ph-fill ph-check-circle alert-icon"></i>
+                    <div>
+                        <strong>Padrão:</strong> Toast verde <code>#24a148</code> canto inferior direito, ícone <code>ph-check-circle</code>, mensagem específica "Item salvo com sucesso".
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 RESPONSIVE GUIDELINES
+            ======================================== -->
+            <section id="responsive" class="section">
+                <h2 class="section-title">Responsive Guidelines</h2>
+
+                <h3 class="subsection-title">Breakpoints</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Device</th>
+                            <th style="width: 25%;">Breakpoint</th>
+                            <th style="width: 50%;">Ajustes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Desktop</strong></td>
+                            <td>> 1024px</td>
+                            <td>Layout completo, sidebar visível, 4 colunas em grids</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tablet</strong></td>
+                            <td>768-1024px</td>
+                            <td>Sidebar colapsável, 3 colunas em grids, formulários 2 colunas</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mobile</strong></td>
+                            <td>< 768px</td>
+                            <td>Sidebar = drawer, 1 coluna, forms empilhados, bottom navigation</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subsection-title">Mobile-Specific Patterns</h3>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Touch Targets:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-06); line-height: 1.8;">
+                    <li>Tamanho mínimo: 44x44px para todos os elementos clicáveis</li>
+                    <li>Espaçamento mínimo entre botões: 8px</li>
+                    <li>Botões primary em mobile: full-width com 48px altura</li>
+                </ul>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Navigation:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-06); line-height: 1.8;">
+                    <li>Header fixo no topo (60px), com hamburger menu à esquerda</li>
+                    <li>Bottom navigation opcional: 56px altura, máximo 5 itens</li>
+                    <li>Sidebar drawer desliza da esquerda, overlay escuro com opacity 0.5</li>
+                </ul>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Content:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li>Padding lateral: 16px (mínimo)</li>
+                    <li>Data Grids: converter para List View em mobile (cards empilhados)</li>
+                    <li>Formulários: sempre 1 coluna, labels acima dos inputs</li>
+                    <li>Modais: full-screen em mobile (não popups)</li>
+                </ul>
+
+                <div class="alert critical">
+                    <i class="ph-fill ph-warning-octagon alert-icon"></i>
+                    <div>
+                        <strong>Obrigatório:</strong> Teste TODAS as telas em mobile antes de homologar. Use Chrome DevTools ou dispositivo real.
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 NÃO FAZER (ANTI-PATTERNS)
+            ======================================== -->
+            <section id="nao-fazer" class="section">
+                <h2 class="section-title">Não Fazer (Anti-patterns)</h2>
+
+                <div class="alert critical">
+                    <i class="ph-fill ph-warning-octagon alert-icon"></i>
+                    <div>
+                        <strong>Critical: Estas práticas são proibidas</strong><br>
+                        Violações podem resultar em aplicações quebradas, difíceis de manter ou inacessíveis.
+                    </div>
+                </div>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">Não Faça Isso</th>
+                            <th style="width: 60%;">Faça Isso Ao Invés</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="dont">Custom CSS com <code>!important</code> para sobrescrever Atlas UI</td>
+                            <td class="do">Configure via <code>settings.json</code> ou use classes do Atlas UI</td>
+                        </tr>
+                        <tr>
+                            <td class="dont">Usar cores fora da paleta GCB</td>
+                            <td class="do">Mapear todas as necessidades para as 6 cores brand + 4 semânticas</td>
+                        </tr>
+                        <tr>
+                            <td class="dont">Widgets de marketplace não aprovados</td>
+                            <td class="do">Use apenas widgets nativos ou aprovados pela equipe Tecnova</td>
+                        </tr>
+                        <tr>
+                            <td class="dont">Hardcode de valores (px, cores) direto nos widgets</td>
+                            <td class="do">Use variáveis de tema e classes reutilizáveis</td>
+                        </tr>
+                        <tr>
+                            <td class="dont">Layouts que quebram em mobile/tablet</td>
+                            <td class="do">Teste em todos os breakpoints antes de homologar</td>
+                        </tr>
+                        <tr>
+                            <td class="dont">Textos em imagens (não acessível, não traduzível)</td>
+                            <td class="do">Use texto HTML estilizado + ícones quando aplicável</td>
+                        </tr>
+                        <tr>
+                            <td class="dont">Ignorar estados de foco (acessibilidade)</td>
+                            <td class="do">Garanta que todos os elementos interativos têm focus state visível</td>
+                        </tr>
+                        <tr>
+                            <td class="dont">Micromanage layout com absolute positioning</td>
+                            <td class="do">Use layout grid e flexbox do Atlas UI</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ========================================
+                 CHECKLIST DE QUALIDADE
+            ======================================== -->
+            <section id="checklist" class="section">
+                <h2 class="section-title">Checklist de Qualidade</h2>
+
+                <p style="margin-bottom: var(--spacing-06);">
+                    Use este checklist antes de cada deploy. Todos os itens devem estar validados para homologação.
+                </p>
+
+                <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06);">
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: var(--spacing-05); display: flex; align-items: center; gap: var(--spacing-03);">
+                        <i class="ph-fill ph-clipboard-text" style="color: var(--color-primary);"></i>
+                        Review Obrigatório
+                    </h3>
+                    
+                    <div style="display: grid; gap: var(--spacing-04);">
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Todas as cores usadas estão na paleta GCB (primárias, semânticas ou grayscale)</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Tipografia usa Inter (ou fallback do sistema) - sem fontes custom não aprovadas</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Ícones usam Font Awesome seguindo tabela de equivalência Phosphor → FA</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Espaçamentos seguem grid 8px (classes spacing-* do Atlas UI)</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Botões primários são teal / verde-água (<code>#00b2a9</code>) e secundários são brancos com borda</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Layout responsivo funciona em mobile (< 768px), tablet (768-1024px) e desktop (> 1024px)</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Todos os elementos interativos têm estados hover e focus visíveis</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Nenhum custom CSS com !important ou absolute positioning desnecessário</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Forms têm validação clara com feedback semântico (success/error/warning)</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Logo GCB presente em login screen e header de aplicação logada</span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 RECURSOS E REFERÊNCIAS
+            ======================================== -->
+            <section id="recursos" class="section">
+                <h2 class="section-title">Recursos e Referências</h2>
+
+                <h3 class="subsection-title">Documentação Oficial</h3>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li><a href="https://docs.mendix.com/howto/front-end/atlas-ui/" target="_blank" style="color: var(--color-interactive);">Atlas UI Documentation</a></li>
+                    <li><a href="https://docs.mendix.com/howto/front-end/customize-styling-new/" target="_blank" style="color: var(--color-interactive);">Customize Styling</a></li>
+                    <li><a href="https://docs.mendix.com/refguide/layout/" target="_blank" style="color: var(--color-interactive);">Layout Widget Reference</a></li>
+                    <li><a href="https://marketplace.mendix.com/" target="_blank" style="color: var(--color-interactive);">Mendix Marketplace</a></li>
+                </ul>
+
+                <h3 class="subsection-title">Design System GCB</h3>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li><a href='v-fundamentos.html' style='color: var(--color-interactive);'>Fundamentos (Cores, Tipografia, Espaçamentos)</a></li>
+                    <li><a href='v-componentes-web.html' style='color: var(--color-interactive);'>Componentes Web (Botões, Forms, Navigation)</a></li>
+                </ul>
+
+                <div class="alert info">
+                    <i class="ph-fill ph-lightbulb alert-icon"></i>
+                    <div>
+                        <strong>Dúvidas ou Sugestões?</strong><br>
+                        Entre em contato com a equipe Tecnova para esclarecer dúvidas sobre customização ou propor melhorias nestas diretrizes.
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="ph ph-check-circle"></i>
+        <span id="toast-message">Copiado!</span>
+    </div>
+
+    <script>
+        // Função para mostrar toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.textContent = message;
+            toast.classList.add('show', 'success');
+            
+            setTimeout(() => {
+                toast.classList.remove('show', 'success');
+            }, 2000);
+        }
+
+        // Função para copiar código HEX
+        function copyHex(hexCode, element) {
+            navigator.clipboard.writeText(hexCode).then(() => {
+                showToast(`${hexCode} copiado!`);
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+            });
+        }
+
+        // Função para toggle de acordeões
+        function toggleExample(toggle) {
+            const content = toggle.nextElementSibling;
+            const isActive = toggle.classList.contains('active');
+            
+            // Fechar todos os outros acordeões
+            document.querySelectorAll('.example-toggle.active').forEach(t => {
+                if (t !== toggle) {
+                    t.classList.remove('active');
+                    t.nextElementSibling.classList.remove('active');
+                }
+            });
+            
+            // Toggle o acordeão clicado
+            if (isActive) {
+                toggle.classList.remove('active');
+                content.classList.remove('active');
+            } else {
+                toggle.classList.add('active');
+                content.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

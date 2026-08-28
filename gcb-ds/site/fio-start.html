@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=ai-legible&utm_source=comment&utm_medium=referral&utm_id=782bdad0-ac75-44d4-8b10-176ebb1cb13d
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="hosting-provider" content="Netlify">
+<meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=782bdad0-ac75-44d4-8b10-176ebb1cb13d">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="assets/icons/icone-brennand.svg">
+<meta name="description" content="Fio Start — monte prompts guiados para ir da ideia ao protótipo com o DS GCB">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Design System GCB">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:title" content="Fio Start · Da ideia ao protótipo">
+    <meta property="og:description" content="Fio Start — monte prompts guiados para ir da ideia ao protótipo com o DS GCB">
+    <meta property="og:url" content="https://gcb-ds.netlify.app/fio-start.html">
+    <meta property="og:image" content="https://gcb-ds.netlify.app/assets/og/og-fio.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Fio · Tecnova — pipeline de design do problema à especificação">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Fio Start · Da ideia ao protótipo">
+    <meta name="twitter:description" content="Fio Start — monte prompts guiados para ir da ideia ao protótipo com o DS GCB">
+    <meta name="twitter:image" content="https://gcb-ds.netlify.app/assets/og/og-fio.png">
+<title>Fio Start · Da ideia ao protótipo</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=space-grotesk@700,600,500,400&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#175ce5;--blue-ghost:rgba(23,92,229,.08);--blue-border:rgba(23,92,229,.2);--blue-hover:#1450cc;
+  --surface-base:#f9f9f9;--white:#ffffff;--surface-raised:#f4f4f6;--surface-border:#e4e4e8;
+  --text-default:#1a1d22;--text-secondary:#565b66;--text-subtle:#757a85;
+  --font:'Space Grotesk',sans-serif;
+  --brand:var(--blue);--brand-l:var(--blue-ghost);--brand-m:var(--blue-border);--brand-d:var(--blue-hover);
+  --teal:#0d9488;--teal-l:rgba(13,148,136,.07);--teal-m:rgba(13,148,136,.2);
+  --purple:#7c3aed;--purple-l:rgba(124,58,237,.07);--purple-m:rgba(124,58,237,.2);
+  --orange:#ea580c;--orange-l:rgba(234,88,12,.07);--orange-m:rgba(234,88,12,.2);
+  --gray:#6b7280;--gray-l:rgba(107,114,128,.06);--gray-m:rgba(107,114,128,.18);
+  --green:#16a34a;--green-l:rgba(22,163,74,.07);--green-m:rgba(22,163,74,.2);
+  --bg:var(--surface-base);--bg-c:var(--white);--bg-l:var(--surface-raised);
+  --br:var(--surface-border);--br2:#eceef2;
+  --tx:var(--text-default);--tx2:var(--text-secondary);--tx3:var(--text-subtle);
+  --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);height:100vh;display:flex;flex-direction:column;overflow:hidden;font-size:13px;font-family:var(--font)}
+
+/* ── Header ── */
+.hdr{height:52px;background:var(--bg-c);border-bottom:1px solid var(--br);display:flex;align-items:center;gap:12px;padding:0 20px;flex-shrink:0;z-index:200;position:relative}
+.hdr::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--brand)}
+.hname{font-size:13px;font-weight:700;color:var(--tx);letter-spacing:-.02em;flex-shrink:0}
+.hname span{color:var(--brand)}
+.htag{font-family:var(--mono);font-size:9px;color:var(--tx3);background:var(--bg-l);border:1px solid var(--br);border-radius:3px;padding:2px 7px}
+.hdiv{width:1px;height:16px;background:var(--br);flex-shrink:0}
+.hbtn{font-family:var(--font);font-size:11px;font-weight:500;padding:4px 11px;border-radius:4px;border:1px solid var(--br);background:transparent;color:var(--tx2);cursor:pointer;transition:all .12s;white-space:nowrap}
+.hbtn:hover{border-color:var(--brand);color:var(--brand)}
+.hbtn.on{background:var(--brand-l);color:var(--brand);border-color:var(--brand-m)}
+.hright{margin-left:auto;display:flex;align-items:center;gap:6px}
+
+/* ── Canvas ── */
+.vp{flex:1;overflow:hidden;cursor:grab;position:relative;background:var(--bg)}
+.vp.grabbing{cursor:grabbing}
+.cv{transform-origin:0 0;position:absolute;top:0;left:0}
+.gw{display:inline-block;padding:28px 120px 160px 28px}
+.grid-row{display:flex;flex-direction:row}
+.corner-col{width:172px;min-width:172px;height:66px;background:var(--bg-c);border-right:2px solid var(--br);border-bottom:2px solid var(--br);flex-shrink:0;display:flex;align-items:center;padding:0 14px;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);font-family:var(--mono)}
+.col-hdr{height:66px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:8px 14px;border-right:1px solid var(--br);border-bottom:2px solid var(--br);background:var(--bg-c);flex-shrink:0}
+.col-n{font-family:var(--mono);font-size:8px;color:var(--tx3)}
+.col-lbl{font-size:11px;font-weight:600;color:var(--tx);letter-spacing:-.01em;line-height:1.2}
+.col-mode{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:8px;padding:2px 6px;border-radius:2px;border:1px solid;width:fit-content}
+.col-mode.convergir{color:var(--brand);border-color:var(--brand-m);background:var(--brand-l)}
+.col-mode.divergir{color:var(--purple);border-color:var(--purple-m);background:var(--purple-l)}
+.row-lbl{width:172px;min-width:172px;position:relative;padding:12px 10px 12px 18px;background:var(--bg-c);border-right:2px solid var(--br);border-bottom:1px solid var(--br2);display:flex;flex-direction:column;justify-content:flex-start;gap:5px;flex-shrink:0;min-height:120px}
+.row-bar{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:0 2px 2px 0}
+.row-name{font-size:11px;font-weight:600;color:var(--tx);line-height:1.3;letter-spacing:-.01em}
+.row-sub{font-size:8px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--tx3);line-height:1.45}
+.cell{min-height:120px;padding:9px;border-right:1px solid var(--br2);border-bottom:1px solid var(--br2);display:flex;flex-direction:column;gap:4px;align-items:flex-start;flex-shrink:0;background:var(--bg-c);transition:background .1s}
+.cell-dir{min-height:80px;padding:10px 12px;border-right:1px solid var(--br2);border-bottom:1px solid var(--br2);flex-shrink:0;background:rgba(23,92,229,.015)}
+.cell-dir-label{font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);margin-bottom:2px}
+.cell-dir-q{font-size:11px;font-weight:600;color:var(--tx);line-height:1.45;margin-bottom:8px}
+.cell-dir-w{font-size:10px;color:var(--tx2);line-height:1.5;font-style:italic}
+.tag-list{display:flex;flex-wrap:wrap;gap:3px}
+.tag{font-size:9px;font-weight:500;padding:2px 7px;border-radius:3px;border:1px solid;white-space:nowrap;line-height:1.55}
+.t-out{background:var(--gray-l);color:var(--gray);border-color:var(--gray-m);font-weight:600;font-size:10px;padding:3px 8px}
+.t-info{background:var(--blue-ghost);color:var(--blue);border-color:var(--blue-border);cursor:pointer;transition:all .12s}
+.t-info:hover{background:rgba(23,92,229,.14);border-color:rgba(23,92,229,.4)}
+
+/* ── Content modal ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(17,24,39,.3);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--bg-c);border:1px solid var(--br);border-radius:8px;padding:22px 24px;max-width:560px;width:92%;max-height:86vh;overflow-y:auto;box-shadow:0 20px 60px rgba(17,24,39,.14);position:relative}
+.modal-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--tx3);font-size:18px;cursor:pointer;padding:4px 8px;border-radius:4px;transition:all .12s;line-height:1}
+.modal-close:hover{color:var(--tx);background:var(--bg-l)}
+.modal-badge{display:inline-flex;align-items:center;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:3px;border:1px solid;margin-bottom:10px;font-family:var(--mono)}
+.modal-title{font-size:15px;font-weight:700;color:var(--tx);line-height:1.3;margin-bottom:8px;letter-spacing:-.02em}
+.modal-sec{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);padding-bottom:5px;border-bottom:1px solid var(--br2);margin:14px 0 8px;font-family:var(--mono)}
+.modal-body{font-size:12px;color:var(--tx2);line-height:1.7}
+
+/* ── Legend ── */
+.legend{position:fixed;bottom:16px;right:56px;background:var(--bg-c);border:1px solid var(--br);border-radius:6px;padding:12px 15px;z-index:150;min-width:220px;box-shadow:0 4px 16px rgba(17,24,39,.06)}
+.legend.hidden{display:none}
+.leg-title{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:9px;font-family:var(--mono)}
+.leg-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:10px;color:var(--tx2)}
+.leg-swatch{width:24px;height:10px;border-radius:2px;flex-shrink:0;border:1px solid}
+
+/* ── Zoom bar ── */
+.zbar{position:fixed;right:14px;bottom:96px;display:flex;flex-direction:column;align-items:center;background:var(--bg-c);border:1px solid var(--br);border-radius:6px;padding:3px;z-index:150;box-shadow:0 2px 12px rgba(17,24,39,.07)}
+.zbar-btn{font-family:var(--mono);font-size:16px;font-weight:300;width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:none;color:var(--tx2);cursor:pointer;border-radius:4px;transition:background .1s;line-height:1}
+.zbar-btn:hover{background:var(--bg-l);color:var(--brand)}
+.zbar-sep{width:22px;height:1px;background:var(--br);margin:1px 0}
+.zbar-val{font-family:var(--mono);font-size:10px;color:var(--tx3);text-align:center;padding:5px 0;width:32px}
+
+/* ── Floating Builder Button ── */
+.builder-fab-stack{position:fixed;bottom:20px;right:14px;z-index:160;display:flex;flex-direction:column;align-items:center;gap:4px}
+.builder-fab{width:46px;height:46px;border-radius:50%;background:var(--brand);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(23,92,229,.4);transition:all .15s;color:#fff}
+.builder-fab:hover{background:var(--brand-d);transform:scale(1.07);box-shadow:0 6px 24px rgba(23,92,229,.5)}
+.builder-fab-caption{font-size:9px;font-weight:600;color:var(--tx2);letter-spacing:.02em;line-height:1;text-align:center}
+
+/* ── Builder Modal ── */
+.builder-overlay{display:none;position:fixed;inset:0;background:rgba(17,24,39,.35);backdrop-filter:blur(4px);z-index:600;align-items:center;justify-content:center}
+.builder-overlay.open{display:flex}
+.builder-box{background:var(--bg-c);border:1px solid var(--br);border-radius:10px;width:96%;max-width:580px;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 24px 72px rgba(17,24,39,.18);position:relative;overflow:hidden}
+.builder-header{padding:18px 24px 14px;border-bottom:1px solid var(--br);flex-shrink:0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.builder-title{font-size:14px;font-weight:700;color:var(--tx);letter-spacing:-.02em}
+.builder-subtitle{font-size:11px;color:var(--tx3);margin-top:2px}
+.builder-close{background:none;border:none;color:var(--tx3);font-size:18px;cursor:pointer;padding:2px 6px;border-radius:4px;transition:all .12s;line-height:1;flex-shrink:0}
+.builder-close:hover{color:var(--tx);background:var(--bg-l)}
+
+/* Step bar */
+.builder-stepbar{padding:14px 24px;border-bottom:1px solid var(--br2);display:flex;align-items:center;gap:0;flex-shrink:0}
+.bsi{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:600;color:var(--tx3);font-family:var(--mono);white-space:nowrap}
+.bsi-dot{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--br);background:var(--bg-l);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--tx3);transition:all .2s;flex-shrink:0}
+.bsi.active .bsi-dot{background:var(--brand);border-color:var(--brand);color:#fff}
+.bsi.done .bsi-dot{background:rgba(22,163,74,.15);border-color:rgba(22,163,74,.4);color:#15803d}
+.bsi.active{color:var(--tx)}
+.bsi-line{flex:1;height:1px;background:var(--br);margin:0 8px;min-width:16px}
+
+/* Builder panels */
+.builder-body{flex:1;overflow-y:auto;padding:20px 24px}
+.builder-body::-webkit-scrollbar{width:4px}
+.builder-body::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+.builder-panel{display:none}
+.builder-panel.active{display:block}
+.bp-label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;font-family:var(--mono)}
+
+/* Task cards */
+.task-card{padding:14px 16px;border:1.5px solid var(--br);border-radius:8px;cursor:pointer;transition:all .12s;margin-bottom:8px;position:relative}
+.task-card:hover{border-color:var(--brand-m);background:var(--brand-l)}
+.task-card.selected{border-color:var(--brand);background:var(--brand-l)}
+.task-card-n{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--tx3);margin-bottom:4px}
+.task-card.selected .task-card-n{color:var(--brand)}
+.task-card-label{font-size:13px;font-weight:600;color:var(--tx);line-height:1.3;margin-bottom:4px}
+.task-card-desc{font-size:11px;color:var(--tx2);line-height:1.5}
+.task-card-arrow{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--tx3);font-size:16px;transition:all .12s}
+.task-card:hover .task-card-arrow,.task-card.selected .task-card-arrow{color:var(--brand);transform:translateY(-50%) translateX(2px)}
+
+/* Brand selector */
+.brand-group{display:flex;gap:8px;margin-bottom:16px}
+.brand-btn{flex:1;padding:10px 12px;border:1.5px solid var(--br);border-radius:6px;cursor:pointer;text-align:center;transition:all .12s;background:var(--bg-c)}
+.brand-btn:hover{border-color:var(--brand-m);background:var(--brand-l)}
+.brand-btn.selected{border-color:var(--brand);background:var(--brand-l)}
+.brand-btn-name{font-size:12px;font-weight:600;color:var(--tx)}
+.brand-btn-sub{font-size:9px;color:var(--tx3);margin-top:2px;font-family:var(--mono)}
+
+/* Context step */
+.context-textarea{width:100%;min-height:140px;padding:12px;border:1.5px solid var(--br);border-radius:6px;font-family:var(--font);font-size:12px;color:var(--tx);background:var(--bg-l);resize:vertical;transition:border-color .12s;line-height:1.6}
+.context-textarea:focus{outline:none;border-color:var(--brand)}
+.context-hint{font-size:10px;color:var(--tx3);margin-top:6px;line-height:1.5}
+
+/* Annexes option */
+.annex-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid var(--br2);border-radius:6px;cursor:pointer;transition:all .12s;margin-bottom:12px}
+.annex-item:hover{border-color:var(--brand-m);background:var(--brand-l)}
+.annex-item.selected{border-color:var(--brand);background:var(--brand-l)}
+.annex-check{width:16px;height:16px;border:1.5px solid var(--br);border-radius:3px;background:var(--bg-c);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.annex-item.selected .annex-check{background:var(--brand);border-color:var(--brand)}
+.annex-check-mark{color:#fff;font-size:9px;display:none}
+.annex-item.selected .annex-check-mark{display:block}
+
+/* Result */
+.result-summary{background:var(--brand-l);border:1px solid var(--brand-m);border-radius:6px;padding:12px 14px;margin-bottom:14px}
+.result-summary-label{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);margin-bottom:6px}
+.result-summary-row{font-size:11px;color:var(--tx2);margin-bottom:3px;line-height:1.5}
+.result-summary-row span{font-weight:600;color:var(--tx)}
+.prompt-pre{font-family:var(--mono);font-size:10px;color:var(--tx2);line-height:1.65;white-space:pre-wrap;word-break:break-word;max-height:280px;overflow-y:auto;background:var(--bg-l);border:1px solid var(--br);border-radius:4px;padding:12px;margin-bottom:10px;mask-image:linear-gradient(to bottom,black calc(100% - 32px),transparent 100%);-webkit-mask-image:linear-gradient(to bottom,black calc(100% - 32px),transparent 100%)}
+.prompt-pre:hover,.prompt-pre:focus-within{mask-image:none;-webkit-mask-image:none}
+.prompt-pre::-webkit-scrollbar{width:3px}
+.prompt-pre::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+
+/* Builder nav */
+.builder-footer{padding:14px 24px;border-top:1px solid var(--br);display:flex;gap:8px;flex-shrink:0}
+.btn-primary{font-family:var(--font);font-size:12px;font-weight:600;padding:8px 18px;border-radius:5px;border:none;background:var(--brand);color:#fff;cursor:pointer;transition:all .12s;flex-shrink:0}
+.btn-primary:hover{background:var(--brand-d)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.btn-secondary{font-family:var(--font);font-size:12px;font-weight:500;padding:8px 14px;border-radius:5px;border:1px solid var(--br);background:transparent;color:var(--tx2);cursor:pointer;transition:all .12s}
+.btn-secondary:hover{border-color:var(--brand);color:var(--brand)}
+.btn-copy{font-family:var(--font);font-size:12px;font-weight:600;padding:8px 16px;border-radius:5px;border:1px solid var(--purple-m);background:var(--purple-l);color:var(--purple);cursor:pointer;transition:all .15s;flex:1}
+.btn-copy:hover{background:rgba(124,58,237,.13);border-color:rgba(124,58,237,.35)}
+
+/* Hints */
+.hint{position:fixed;bottom:16px;left:16px;font-size:10px;color:var(--tx3);font-family:var(--mono);display:flex;gap:12px;z-index:100}
+.hint kbd{background:var(--bg-c);border:1px solid var(--br);border-radius:3px;padding:1px 5px;font-size:9px}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div style="display:flex;align-items:baseline;gap:10px;flex-shrink:0">
+    <span class="hname">Fio <span>Start</span></span>
+    <span style="font-size:11px;color:var(--tx3)">·</span>
+    <span style="font-size:12px;font-weight:500;color:var(--tx2)">Da ideia ao protótipo</span>
+    <span class="htag">v1.0</span>
+  </div>
+  <div class="hdiv"></div>
+  <span style="font-size:11px;color:var(--tx3)">Tecnova · Soluções Digitais</span>
+  <div class="hright">
+    <a class='hbtn' href='index.html' style='text-decoration:none'>Fio ↗</a>
+    <a class='hbtn' href='ds.html' style='text-decoration:none'>Design System ↗</a>
+    <button class="hbtn" id="btn-leg" onclick="toggleLeg(this)">Legenda</button>
+    <button class="hbtn" onclick="resetV()">↺ Reset</button>
+  </div>
+</header>
+
+<div class="vp" id="vp"><div class="cv" id="cv"><div class="gw" id="gw"></div></div></div>
+
+<div class="legend hidden" id="legend">
+  <div class="leg-title">Raias</div>
+  <div class="leg-row"><div class="leg-swatch" style="background:var(--gray-l);border-color:var(--gray-m)"></div>Entregável</div>
+  <div class="leg-row"><div class="leg-swatch" style="background:rgba(23,92,229,.015);border-color:var(--brand-m)"></div>Diretriz</div>
+  <div class="leg-row"><div class="leg-swatch" style="background:var(--blue-ghost);border-color:var(--blue-border)"></div>O que a IA faz · clique para ver</div>
+</div>
+
+<div class="zbar">
+  <button class="zbar-btn" onclick="dz(.1)">+</button>
+  <div class="zbar-sep"></div>
+  <div class="zbar-val" id="zv">75%</div>
+  <div class="zbar-sep"></div>
+  <button class="zbar-btn" onclick="dz(-.1)">−</button>
+</div>
+
+<!-- Floating Builder Button -->
+<div class="builder-fab-stack">
+  <button class="builder-fab" onclick="openBuilder()" title="Preparar prompt"><span style="font-size:14px">✦</span></button>
+  <div class="builder-fab-caption">Prompt</div>
+</div>
+
+<!-- Builder Modal -->
+<div class="builder-overlay" id="builder-overlay" onclick="onBuilderBg(event)">
+  <div class="builder-box">
+    <div class="builder-header">
+      <div>
+        <div class="builder-title">Preparar prompt</div>
+        <div class="builder-subtitle">Escolha a fase, cole o contexto e copie o prompt para o Claude</div>
+      </div>
+      <button class="builder-close" onclick="closeBuilder()">×</button>
+    </div>
+    <div class="builder-stepbar">
+      <div class="bsi" id="bsi-1"><div class="bsi-dot">1</div>Fase</div>
+      <div class="bsi-line"></div>
+      <div class="bsi" id="bsi-2"><div class="bsi-dot">2</div>Contexto</div>
+      <div class="bsi-line"></div>
+      <div class="bsi" id="bsi-3"><div class="bsi-dot">3</div>Prompt</div>
+    </div>
+    <div class="builder-body" id="builder-body">
+      <!-- Step 1: Phase -->
+      <div class="builder-panel active" id="bs-1">
+        <div class="bp-label">Em qual fase você está?</div>
+        <div id="phase-list"></div>
+      </div>
+      <!-- Step 2: Context -->
+      <div class="builder-panel" id="bs-2">
+        <div class="bp-label">Contexto do projeto</div>
+        <div class="annex-item" id="annexes-option" onclick="toggleAnnexes()">
+          <div class="annex-check" id="annexes-check"><span class="annex-check-mark">✓</span></div>
+          <div>
+            <div style="font-size:12px;font-weight:500;color:var(--tx)">Contexto nos documentos anexos</div>
+            <div style="font-size:10px;color:var(--tx3);margin-top:2px;line-height:1.5">O contexto está em arquivos já anexados na conversa do Claude</div>
+          </div>
+        </div>
+        <div id="brand-section" style="display:none">
+          <div class="bp-label" style="margin-top:8px">Qual marca?</div>
+          <div class="brand-group" id="brand-group"></div>
+        </div>
+        <div id="platform-section" style="display:none">
+          <div class="bp-label" style="margin-top:8px">Qual plataforma?</div>
+          <div class="brand-group" id="platform-group"></div>
+        </div>
+        <textarea class="context-textarea" id="context-input" placeholder="Descreva sua ideia, problema ou demanda aqui.&#10;&#10;Quanto mais contexto, melhor o resultado. Pode colar textos, dados, descrições de processo — qualquer insumo relevante."></textarea>
+        <div class="context-hint">Dica: se você já descreveu o problema na fase anterior, cole aqui o resultado que o Claude gerou.</div>
+      </div>
+      <!-- Step 3: Result -->
+      <div class="builder-panel" id="bs-3"></div>
+    </div>
+    <div class="builder-footer" id="builder-footer">
+      <button class="btn-secondary" id="btn-back" onclick="builderBack()" style="display:none">← Voltar</button>
+      <button class="btn-primary" id="btn-next" onclick="builderNext()">Avançar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Content Modal -->
+<div class="modal-overlay" id="modal" onclick="onModalBg(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<div class="hint">
+  <span><kbd>Scroll</kbd> mover</span>
+  <span><kbd>⌘</kbd>+<kbd>Scroll</kbd> zoom</span>
+  <span><kbd>0</kbd> reset</span>
+</div>
+
+<script>
+/* Base única do Design System publicado — alterar aqui reflete em todos os prompts gerados. */
+const DS_BASE='https://gcb-ds.netlify.app';
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ── Grid Data ── */
+const CW=260;
+const PHASES=[
+  {id:'f1',n:'01',label:'Definir o problema',mode:'convergir'},
+  {id:'f2',n:'02',label:'Entender o contexto',mode:'divergir'},
+  {id:'f3',n:'03',label:'Estruturar a solução',mode:'convergir'},
+  {id:'f4',n:'04',label:'Prototipar',mode:'divergir'},
+];
+const ROWS=[
+  {id:'r_ent',label:'Entregável',sub:'O que sai desta fase',color:'#6b7280'},
+  {id:'r_dir',label:'Diretriz',sub:'Pergunta central · quando usar',color:'#175CE5'},
+  {id:'r_ia',label:'O que a IA faz',sub:'Clique para ver detalhes',color:'#175CE5'},
+];
+
+const DELIVERABLES={
+  f1:['Problema definido','Stakeholders','Ganho esperado','Restrições','Incertezas mapeadas'],
+  f2:['Contexto estruturado','Suposições questionadas','Padrões identificados','Lacunas com método'],
+  f3:['Escopo funcional','Fluxos principais','Sitemap','Decisões abertas'],
+  f4:['Protótipo HTML/CSS','Fluxo feliz + erros','Navegável no browser'],
+};
+
+const DIRECTIVES={
+  f1:{q:'O que exatamente estamos resolvendo e para quem?',w:'Você tem uma ideia ou demanda mas ainda não definiu o problema real'},
+  f2:{q:'O que já sabemos e o que precisamos descobrir?',w:'O problema está definido mas falta contexto para avançar'},
+  f3:{q:'O que o produto faz e como o usuário navega?',w:'Você tem contexto suficiente e precisa definir o que será construído'},
+  f4:{q:'Como a solução se comporta na prática?',w:'A estrutura está definida e você precisa de algo visual para validar'},
+};
+
+const IA_ACTIONS={
+  f1:[
+    {id:'sep-problema',label:'Separa sintoma de causa',desc:'A IA analisa sua descrição e ajuda a distinguir o que é sintoma (efeito visível) do problema real (causa raiz). Perguntas como "por quê isso acontece?" são feitas automaticamente até chegar à causa. Você valida se faz sentido.'},
+    {id:'identifica-atores',label:'Identifica stakeholders',desc:'A IA pergunta quem é afetado, quem decide e quem executa. Monta uma lista com papel de cada pessoa. Se faltarem informações, sinaliza o que você precisa descobrir.'},
+    {id:'ganho-esperado',label:'Quantifica o ganho esperado',desc:'A IA ajuda a estimar o que se ganha resolvendo o problema: horas economizadas, custo reduzido, risco mitigado. Se não for possível quantificar, descreve o ganho qualitativo. Se nem isso tiver evidência, sinaliza e sugere como levantar.'},
+    {id:'mapeia-incertezas',label:'Mapeia incertezas',desc:'A IA identifica o que está claro e o que não está na sua descrição. Cada incerteza vem com uma sugestão de como resolver (perguntar para quem, onde encontrar a resposta).'},
+  ],
+  f2:[
+    {id:'org-conhecimento',label:'Organiza fatos vs. suposições',desc:'A IA separa o que você trouxe em três categorias: fatos (dados verificáveis), suposições (sua experiência, não verificada) e lacunas (o que falta). Para cada suposição, pergunta: como você sabe disso? O que acontece se não for verdade?'},
+    {id:'investigacao-ativa',label:'Investiga e puxa desdobramentos',desc:'A IA não espera passivamente — faz perguntas exploratórias, puxa conexões que você pode não ter visto e questiona o que está sendo assumido. Se você trouxer dados brutos (relatórios, tickets, reclamações), extrai padrões e sinaliza contradições.'},
+    {id:'sinaliza-lacunas',label:'Sinaliza lacunas com método',desc:'A IA compara o que você sabe com o que seria necessário para avançar. Para cada lacuna, sugere concretamente: quem pode responder, onde buscar a informação, que tipo de observação ou conversa seria útil.'},
+  ],
+  f3:[
+    {id:'escopo-funcional',label:'Define o escopo funcional',desc:'A IA transforma sua descrição em um documento estruturado: o que o produto faz, para quem, funcionalidades (deve ter / bom ter / fora do escopo) e restrições conhecidas.'},
+    {id:'gera-fluxos',label:'Gera fluxos de uso',desc:'A IA descreve passo a passo como o usuário navega pelo produto. Cobre o caminho principal (tudo dá certo), caminhos alternativos e o que acontece quando algo dá errado.'},
+    {id:'monta-sitemap',label:'Monta o sitemap',desc:'A IA organiza as telas em hierarquia: seções principais, telas dentro de cada seção e estados relevantes (modal, estado vazio, erro). Cada tela tem uma frase descrevendo seu objetivo.'},
+  ],
+  f4:[
+    {id:'gera-html',label:'Gera protótipo HTML/CSS',desc:'A IA cria código navegável no browser usando o Design System da marca escolhida (Vivix, Atiaia ou Corporativo). O protótipo segue as cores, tipografia e componentes da marca.'},
+    {id:'cobre-estados',label:'Cobre estados de interface',desc:'Além do fluxo principal, a IA gera os estados de cada tela: vazio (sem dados), carregando, com erro, sucesso e desabilitado. Você vê como o produto se comporta em cada situação.'},
+    {id:'sinaliza-gaps',label:'Sinaliza gaps no DS',desc:'Se o protótipo precisar de um componente que não existe no Design System da marca, a IA sinaliza com um comentário no código e usa uma referência externa, deixando claro o que precisa ser criado.'},
+  ],
+};
+
+/* ── Builder Data ── */
+const BUILDER_PHASES=[
+  {
+    id:'f1',n:'01',label:'Definir o problema',
+    desc:'Transforme uma ideia ou demanda vaga em um problema claro e bem definido',
+    needsBrand:false,
+    persona:'Você é um estrategista de design e analista de processos com experiência em definição de escopo, estruturação de problemas e pesquisa aplicada. Suas referências são Shape Up (Basecamp), Jobs to Be Done (Christensen) e Systems Thinking (Senge). Você ajuda pessoas não-técnicas a transformar ideias vagas em problemas claros e bem definidos. Linguagem acessível — traduza conceitos técnicos para linguagem de negócio sem perder rigor.',
+    tarefa:'O usuário tem uma ideia ou demanda. Ajude-o a transformar isso em um objeto de trabalho claro.\n\nConduza a análise respondendo:\n(1) Qual é o objeto? — o que será trabalhado\n(2) Qual é o problema real? — separe sintoma de causa raiz. Pergunte \"por quê?\" até chegar na causa\n(3) Para quem é um problema? — quem é afetado diretamente\n(4) O que ganhamos resolvendo? — seja específico. Priorize ganho quantitativo: horas economizadas, custo reduzido, risco mitigado, receita gerada. Se não for possível quantificar, descreva o ganho qualitativo (ex: redução de atrito, melhoria de experiência). Se nem qualitativo tiver evidência, registre como ❓ Em aberto e indique como o usuário pode levantar essa evidência\n(5) Quem decide? — stakeholders com poder de decisão\n(6) Como saberemos que deu certo? — critério de sucesso mensurável, vinculado ao ganho da pergunta 4\n\nSe a descrição for vaga, faça perguntas para esclarecer antes de estruturar. Sinalize quando a demanda não está madura para avançar.\n\nPara cada afirmação, use:\n— ✅ Confirmado — informado pelo usuário\n— 〜 Inferido — deduzido do contexto\n— ❓ Em aberto — precisa de mais informação',
+    output:'Entregue em sequência, sem introduções:\n1. Objeto — uma frase descrevendo o que será trabalhado\n2. Problema real — \"O problema é X, que causa Y, para Z\"\n3. Stakeholders — lista com papel: informa / decide / executa\n4. Ganho esperado — quantitativo quando possível (horas, custo, risco), qualitativo quando não (experiência, atrito). Se não houver evidência para nenhum, registre ❓ Em aberto com indicação de como levantar\n5. Restrições conhecidas — técnicas, políticas, orçamentárias, de prazo\n6. Incertezas — o que ainda precisa ser descoberto, com sugestão de como resolver\n7. Próximo passo — o que o usuário deve fazer antes de ir para a Fase 2',
+  },
+  {
+    id:'f2',n:'02',label:'Entender o contexto',
+    desc:'Investigue o problema: organize o que sabe, questione suposições e identifique o que falta',
+    needsBrand:false,
+    persona:'Você é um UX researcher e analista de processos com experiência em levantamento contextual, pesquisa aplicada e diagnóstico de problemas. Suas referências são Just Enough Research (Monteiro), NNG UX Research e Service Blueprint (Shostack). Você conduz investigação ativa — faz perguntas, puxa desdobramentos, questiona suposições. Linguagem acessível — traduza conceitos de pesquisa para linguagem de negócio sem perder rigor.',
+    tarefa:'O usuário já definiu um problema e agora precisa entender melhor o contexto antes de desenhar uma solução. Sua postura é investigativa — não espere passivamente, conduza a exploração.\n\nFaça três coisas:\n\n1. Organize o que o usuário trouxe, separando:\n— Fatos (dado verificável, documento, métrica, relato direto)\n— Suposições (experiência pessoal, impressão, \"eu acho que\")\n— Lacunas (informação necessária que não foi fornecida)\n\n2. Questione ativamente:\n— Para cada suposição, pergunte: \"como você sabe disso?\" e \"o que acontece se isso não for verdade?\"\n— Para cada lacuna, sugira: onde encontrar a resposta, quem pode responder, qual método usar (conversa com usuário, análise de dados existentes, observação do processo)\n— Puxe desdobramentos: \"você mencionou X — isso afeta Y? quem mais é impactado?\"\n\n3. Se o usuário trouxer dados brutos (relatórios, reclamações, tickets, descrições de processo), extraia padrões:\n— O que aparece com frequência vs. caso isolado\n— Tensões e contradições entre informações\n— O que os dados dizem vs. o que o usuário acredita\n\nSe o usuário descrever um processo existente, estruture em: etapas, atores, entradas e saídas. Marque pontos de baixa visibilidade.\n\nPara cada informação, use:\n— ✅ Fato — dado verificável ou documentado\n— 〜 Suposição — baseado na experiência do usuário, não verificado\n— ❓ Lacuna — informação necessária que não foi fornecida',
+    output:'Entregue:\n1. Contexto estruturado — o que sabemos organizado por tema, com marcador de confiança em cada item\n2. Suposições questionadas — lista de suposições do usuário com pergunta de verificação para cada uma\n3. Processo atual (se aplicável) — etapas, atores, entradas e saídas com pontos de baixa visibilidade\n4. Padrões identificados (se dados brutos foram fornecidos) — recorrências, tensões, contradições\n5. Lacunas críticas — o que precisa ser descoberto, com sugestão concreta de como (quem perguntar, onde buscar, o que observar)\n6. Veredicto — o contexto é suficiente para avançar para a Fase 3 ou há lacunas que precisam ser resolvidas primeiro? Seja direto',
+  },
+  {
+    id:'f3',n:'03',label:'Estruturar a solução',
+    desc:'Defina o que o produto faz, quais telas tem e como o usuário navega',
+    needsBrand:false,
+    persona:'Você é um arquiteto de informação com experiência em estruturação de produtos digitais. Você ajuda pessoas não-técnicas a transformar uma ideia de solução em estrutura navegável. Linguagem acessível, sem jargão de design.',
+    tarefa:'O usuário tem um problema definido e contexto suficiente. Agora precisa estruturar o que será construído.\n\nAjude-o a definir:\n— O que o produto faz (escopo funcional)\n— Para quem (usuário principal e secundários)\n— Quais telas existem e como se conectam (sitemap)\n— Como o usuário navega pelos fluxos principais\n— O que está dentro e fora do escopo\n\nSinalize decisões que o usuário precisa tomar antes de prototipar. Use [DECISÃO ABERTA: descrição] para cada ponto indefinido.\n\nSe o input não tiver contexto suficiente, sinalize o que está faltando antes de estruturar.',
+    output:'Entregue:\n1. Escopo funcional — objetivo, usuário principal, funcionalidades organizadas em: Deve ter / Bom ter / Fora do escopo\n2. Sitemap — hierarquia de telas com objetivo de cada uma em uma frase\n3. Fluxos principais — passo a passo: [Usuário faz X] → [Sistema responde Y]. Cubra fluxo feliz + 1 alternativo + 1 erro\n4. Decisões abertas — numeradas, com indicação de quem precisa decidir\n5. Próximo passo — levar para Fase 4 (prototipar) com indicação de qual marca do Design System usar',
+  },
+  {
+    id:'f4',n:'04',label:'Prototipar',
+    desc:'Gere um protótipo navegável no browser usando o Design System da marca',
+    needsBrand:true,
+    needsPlatform:true,
+    persona:'Você é um product designer especialista em prototipação baseada em código e design systems. O Design System GCB publicado em '+DS_BASE+' é sua referência principal e obrigatória. Antes de gerar qualquer código, consulte os arquivos do DS da marca indicada usando as URLs fornecidas na seção <ds-reference>. Use referências externas apenas para preencher lacunas documentadas e sinalize quando isso ocorrer.',
+    tarefa:'Gere um protótipo em HTML/CSS navegável no browser baseado nos artefatos fornecidos. Use o Design System da marca indicada.\n\nAntes de começar, consulte obrigatoriamente:\n1. O arquivo CONTEXT.md do DS: '+DS_BASE+'/CONTEXT.md — leia inteiro, contém tokens, regras, aliases e gaps conhecidos\n2. O arquivo de fundamentos da marca indicada — contém todos os tokens CSS (:root)\n3. O arquivo de componentes web da marca — contém todas as classes CSS disponíveis\n4. Se Mendix: use o shell da marca como base (copie o HTML inteiro e substitua o conteúdo de .content)\n\nAs URLs exatas dos arquivos serão fornecidas na seção <ds-reference> do prompt.\n\nPrincípios obrigatórios:\n— Redução da carga cognitiva: apresente informações progressivamente\n— HTML5 semântico: use tags corretas (main, section, nav, article, header, footer)\n— Acessibilidade: contraste mínimo 4.5:1, foco visível, labels em todos os campos\n— Responsivo: funcional em desktop e mobile\n— Identidade de marca: substitua qualquer placeholder de logo (ex.: ícone genérico dentro de .header__logo) pela imagem do logo oficial da marca, informada na seção <brand-logo> do prompt\n\nCubra todos os estados relevantes: vazio, carregando, preenchido, erro, sucesso, desabilitado. Não entregue apenas o fluxo feliz.\n\nComente os trechos principais do código explicando a decisão. Sinalize gaps no DS com: <!-- DS GAP: usando [referência] para [componente] -->',
+    output:'Entregue código HTML/CSS funcional e navegável:\n— Fluxo feliz completo\n— Ao menos 1 fluxo alternativo\n— Estados de erro para ações principais\n— Comentários nos trechos principais\n— Bloco de anotações ao final: <!-- ANOTAÇÕES: [tela] — comportamento | estados cobertos | decisões abertas -->\n— DS GAP sinalizado quando componente externo for necessário',
+  },
+];
+
+const BRANDS=[
+  {id:'vivix',name:'VIVIX',sub:'#00b2a9'},
+  {id:'atiaia',name:'Atiaia Energia',sub:'#009cde'},
+  {id:'corporativo',name:'Corporativo',sub:'#ec7d07'},
+];
+
+const PLATFORMS=[
+  {id:'mendix',name:'Mendix',sub:'Low-code'},
+  {id:'sap',name:'SAP BTP',sub:'Fiori'},
+  {id:'web',name:'Web',sub:'Custom'},
+  {id:'powerbi',name:'Power BI',sub:'Dashboards'},
+  {id:'docs',name:'Documentos',sub:'PPT · Slides'},
+];
+
+/* ── Builder State ── */
+let bState={step:1,phaseId:null,brand:null,platform:null,annexes:false};
+
+function getPhase(){return BUILDER_PHASES.find(p=>p.id===bState.phaseId);}
+
+function openBuilder(){
+  resetBuilder();
+  document.getElementById('builder-overlay').classList.add('open');
+}
+function closeBuilder(){document.getElementById('builder-overlay').classList.remove('open');}
+function onBuilderBg(e){if(e.target===document.getElementById('builder-overlay'))closeBuilder();}
+
+function resetBuilder(){
+  bState={step:1,phaseId:null,brand:null,platform:null,annexes:false};
+  showBuilderStep(1);
+  renderPhaseList();
+  const ci=document.getElementById('context-input');
+  if(ci)ci.value='';
+}
+
+function showBuilderStep(step){
+  bState.step=step;
+  ['1','2','3'].forEach(s=>{
+    const el=document.getElementById('bs-'+s);
+    if(el)el.classList.toggle('active',s===String(step));
+  });
+  [1,2,3].forEach(i=>{
+    const el=document.getElementById('bsi-'+i);
+    if(!el)return;
+    el.classList.remove('active','done');
+    if(i<step)el.classList.add('done');
+    else if(i===step)el.classList.add('active');
+  });
+  // footer
+  const footer=document.getElementById('builder-footer');
+  if(step===3){
+    footer.innerHTML='<button class="btn-secondary" onclick="resetBuilder()">← Novo prompt</button>';
+  } else {
+    footer.innerHTML=
+      '<button class="btn-secondary" id="btn-back" onclick="builderBack()" style="display:'+(step>1?'':'none')+'">← Voltar</button>'+
+      '<button class="btn-primary" id="btn-next" onclick="builderNext()">'+(step===2?'Gerar prompt →':'Avançar →')+'</button>';
+    updateNextBtn();
+  }
+  // show brand/platform selector only for f4
+  const brandSec=document.getElementById('brand-section');
+  const platformSec=document.getElementById('platform-section');
+  const phase=getPhase();
+  if(brandSec){
+    brandSec.style.display=(step===2&&phase&&phase.needsBrand)?'block':'none';
+  }
+  if(platformSec){
+    platformSec.style.display=(step===2&&phase&&phase.needsPlatform)?'block':'none';
+  }
+}
+
+function updateNextBtn(){
+  const btn=document.getElementById('btn-next');
+  if(!btn)return;
+  if(bState.step===1)btn.disabled=!bState.phaseId;
+  else if(bState.step===2){
+    const phase=getPhase();
+    const missingBrand=phase&&phase.needsBrand&&!bState.brand;
+    const missingPlatform=phase&&phase.needsPlatform&&!bState.platform;
+    btn.disabled=!!(missingBrand||missingPlatform);
+  }
+}
+
+function builderNext(){
+  if(bState.step===1&&!bState.phaseId)return;
+  if(bState.step===1){
+    showBuilderStep(2);
+    renderBrandGroup();
+    renderPlatformGroup();
+    return;
+  }
+  if(bState.step===2){
+    const phase=getPhase();
+    if(phase&&phase.needsBrand&&!bState.brand)return;
+    if(phase&&phase.needsPlatform&&!bState.platform)return;
+    generatePrompt();
+    return;
+  }
+}
+
+function builderBack(){
+  if(bState.step<=1)return;
+  showBuilderStep(bState.step-1);
+  if(bState.step===1)renderPhaseList();
+}
+
+/* ── Step 1: Phase list ── */
+function renderPhaseList(){
+  let h='';
+  BUILDER_PHASES.forEach(p=>{
+    const sel=bState.phaseId===p.id;
+    h+=`<div class="task-card${sel?' selected':''}" onclick="selectPhase('${p.id}')">
+      <div class="task-card-n">Fase ${p.n}</div>
+      <div class="task-card-label">${p.label}</div>
+      <div class="task-card-desc">${p.desc}</div>
+      <span class="task-card-arrow">›</span>
+    </div>`;
+  });
+  document.getElementById('phase-list').innerHTML=h;
+}
+
+function selectPhase(id){
+  bState.phaseId=id;
+  bState.brand=null;
+  bState.platform=null;
+  renderPhaseList();
+  setTimeout(()=>{
+    showBuilderStep(2);
+    renderBrandGroup();
+    renderPlatformGroup();
+  },120);
+}
+
+/* ── Step 2: Brand selector ── */
+function renderBrandGroup(){
+  let h='';
+  BRANDS.forEach(b=>{
+    const sel=bState.brand===b.id;
+    h+=`<div class="brand-btn${sel?' selected':''}" onclick="selectBrand('${b.id}')">
+      <div class="brand-btn-name">${b.name}</div>
+      <div class="brand-btn-sub">${b.sub}</div>
+    </div>`;
+  });
+  document.getElementById('brand-group').innerHTML=h;
+}
+
+function selectBrand(id){
+  bState.brand=id;
+  renderBrandGroup();
+  updateNextBtn();
+}
+
+/* ── Step 2: Platform selector ── */
+function renderPlatformGroup(){
+  const el=document.getElementById('platform-group');
+  if(!el)return;
+  let h='';
+  PLATFORMS.forEach(p=>{
+    const sel=bState.platform===p.id;
+    h+=`<div class="brand-btn${sel?' selected':''}" onclick="selectPlatform('${p.id}')">
+      <div class="brand-btn-name">${p.name}</div>
+      <div class="brand-btn-sub">${p.sub}</div>
+    </div>`;
+  });
+  el.innerHTML=h;
+}
+
+function selectPlatform(id){
+  bState.platform=id;
+  renderPlatformGroup();
+  updateNextBtn();
+}
+
+function toggleAnnexes(){
+  bState.annexes=!bState.annexes;
+  document.getElementById('annexes-option').classList.toggle('selected',bState.annexes);
+}
+
+/* ── Generate prompt ── */
+function generatePrompt(){
+  const phase=getPhase();
+  if(!phase)return;
+
+  const ctx=document.getElementById('context-input')?.value.trim()||'';
+  let inputContent;
+  if(bState.annexes&&ctx)inputContent=`O contexto do projeto está nos documentos anexados a esta conversa.\n\n${ctx}`;
+  else if(bState.annexes)inputContent='O contexto do projeto está nos documentos anexados a esta conversa.';
+  else inputContent=ctx||'[Descreva aqui sua ideia, problema ou demanda]';
+
+  let brandLine='';
+  let platformLine='';
+  let dsRef='';
+  let logoRef='';
+  const dsBase=DS_BASE;
+
+  if(phase.needsBrand&&bState.brand){
+    const b=BRANDS.find(x=>x.id===bState.brand);
+    const brandName=b?b.name:bState.brand;
+    brandLine=`\nMarca do Design System: ${brandName}. Use os tokens e componentes desta marca como referência obrigatória.`;
+    const prefix=bState.brand==='vivix'?'v-':bState.brand==='atiaia'?'a-':'';
+    const logoFile=bState.brand==='corporativo'?'logo-corporativo.svg':`logo-${bState.brand}.svg`;
+
+    if(phase.needsPlatform&&!bState.platform){
+      dsRef=`\n\n<ds-reference>\n[AGUARDANDO: plataforma não selecionada — Mendix, SAP BTP, Web ou Power BI]\n</ds-reference>`;
+    } else {
+      if(bState.platform!=='powerbi'){
+        logoRef=`\n\n<brand-logo>\nLogo oficial: ${dsBase}/assets/logos/${logoFile}\nInsira este arquivo (via <img>) no lugar do placeholder de logo do shell (ex.: .header__logo). Se o fundo colorido do container prejudicar a leitura do logo, troque o fundo do container para branco.\n</brand-logo>`;
+      }
+
+      if(bState.platform==='mendix'){
+        platformLine=`\nPlataforma: Mendix.`;
+        dsRef=`\n\n<ds-reference>\nDesign System GCB — ${brandName} · Mendix\n\nLeia estes arquivos antes de gerar código (use web fetch):\n1. Contexto geral: ${dsBase}/CONTEXT.md\n2. Fundamentos (tokens): ${dsBase}/${prefix}fundamentos.html\n3. Shell Mendix: ${dsBase}/${prefix}mendix-shell.html — copie o HTML inteiro e substitua apenas o conteúdo de .content\n4. Mapeamento de ícones (Phosphor → Font Awesome): ${dsBase}/${prefix}mendix.html\n</ds-reference>`;
+      } else if(bState.platform==='sap'){
+        platformLine=`\nPlataforma: SAP BTP.`;
+        dsRef=`\n\n<ds-reference>\nDesign System GCB — ${brandName} · SAP BTP\n\nLeia estes arquivos antes de gerar código (use web fetch):\n1. Contexto geral: ${dsBase}/CONTEXT.md\n2. Fundamentos (tokens): ${dsBase}/${prefix}fundamentos.html\n3. Shell SAP BTP: ${dsBase}/${prefix}sap-shell.html — copie o HTML inteiro; use Object Page para detalhe de registro ou List Report para listagem\n4. Diretrizes Fiori: ${dsBase}/${prefix}sap-btp.html\n</ds-reference>`;
+      } else if(bState.platform==='web'){
+        platformLine=`\nPlataforma: Web.`;
+        dsRef=`\n\n<ds-reference>\nDesign System GCB — ${brandName} · Web\n\nLeia estes arquivos antes de gerar código (use web fetch):\n1. Contexto geral: ${dsBase}/CONTEXT.md\n2. Fundamentos (tokens): ${dsBase}/${prefix}fundamentos.html\n3. Componentes Web: ${dsBase}/${prefix}componentes-web.html\n\nCrie HTML novo usando os tokens de fundamentos + classes de componentes-web. Use .grid ou .grid-N para layout.\n</ds-reference>`;
+      } else if(bState.platform==='powerbi'){
+        platformLine=`\nPlataforma: Power BI.`;
+        dsRef=`\n\n<ds-reference>\nDesign System GCB — ${brandName} · Power BI\n\n[ATENÇÃO: Power BI não é prototipado em HTML navegável]\nLeia antes de responder:\n1. Contexto geral: ${dsBase}/CONTEXT.md\n2. Diretrizes Power BI: ${dsBase}/${prefix}componentes-powerbi.html\n\nNão gere um protótipo HTML/CSS navegável. Entregue uma especificação textual do dashboard (layout, cores, hierarquia visual, tipografia) seguindo as diretrizes do arquivo acima, para orientar quem vai construir o relatório real no Power BI Desktop.\n</ds-reference>`;
+      } else if(bState.platform==='docs'){
+        platformLine=`\nPlataforma: Documentos e Apresentações.`;
+        dsRef=`\n\n<ds-reference>\nDesign System GCB — ${brandName} · Documentos e Apresentações\n\n[ATENÇÃO: documentos e slides seguem as diretrizes editoriais de comunicação corporativa da marca — não os componentes de UI digital]\nLeia estes arquivos antes de gerar o material (use web fetch):\n1. Contexto geral: ${dsBase}/CONTEXT.md\n2. Fundamentos da marca: ${dsBase}/${prefix}fundamentos.html — leia o bloco \"Diretrizes obrigatórias para geração de materiais\" no topo da página e a seção Composição (#composicao): grafismos, fundos padrão, hierarquia tipográfica, estrutura de capa/slide interno/encerramento, cards, rodapé e o checklist de validação\n\nEscolha o formato mais adequado ao pedido do usuário:\n— PPTX: gere um arquivo .pptx real seguindo a estrutura de capa, slides internos e encerramento descrita na seção Composição. Use apenas os fundos, grafismos e paleta de cores da marca — nunca formas genéricas (círculos, ondas, gradientes soltos).\n— HTML dinâmico: gere um deck navegável (um <section> por slide, proporção 16:9, navegação por setas ou scroll snap), reaproveitando os tokens de cor e a hierarquia tipográfica dos fundamentos da marca.\n\nNunca usar a fonte Inter em slides/documentos — ela é exclusiva de ambientes digitais interativos. Use a fonte de apoio indicada nas diretrizes de geração de materiais da marca (varia por marca — confirme no arquivo de fundamentos).\n</ds-reference>`;
+      }
+    }
+  }
+
+  const prompt=`<persona>\n${phase.persona}\n</persona>\n\n<tarefa>\n${phase.tarefa}\n</tarefa>${dsRef}${logoRef}\n\n<output>\n${phase.output}\n</output>\n\n<input>${brandLine}${platformLine}\n${inputContent}\n</input>`;
+
+  // Render result
+  const summaryHtml=`<div class="result-summary">
+    <div class="result-summary-label">Resumo</div>
+    <div class="result-summary-row">Fase: <span>${phase.n} — ${phase.label}</span></div>
+    ${phase.needsBrand&&bState.brand?`<div class="result-summary-row">Marca: <span>${BRANDS.find(x=>x.id===bState.brand)?.name||bState.brand}</span></div>`:''}
+    ${phase.needsPlatform&&bState.platform?`<div class="result-summary-row">Plataforma: <span>${PLATFORMS.find(x=>x.id===bState.platform)?.name||bState.platform}</span></div>`:''}
+  </div>`;
+
+  document.getElementById('bs-3').innerHTML=summaryHtml+
+    `<div class="bp-label" style="margin-bottom:8px">Prompt gerado</div>
+    <pre class="prompt-pre" id="prompt-out">${esc(prompt)}</pre>
+    <button class="btn-copy" onclick="copyPrompt(this)">Copiar prompt</button>`;
+
+  showBuilderStep(3);
+}
+
+function copyPrompt(btn){
+  const el=document.getElementById('prompt-out');
+  if(!el)return;
+  const text=el.textContent;
+  const done=()=>{const o=btn.textContent;btn.textContent='✓ Copiado!';btn.style.cssText='background:rgba(22,163,74,.12);color:#15803d;border-color:rgba(22,163,74,.3)';setTimeout(()=>{btn.textContent=o;btn.style.cssText='';},2000);};
+  if(navigator.clipboard)navigator.clipboard.writeText(text).then(done).catch(()=>fbCopy(text,done));else fbCopy(text,done);
+}
+function fbCopy(t,cb){const a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;left:-9999px';document.body.appendChild(a);a.select();try{document.execCommand('copy');cb();}catch(e){}document.body.removeChild(a);}
+
+/* ── Build Grid ── */
+function buildGrid(){
+  let h='<div class="grid-row"><div class="corner-col">Fio Start</div>';
+  PHASES.forEach(ph=>{
+    h+=`<div class="col-hdr" style="width:${CW}px;min-width:${CW}px">
+      <span class="col-n">Fase ${ph.n}</span>
+      <span class="col-lbl">${ph.label}</span>
+      <span class="col-mode ${ph.mode}">${ph.mode==='convergir'?'◆':'◇'} ${ph.mode}</span>
+    </div>`;
+  });
+  h+='</div>';
+
+  ROWS.forEach(row=>{
+    h+='<div class="grid-row">';
+    h+=`<div class="row-lbl">
+      <div class="row-bar" style="background:${row.color}"></div>
+      <div class="row-name">${row.label}</div>
+      <div class="row-sub">${row.sub}</div>
+    </div>`;
+    PHASES.forEach(ph=>{
+      if(row.id==='r_ent'){
+        const items=DELIVERABLES[ph.id]||[];
+        h+=`<div class="cell" style="width:${CW}px;min-width:${CW}px;background:rgba(107,114,128,.015)"><div class="tag-list">`;
+        items.forEach(t=>h+=`<span class="tag t-out">${t}</span>`);
+        h+='</div></div>';
+      } else if(row.id==='r_dir'){
+        const d=DIRECTIVES[ph.id];
+        h+=`<div class="cell-dir" style="width:${CW}px;min-width:${CW}px">
+          <div class="cell-dir-label">Pergunta central</div>
+          <div class="cell-dir-q">${d?d.q:''}</div>
+          <div class="cell-dir-label">Use quando</div>
+          <div class="cell-dir-w">${d?d.w:''}</div>
+        </div>`;
+      } else if(row.id==='r_ia'){
+        const items=IA_ACTIONS[ph.id]||[];
+        h+=`<div class="cell" style="width:${CW}px;min-width:${CW}px;background:var(--blue-ghost)"><div class="tag-list">`;
+        items.forEach(t=>h+=`<span class="tag t-info" onclick="showInfoModal('${t.id}','${ph.id}')">${t.label}</span>`);
+        h+='</div></div>';
+      }
+    });
+    h+='</div>';
+  });
+
+  document.getElementById('gw').innerHTML=h;
+}
+
+/* ── Info modal ── */
+function showInfoModal(actionId,phaseId){
+  const actions=IA_ACTIONS[phaseId]||[];
+  const a=actions.find(x=>x.id===actionId);
+  if(!a)return;
+  const phase=PHASES.find(p=>p.id===phaseId);
+  let h=`<div class="modal-badge" style="background:var(--blue-ghost);color:var(--blue);border-color:var(--blue-border)">O que a IA faz · Fase ${phase?phase.n:''}</div>`;
+  h+=`<div class="modal-title">${a.label}</div>`;
+  h+=`<div class="modal-body">${a.desc}</div>`;
+  openModal(h);
+}
+
+function openModal(html){document.getElementById('modal-content').innerHTML=html;document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function onModalBg(e){if(e.target===document.getElementById('modal'))closeModal();}
+function toggleLeg(btn){document.getElementById('legend').classList.toggle('hidden');btn.classList.toggle('on');}
+
+/* ── Pan / Zoom ── */
+let scale=.82,panX=28,panY=28,drag=false,ox=0,oy=0;
+const vp=document.getElementById('vp'),cv=document.getElementById('cv');
+function applyT(anim){
+  if(anim){cv.style.transition='transform .16s cubic-bezier(.25,.46,.45,.94)';setTimeout(()=>cv.style.transition='',200);}
+  else cv.style.transition='none';
+  cv.style.transform=`translate(${panX}px,${panY}px) scale(${scale})`;
+  document.getElementById('zv').textContent=Math.round(scale*100)+'%';
+}
+vp.addEventListener('wheel',e=>{
+  e.preventDefault();
+  if(e.metaKey||e.ctrlKey){
+    const r=vp.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+    const f=e.deltaY<0?1.08:.925,ns=Math.min(3,Math.max(.15,scale*f));
+    panX=mx-(mx-panX)*(ns/scale);panY=my-(my-panY)*(ns/scale);scale=ns;
+  } else {panX-=e.deltaX;panY-=e.deltaY;}
+  applyT(false);
+},{passive:false});
+vp.addEventListener('mousedown',e=>{if(e.target.closest('.builder-fab-stack,.builder-fab,.builder-box,.modal-box,.hbtn,.zbar-btn,.t-info'))return;drag=true;ox=e.clientX-panX;oy=e.clientY-panY;vp.classList.add('grabbing');});
+document.addEventListener('mousemove',e=>{if(!drag)return;panX=e.clientX-ox;panY=e.clientY-oy;applyT(false);});
+document.addEventListener('mouseup',()=>{drag=false;vp.classList.remove('grabbing');});
+
+// Touch support
+let pinching=false,pd0=0,ps0=0,pcx=0,pcy=0,ppx=0,ppy=0,tDrag=false,tOX=0,tOY=0;
+function tdist(t){const dx=t[0].clientX-t[1].clientX,dy=t[0].clientY-t[1].clientY;return Math.sqrt(dx*dx+dy*dy);}
+vp.addEventListener('touchstart',e=>{
+  if(e.target.closest('.builder-fab-stack,.builder-fab,.builder-box'))return;
+  if(e.touches.length===1){tDrag=true;pinching=false;tOX=e.touches[0].clientX-panX;tOY=e.touches[0].clientY-panY;}
+  else if(e.touches.length===2){tDrag=false;pinching=true;pd0=tdist(e.touches);ps0=scale;const r=vp.getBoundingClientRect();pcx=(e.touches[0].clientX+e.touches[1].clientX)/2-r.left;pcy=(e.touches[0].clientY+e.touches[1].clientY)/2-r.top;ppx=panX;ppy=panY;}
+  e.preventDefault();
+},{passive:false});
+vp.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  if(pinching&&e.touches.length===2){const d=tdist(e.touches),ns=Math.min(3,Math.max(.15,ps0*(d/pd0)));panX=pcx-(pcx-ppx)*(ns/ps0);panY=pcy-(pcy-ppy)*(ns/ps0);scale=ns;applyT(false);}
+  else if(tDrag&&e.touches.length===1){panX=e.touches[0].clientX-tOX;panY=e.touches[0].clientY-tOY;applyT(false);}
+},{passive:false});
+vp.addEventListener('touchend',e=>{if(e.touches.length<2)pinching=false;if(e.touches.length===0)tDrag=false;},{passive:true});
+function dz(d){const r=vp.getBoundingClientRect(),mx=r.width/2,my=r.height/2;const ns=Math.min(3,Math.max(.15,scale+d));panX=mx-(mx-panX)*(ns/scale);panY=my-(my-panY)*(ns/scale);scale=ns;applyT(true);}
+function resetV(){scale=.82;panX=28;panY=28;applyT(true);}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();closeBuilder();}
+  if(e.key==='0'&&!e.target.tagName.match(/INPUT|TEXTAREA/))resetV();
+});
+
+buildGrid();
+applyT(false);
+</script>
+
+<script>
+/* Acessibilidade: torna os cards de seleção (divs com onclick) operáveis por teclado.
+   Mantém o markup existente — apenas injeta role/tabindex/aria-checked e trata Enter/Espaço. */
+(function(){
+  var SEL = '.task-card, .brand-btn, .annex-item';
+  var RADIO = '.task-card, .brand-btn';
+  function roleOf(el){
+    /* radio = escolha única; checkbox = múltipla escolha */
+    try { return el.matches(RADIO) ? 'radio' : 'checkbox'; }
+    catch (e) { return 'checkbox'; }   /* navegador sem suporte a :has() */
+  }
+  function stamp(root){
+    (root.querySelectorAll ? root.querySelectorAll(SEL) : []).forEach(function(el){
+      if (!el.hasAttribute('role')) el.setAttribute('role', roleOf(el));
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+      el.setAttribute('aria-checked', el.classList.contains('selected') ? 'true' : 'false');
+    });
+  }
+  function run(){ stamp(document); }
+  document.addEventListener('keydown', function(e){
+    if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+    var el = e.target.closest && e.target.closest(SEL);
+    if (!el) return;
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+    e.preventDefault();
+    el.click();
+  });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+  var queued = false;
+  new MutationObserver(function(){
+    if (queued) return;
+    queued = true;
+    setTimeout(function(){ queued = false; run(); }, 0);
+  }).observe(document.documentElement, {childList:true, subtree:true});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=ai-legible&utm_source=comment&utm_medium=referral&utm_id=782bdad0-ac75-44d4-8b10-176ebb1cb13d
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="hosting-provider" content="Netlify">
+<meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=782bdad0-ac75-44d4-8b10-176ebb1cb13d">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="assets/icons/icone-brennand.svg">
+  <meta name="description" content="Corporativo · Design System GCB — Shell SAP Fiori pronto para prototipação — ShellBar, Object Page e List Report.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Design System GCB">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:title" content="[Nome da Aplicação] · SAP Fiori Shell — Corporativo · GCB Design System">
+    <meta property="og:description" content="Corporativo · Design System GCB — Shell SAP Fiori pronto para prototipação — ShellBar, Object Page e List Report.">
+    <meta property="og:url" content="https://gcb-ds.netlify.app/sap-shell.html">
+    <meta property="og:image" content="https://gcb-ds.netlify.app/assets/og/og-ds.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Design System GCB — Corporativo, Atiaia Energia e VIVIX">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="[Nome da Aplicação] · SAP Fiori Shell — Corporativo · GCB Design System">
+    <meta name="twitter:description" content="Corporativo · Design System GCB — Shell SAP Fiori pronto para prototipação — ShellBar, Object Page e List Report.">
+    <meta name="twitter:image" content="https://gcb-ds.netlify.app/assets/og/og-ds.png">
+  <title>[Nome da Aplicação] · SAP Fiori Shell — Corporativo · GCB Design System</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <style>
+    /* ============================================================
+       DESIGN TOKENS — GCB Vivix
+       Fonte: v-fundamentos.html
+       ATENÇÃO: No SAP real, tokens são configurados via
+       SAP Theme Designer (theming.sap.com) e SCSS variables.
+       Este arquivo é protótipo HTML/CSS para validação visual.
+    ============================================================ */
+    :root {
+      /* Brand GCB */
+      --color-primary:       #ec7d07;
+      --color-primary-hover: #d4710a;
+      --color-dark:          #004952;
+      --color-accent:        #fabc34;
+
+      /* Semânticas */
+      --color-success:     #24a148;
+      --color-warning:     #f1c21b;
+      --color-error:       #bb0000;
+      --color-info:        #007acc;
+      --color-interactive: #0f62fe;
+
+      /* SAP Status colors (alinhados ao GCB) */
+      --sap-positive:  #24a148;
+      --sap-negative:  #bb0000;
+      --sap-critical:  #f1c21b;
+      --sap-neutral:   #525252;
+      --sap-informative: #007acc;
+
+      /* UI Neutral */
+      --ui-background: #f5f6fa;   /* Fiori usa fundo levemente acinzentado */
+      --ui-01:         #f4f4f4;
+      --ui-02:         #ffffff;
+      --text-primary:  #161616;
+      --text-secondary:#525252;
+      --text-disabled: #8d8d8d;
+      --border-subtle: #e0e0e0;
+      --border-strong: #8d8d8d;
+
+      /* Espaçamento (Carbon / compatível SAP) */
+      --s-01: 2px;   --s-02: 4px;   --s-03: 8px;
+      --s-04: 12px;  --s-05: 16px;  --s-06: 24px;
+      --s-07: 32px;  --s-08: 40px;  --s-09: 48px;
+      --s-10: 64px;
+
+      /* Tipografia */
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --fw-regular:  400;
+      --fw-medium:   500;
+      --fw-semibold: 600;
+
+      /* Elevações */
+      --elevation-01: 0 1px 3px rgba(0,0,0,.10);
+      --elevation-02: 0 2px 6px rgba(0,0,0,.14);
+      --elevation-03: 0 4px 12px rgba(0,0,0,.18);
+      --elevation-04: 0 8px 24px rgba(0,0,0,.22);
+
+      /* Border radius */
+      --radius-sm:   2px;
+      --radius-md:   4px;
+      --radius-lg:   8px;
+      --radius-full: 9999px;
+
+      /* Transições */
+      --t-fast: 100ms;
+      --t-base: 200ms;
+      --t-slow: 400ms;
+      --ease:   cubic-bezier(.4,0,.2,1);
+
+      /* Shell — Fiori */
+      --shellbar-h:    56px;   /* 44px mobile, 56px desktop */
+      --sidenav-w:     256px;
+      --sidenav-w-min: 48px;
+    }
+
+    /* ============================================================
+       RESET
+    ============================================================ */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { height:100%; }
+    body {
+      font-family: var(--font);
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--ui-background);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration:none; color:inherit; }
+    button { font-family:inherit; cursor:pointer; border:none; background:none; }
+    ul { list-style:none; }
+
+
+    /* ============================================================
+       SHELL LAYOUT
+       Fiori: ShellBar (topo fixo) + SideNav (esquerda) + Content
+    ============================================================ */
+    .shell {
+      display: grid;
+      grid-template-rows: var(--shellbar-h) 1fr;
+      grid-template-columns: var(--sidenav-w) 1fr;
+      grid-template-areas:
+        "shellbar shellbar"
+        "sidenav  content";
+      min-height: 100vh;
+      transition: grid-template-columns var(--t-slow) var(--ease);
+    }
+    .shell.collapsed {
+      grid-template-columns: var(--sidenav-w-min) 1fr;
+    }
+
+
+    /* ============================================================
+       SHELLBAR — sap.m.ShellBar
+       Fiori spec: altura 56px desktop, fundo var(--color-dark) da marca
+    ============================================================ */
+    .shellbar {
+      grid-area: shellbar;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      height: var(--shellbar-h);
+      background: var(--color-dark);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--s-05);
+      gap: var(--s-03);
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    }
+
+    /* Hamburger */
+    .shellbar__toggle {
+      display: flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      color: rgba(255,255,255,.8);
+      flex-shrink: 0;
+      transition: background var(--t-base) var(--ease),
+                  color    var(--t-base) var(--ease);
+    }
+    .shellbar__toggle:hover { background: rgba(255,255,255,.12); color: white; }
+    .shellbar__toggle i { font-size: 20px; }
+
+    /* Logo + App title */
+    .shellbar__brand {
+      display: flex; align-items: center; gap: var(--s-04);
+      flex: 1; min-width: 0;
+    }
+    .shellbar__logo {
+      height: 28px;
+      display: flex; align-items: center; gap: var(--s-02);
+      flex-shrink: 0;
+    }
+    .shellbar__logo-mark {
+      width: 28px; height: 28px;
+      background: var(--color-primary);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .shellbar__logo-mark i { font-size: 16px; color: white; }
+    .shellbar__logo-text {
+      font-size: 13px; font-weight: var(--fw-semibold);
+      color: rgba(255,255,255,.6);
+      letter-spacing: .3px;
+    }
+
+    /* Separador vertical */
+    .shellbar__sep {
+      width: 1px; height: 20px;
+      background: rgba(255,255,255,.2);
+      flex-shrink: 0;
+    }
+
+    .shellbar__app-title {
+      font-size: 15px; font-weight: var(--fw-semibold);
+      color: white;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* Copilot / Search (centro) */
+    .shellbar__search {
+      display: flex; align-items: center; gap: var(--s-03);
+      height: 32px; padding: 0 var(--s-04);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: var(--radius-full);
+      background: rgba(255,255,255,.08);
+      min-width: 240px;
+      transition: background var(--t-base) var(--ease),
+                  border-color var(--t-base) var(--ease);
+    }
+    .shellbar__search:focus-within {
+      background: rgba(255,255,255,.14);
+      border-color: rgba(255,255,255,.4);
+    }
+    .shellbar__search i { font-size: 15px; color: rgba(255,255,255,.6); flex-shrink: 0; }
+    .shellbar__search input {
+      flex:1; border:none; outline:none;
+      background: transparent;
+      font-size: 13px; font-family: var(--font);
+      color: white;
+    }
+    .shellbar__search input::placeholder { color: rgba(255,255,255,.5); }
+
+    /* Ações utilitárias (direita) */
+    .shellbar__actions {
+      display: flex; align-items: center; gap: var(--s-02);
+      flex-shrink: 0;
+    }
+    .shellbar__icon-btn {
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      color: rgba(255,255,255,.75);
+      transition: background var(--t-base) var(--ease),
+                  color    var(--t-base) var(--ease);
+    }
+    .shellbar__icon-btn:hover { background: rgba(255,255,255,.12); color: white; }
+    .shellbar__icon-btn i { font-size: 20px; }
+    .shellbar__badge {
+      position: absolute; top: 5px; right: 5px;
+      width: 8px; height: 8px;
+      background: var(--color-warning);
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--color-dark);
+    }
+    .shellbar__avatar {
+      width: 30px; height: 30px;
+      border-radius: var(--radius-full);
+      background: var(--color-primary);
+      color: white; font-size: 11px; font-weight: var(--fw-semibold);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      border: 1.5px solid rgba(255,255,255,.2);
+      transition: border-color var(--t-base) var(--ease);
+    }
+    .shellbar__avatar:hover { border-color: rgba(255,255,255,.5); }
+
+
+    /* ============================================================
+       SIDE NAVIGATION — Fiori Side Navigation
+    ============================================================ */
+    .sidenav {
+      grid-area: sidenav;
+      position: sticky;
+      top: var(--shellbar-h);
+      height: calc(100vh - var(--shellbar-h));
+      background: white;
+      border-right: 1px solid var(--border-subtle);
+      overflow: hidden;
+      overflow-y: auto;
+      display: flex; flex-direction: column;
+      transition: width var(--t-slow) var(--ease);
+      width: var(--sidenav-w);
+    }
+    .shell.collapsed .sidenav { width: var(--sidenav-w-min); }
+    .sidenav::-webkit-scrollbar { width: 3px; }
+    .sidenav::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 2px; }
+
+    /* App info no topo da sidenav */
+    .sidenav__app-info {
+      padding: var(--s-04) var(--s-04) var(--s-03);
+      border-bottom: 1px solid var(--border-subtle);
+      overflow: hidden;
+      transition: opacity var(--t-base) var(--ease);
+    }
+    .sidenav__app-label {
+      font-size: 10px; font-weight: var(--fw-semibold);
+      color: var(--text-disabled);
+      text-transform: uppercase; letter-spacing: .6px;
+      white-space: nowrap;
+    }
+    .shell.collapsed .sidenav__app-info { opacity: 0; }
+
+    /* Grupo nav */
+    .nav-group { padding: var(--s-03) 0; }
+    .nav-group + .nav-group { border-top: 1px solid var(--border-subtle); }
+    .nav-group__label {
+      padding: 0 var(--s-04) var(--s-02);
+      font-size: 10px; font-weight: var(--fw-semibold);
+      color: var(--text-disabled);
+      text-transform: uppercase; letter-spacing: .6px;
+      white-space: nowrap;
+      opacity: 1;
+      transition: opacity var(--t-base) var(--ease);
+    }
+    .shell.collapsed .nav-group__label { opacity: 0; }
+
+    /* Item nav */
+    .nav-item {
+      display: flex; align-items: center; gap: var(--s-03);
+      padding: var(--s-02) var(--s-03);
+      margin: 1px var(--s-02);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 13px; font-weight: var(--fw-medium);
+      white-space: nowrap; cursor: pointer;
+      transition: background var(--t-fast) var(--ease),
+                  color    var(--t-fast) var(--ease);
+      position: relative;
+    }
+    .nav-item:hover { background: var(--ui-01); color: var(--text-primary); }
+    .nav-item.active {
+      background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+      color: var(--color-primary);
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute; left: 0; top: 3px; bottom: 3px;
+      width: 3px; background: var(--color-primary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+    .nav-item__icon {
+      width: 28px; height: 28px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-item__icon i { font-size: 17px; }
+    .nav-item__label {
+      flex:1; overflow:hidden; text-overflow:ellipsis;
+      opacity:1; transition: opacity var(--t-base) var(--ease);
+    }
+    .shell.collapsed .nav-item__label { opacity:0; pointer-events:none; }
+    .nav-item__count {
+      font-size: 10px; font-weight: var(--fw-semibold);
+      background: var(--color-error); color: white;
+      padding: 1px 5px; border-radius: var(--radius-full);
+      line-height: 1.4; flex-shrink: 0;
+      opacity: 1; transition: opacity var(--t-base) var(--ease);
+    }
+    .shell.collapsed .nav-item__count { opacity:0; }
+
+    /* Tooltip collapsed */
+    .nav-item[data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute; left: calc(var(--sidenav-w-min) - var(--s-02));
+      top: 50%; transform: translateY(-50%);
+      background: var(--text-primary); color: white;
+      font-size: 12px; padding: var(--s-02) var(--s-04);
+      border-radius: var(--radius-md); white-space: nowrap;
+      pointer-events: none; opacity: 0;
+      transition: opacity var(--t-base) var(--ease); z-index: 300;
+    }
+    .shell.collapsed .nav-item[data-tooltip]:hover::after { opacity: 1; }
+
+    .sidenav__footer { margin-top: auto; border-top: 1px solid var(--border-subtle); padding: var(--s-02) 0; }
+
+
+    /* ============================================================
+       CONTENT AREA
+    ============================================================ */
+    .content {
+      grid-area: content;
+      min-height: calc(100vh - var(--shellbar-h));
+      overflow-x: hidden;
+    }
+
+    /* ── Object Page Header (padrão Fiori para detail views) ── */
+    .object-header {
+      background: white;
+      border-bottom: 1px solid var(--border-subtle);
+      box-shadow: var(--elevation-01);
+      position: sticky;
+      top: var(--shellbar-h);
+      z-index: 100;
+    }
+    .object-header__top {
+      display: flex; align-items: center;
+      padding: var(--s-04) var(--s-07);
+      gap: var(--s-04);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .object-header__back {
+      display: flex; align-items: center; gap: var(--s-02);
+      font-size: 13px; color: var(--color-interactive);
+      cursor: pointer; flex-shrink: 0;
+    }
+    .object-header__back:hover { text-decoration: underline; }
+    .object-header__back i { font-size: 15px; }
+    .object-header__breadcrumb {
+      display: flex; align-items: center; gap: var(--s-02);
+      font-size: 12px; color: var(--text-secondary); flex: 1;
+    }
+    .object-header__breadcrumb i { font-size: 11px; color: var(--border-strong); }
+    .object-header__actions {
+      display: flex; align-items: center; gap: var(--s-03); flex-shrink: 0;
+    }
+
+    .object-header__main {
+      display: flex; align-items: flex-start;
+      padding: var(--s-05) var(--s-07);
+      gap: var(--s-06);
+    }
+    .object-header__icon {
+      width: 48px; height: 48px; flex-shrink: 0;
+      background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+      border-radius: var(--radius-lg);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--color-primary);
+    }
+    .object-header__icon i { font-size: 24px; }
+    .object-header__info { flex: 1; min-width: 0; }
+    .object-header__title {
+      font-size: 18px; font-weight: var(--fw-semibold);
+      color: var(--text-primary); line-height: 1.3;
+      margin-bottom: var(--s-02);
+    }
+    .object-header__subtitle { font-size: 13px; color: var(--text-secondary); }
+
+    /* Key facts (dados em destaque no header) */
+    .object-header__facts {
+      display: flex; gap: var(--s-07); flex-shrink: 0;
+    }
+    .fact {
+      display: flex; flex-direction: column; gap: 2px;
+      text-align: right;
+    }
+    .fact__label { font-size: 10px; font-weight: var(--fw-semibold); color: var(--text-disabled); text-transform: uppercase; letter-spacing: .4px; }
+    .fact__value { font-size: 20px; font-weight: var(--fw-semibold); color: var(--text-primary); }
+    .fact__value.positive { color: var(--color-success); }
+    .fact__value.negative { color: var(--color-error); }
+
+    /* Anchor Navigation (tabs fixas no header) */
+    .anchor-nav {
+      display: flex; gap: 0;
+      padding: 0 var(--s-07);
+      border-top: 1px solid var(--border-subtle);
+      overflow-x: auto;
+    }
+    .anchor-nav::-webkit-scrollbar { height: 0; }
+    .anchor-tab {
+      padding: var(--s-03) var(--s-05);
+      font-size: 13px; font-weight: var(--fw-medium);
+      color: var(--text-secondary);
+      border-bottom: 2px solid transparent;
+      white-space: nowrap; cursor: pointer;
+      transition: color var(--t-base) var(--ease),
+                  border-color var(--t-base) var(--ease);
+    }
+    .anchor-tab:hover { color: var(--text-primary); }
+    .anchor-tab.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+
+    /* ── List Report Header (padrão Fiori para list views) ── */
+    .list-report-header {
+      background: white;
+      border-bottom: 1px solid var(--border-subtle);
+      padding: var(--s-05) var(--s-07);
+      box-shadow: var(--elevation-01);
+    }
+    .list-report-header__title { font-size: 18px; font-weight: var(--fw-semibold); margin-bottom: var(--s-02); }
+    .list-report-header__count { font-size: 12px; color: var(--text-secondary); }
+
+    /* ── Content padded ── */
+    .content-body { padding: var(--s-06) var(--s-07); }
+
+
+    /* ============================================================
+       COMPONENTES SAP-STYLE
+       Seguem as especificações do sap-btp.html
+    ============================================================ */
+
+    /* Botões — SAP usa filled/outlined/ghost */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: var(--s-02);
+      height: 36px; padding: 0 var(--s-05);
+      border: 1px solid transparent;
+      border-radius: var(--radius-md);
+      font-size: 13px; font-weight: var(--fw-medium);
+      font-family: var(--font); cursor: pointer; white-space: nowrap;
+      transition: background var(--t-fast) var(--ease),
+                  border-color var(--t-fast) var(--ease);
+    }
+    .btn:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 2px; }
+    .btn i { font-size: 15px; line-height: 1; }
+    .btn--sm { height: 28px; padding: 0 var(--s-04); font-size: 12px; }
+    .btn--icon { width: 36px; padding: 0; }
+    .btn--icon.btn--sm { width: 28px; }
+    .btn:disabled { opacity: .4; cursor: not-allowed; pointer-events: none; }
+
+    .btn-primary  { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+    .btn-primary:hover  { background: var(--color-primary-hover); border-color: var(--color-primary-hover); }
+    .btn-secondary { background: white; color: var(--text-primary); border-color: var(--text-primary); }
+    .btn-secondary:hover { background: var(--ui-01); }
+    .btn-ghost    { background: white; color: var(--text-primary); border-color: var(--border-subtle); }
+    .btn-ghost:hover    { background: var(--ui-01); border-color: var(--border-strong); }
+    .btn-negative { background: var(--color-error); color: white; border-color: var(--color-error); }
+    .btn-negative:hover { background: #990000; }
+
+    /* Status indicators (SAP semaphore) */
+    .status {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12px; font-weight: var(--fw-medium);
+    }
+    .status::before {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%; flex-shrink: 0;
+    }
+    .status--positive { color: var(--sap-positive); }
+    .status--positive::before { background: var(--sap-positive); }
+    .status--negative { color: var(--sap-negative); }
+    .status--negative::before { background: var(--sap-negative); }
+    .status--critical { color: #8f6b00; }
+    .status--critical::before { background: var(--sap-critical); }
+    .status--neutral  { color: var(--sap-neutral); }
+    .status--neutral::before  { background: var(--sap-neutral); }
+    .status--informative { color: var(--color-info); }
+    .status--informative::before { background: var(--color-info); }
+
+    /* Input */
+    .input-group { display: flex; flex-direction: column; gap: var(--s-02); }
+    .input-label { font-size: 13px; font-weight: var(--fw-medium); }
+    .input-label .required { color: var(--color-error); margin-left: 2px; }
+    .input-field {
+      height: 36px; padding: 0 var(--s-04);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      font-size: 13px; font-family: var(--font);
+      background: white; color: var(--text-primary);
+      transition: border-color var(--t-base) var(--ease),
+                  box-shadow   var(--t-base) var(--ease);
+    }
+    .input-field::placeholder { color: var(--text-disabled); }
+    .input-field:hover  { border-color: var(--color-primary); }
+    .input-field:focus  { outline:none; border-color: var(--color-interactive); box-shadow: 0 0 0 2px rgba(15,98,254,.12); }
+    .input-field.error  { border-color: var(--color-error); }
+    .input-field.success { border-color: var(--color-success); }
+    .input-field:disabled { background: var(--ui-01); color: var(--text-disabled); cursor: not-allowed; }
+    .input-message { font-size: 11px; display: flex; align-items: center; gap: 4px; margin-top: 3px; }
+    .input-message.error   { color: var(--color-error); }
+    .input-message.success { color: var(--color-success); }
+    .input-message.helper  { color: var(--text-secondary); }
+    .input-message i { font-size: 13px; }
+
+    /* Select */
+    .select-field {
+      height: 36px; padding: 0 var(--s-08) 0 var(--s-04);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      font-size: 13px; font-family: var(--font);
+      background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23525252' viewBox='0 0 256 256'%3E%3Cpath d='M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z'/%3E%3C/svg%3E") no-repeat right 10px center;
+      appearance: none; cursor: pointer;
+      transition: border-color var(--t-base) var(--ease);
+    }
+    .select-field:focus { outline:none; border-color: var(--color-interactive); }
+
+    /* Cards */
+    .card {
+      background: white;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      box-shadow: var(--elevation-01);
+    }
+    .card__header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--s-04) var(--s-05);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .card__title   { font-size: 14px; font-weight: var(--fw-semibold); }
+    .card__subtitle { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+
+    /* KPI Card (Object Number + status) */
+    .kpi-card {
+      background: white;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: var(--s-05) var(--s-06);
+      box-shadow: var(--elevation-01);
+    }
+    .kpi-card__label { font-size: 11px; font-weight: var(--fw-semibold); color: var(--text-secondary); text-transform: uppercase; letter-spacing: .4px; margin-bottom: var(--s-02); }
+    .kpi-card__value { font-size: 26px; font-weight: var(--fw-semibold); line-height: 1; margin-bottom: var(--s-02); }
+    .kpi-card__value.positive { color: var(--color-success); }
+    .kpi-card__value.negative { color: var(--color-error); }
+    .kpi-card__trend { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: var(--fw-medium); }
+    .kpi-card__trend.up   { color: var(--color-success); }
+    .kpi-card__trend.down { color: var(--color-error); }
+
+    /* Table — SAP style (mais compacta) */
+    .table-wrapper {
+      background: white;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--elevation-01);
+    }
+    .table-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--s-03) var(--s-05);
+      border-bottom: 1px solid var(--border-subtle);
+      gap: var(--s-04);
+    }
+    .table-toolbar__left  { display: flex; align-items: center; gap: var(--s-03); }
+    .table-toolbar__right { display: flex; align-items: center; gap: var(--s-02); }
+    .table-title { font-size: 13px; font-weight: var(--fw-semibold); }
+    .table-count { font-size: 12px; color: var(--text-secondary); }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .data-table thead { background: var(--color-dark); }
+    .data-table th {
+      padding: var(--s-03) var(--s-05);
+      text-align: left; font-size: 11px; font-weight: var(--fw-semibold);
+      color: rgba(255,255,255,.85); letter-spacing: .3px;
+      white-space: nowrap;
+    }
+    .data-table td {
+      padding: var(--s-03) var(--s-05);
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: middle;
+    }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table tbody tr:hover td { background: var(--ui-01); }
+    .table-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--s-03) var(--s-05);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* Pagination */
+    .pagination { display: flex; align-items: center; gap: var(--s-02); }
+    .pagination__info { font-size: 12px; color: var(--text-secondary); margin-right: var(--s-02); }
+    .pagination__btn {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background: white; font-size: 12px; color: var(--text-primary);
+      cursor: pointer;
+      transition: all var(--t-fast) var(--ease);
+    }
+    .pagination__btn:hover { background: var(--ui-01); }
+    .pagination__btn.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+    .pagination__btn:disabled { opacity: .4; cursor: not-allowed; }
+    .pagination__btn i { font-size: 13px; }
+
+    /* Search */
+    .search-input {
+      display: flex; align-items: center; gap: var(--s-02);
+      height: 32px; padding: 0 var(--s-03);
+      border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+      background: white; min-width: 220px;
+      transition: border-color var(--t-base) var(--ease);
+    }
+    .search-input:focus-within { border-color: var(--color-interactive); }
+    .search-input i { font-size: 14px; color: var(--text-disabled); flex-shrink: 0; }
+    .search-input input {
+      flex:1; border:none; outline:none;
+      font-size: 13px; font-family: var(--font);
+      background: transparent; color: var(--text-primary);
+    }
+    .search-input input::placeholder { color: var(--text-disabled); }
+
+    /* Alert inline */
+    .alert {
+      display: flex; gap: var(--s-03);
+      padding: var(--s-03) var(--s-04);
+      border-radius: var(--radius-sm); font-size: 13px; line-height: 1.5;
+    }
+    .alert i { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .alert--info    { background: rgba(0,122,204,.08); border-left: 3px solid var(--color-info);    color: #003d73; }
+    .alert--warning { background: rgba(241,194,27,.10); border-left: 3px solid var(--color-warning); color: #8f6b00; }
+    .alert--error   { background: rgba(187,0,0,.08);   border-left: 3px solid var(--color-error);   color: #750e13; }
+    .alert--success { background: rgba(36,161,72,.08);  border-left: 3px solid var(--color-success); color: #0f5223; }
+
+    /* Grid */
+    .grid-4 { display:grid; grid-template-columns: repeat(4,1fr); gap: var(--s-05); }
+    .grid-3 { display:grid; grid-template-columns: repeat(3,1fr); gap: var(--s-05); }
+    .grid-2 { display:grid; grid-template-columns: repeat(2,1fr); gap: var(--s-05); }
+    @media (max-width:1200px) { .grid-4 { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width:768px)  { .grid-4,.grid-3,.grid-2 { grid-template-columns: 1fr; } }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.4);
+      display: none; align-items: center; justify-content: center; z-index: 500;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal {
+      background: white; border-radius: var(--radius-md);
+      box-shadow: var(--elevation-04);
+      max-width: 520px; width: calc(100% - var(--s-07));
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal__header {
+      padding: var(--s-05) var(--s-06);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal__title  { font-size: 15px; font-weight: var(--fw-semibold); }
+    .modal__body   { padding: var(--s-05) var(--s-06); }
+    .modal__footer {
+      padding: var(--s-04) var(--s-06);
+      border-top: 1px solid var(--border-subtle);
+      display: flex; justify-content: flex-end; gap: var(--s-03);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: var(--s-06); right: var(--s-06);
+      min-width: 260px; padding: var(--s-03) var(--s-05);
+      background: var(--text-primary); color: white;
+      border-radius: var(--radius-md); font-size: 13px;
+      display: flex; align-items: center; gap: var(--s-03);
+      box-shadow: var(--elevation-03);
+      transform: translateY(100%); opacity: 0;
+      transition: all var(--t-base) var(--ease);
+      z-index: 600; pointer-events: none;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+    .toast.success { background: var(--color-success); }
+    .toast.error   { background: var(--color-error); }
+    .toast i { font-size: 16px; flex-shrink: 0; }
+
+    /* Divider */
+    .divider { height:1px; background: var(--border-subtle); border:none; margin: var(--s-06) 0; }
+
+    /* ============================================================
+       CLASSES TIPOGRÁFICAS
+    ============================================================ */
+    .text-display-01 { font-size:48px; font-weight:var(--fw-semibold); line-height:1.1; }
+    .text-h1         { font-size:32px; font-weight:var(--fw-semibold); line-height:1.2; }
+    .text-h2         { font-size:28px; font-weight:var(--fw-semibold); line-height:1.2; }
+    .text-h3         { font-size:24px; font-weight:var(--fw-semibold); line-height:1.3; }
+    .text-h4         { font-size:20px; font-weight:var(--fw-semibold); line-height:1.3; }
+    .text-h5         { font-size:18px; font-weight:var(--fw-semibold); line-height:1.4; }
+    .text-body-lg    { font-size:16px; font-weight:var(--fw-regular);  line-height:1.6; }
+    .text-body-md    { font-size:14px; font-weight:var(--fw-regular);  line-height:1.6; }
+    .text-body-sm    { font-size:12px; font-weight:var(--fw-regular);  line-height:1.5; }
+    .text-label-lg   { font-size:14px; font-weight:var(--fw-medium);   line-height:1.4; }
+    .text-label-md   { font-size:12px; font-weight:var(--fw-medium);   line-height:1.4; }
+    .text-label-sm   { font-size:11px; font-weight:var(--fw-medium);   line-height:1.4; text-transform:uppercase; letter-spacing:.5px; }
+    .text-caption    { font-size:10px; font-weight:var(--fw-regular);  line-height:1.4; }
+
+    .text-primary-color   { color: var(--text-primary); }
+    .text-secondary-color { color: var(--text-secondary); }
+    .text-brand           { color: var(--color-primary); }
+    .text-success         { color: var(--color-success); }
+    .text-error           { color: var(--color-error); }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 768px) {
+      :root { --shellbar-h: 44px; }
+      .shell { grid-template-columns: 0 1fr; }
+      .shell.mobile-open { grid-template-columns: var(--sidenav-w) 1fr; }
+      .sidenav {
+        position: fixed; top: var(--shellbar-h); left: 0; z-index: 300;
+        transform: translateX(-100%);
+        box-shadow: var(--elevation-03);
+        transition: transform var(--t-slow) var(--ease);
+      }
+      .shell.mobile-open .sidenav { transform: translateX(0); width: var(--sidenav-w); }
+      .object-header__facts { display: none; }
+      .content-body { padding: var(--s-05); }
+      .shellbar__search { display: none; }
+    }
+
+    /* ── Loading States ── */
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid var(--border-subtle);
+      border-top-color: var(--color-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .spinner--sm { width: 16px; height: 16px; border-width: 2px; }
+    .spinner--lg { width: 48px; height: 48px; border-width: 4px; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--ui-01) 25%, var(--gray-200) 50%, var(--ui-01) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-sm);
+    }
+    .skeleton--text { height: 14px; margin-bottom: 8px; }
+    .skeleton--text:last-child { width: 60%; }
+    .skeleton--heading { height: 24px; width: 40%; margin-bottom: var(--s-05); }
+    .skeleton--avatar { width: 40px; height: 40px; border-radius: 50%; }
+    .skeleton--card { height: 120px; border-radius: var(--radius-md); }
+    .skeleton--row { height: 48px; margin-bottom: 1px; }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ================================================================
+       SAP FIORI SHELL
+       Padrões suportados:
+       • Object Page — header com key facts + anchor navigation + sections
+       • List Report  — tabela com filtros
+       Para prototipar outras telas, alterne o conteúdo de .content
+       mantendo .object-header (Object Page) ou .list-report-header.
+  ================================================================ -->
+  <div class="shell" id="shell">
+
+    <!-- SHELLBAR (sap.m.ShellBar) -->
+    <header class="shellbar">
+      <button class="shellbar__toggle" onclick="toggleNav()" title="Navegação">
+        <i class="ph ph-list"></i>
+      </button>
+
+      <div class="shellbar__brand">
+        <div class="shellbar__logo">
+          <div class="shellbar__logo-mark">
+            <i class="ph-fill ph-hexagon"></i>
+          </div>
+          <span class="shellbar__logo-text">GCB</span>
+        </div>
+        <div class="shellbar__sep"></div>
+        <span class="shellbar__app-title">Nome da Aplicação</span>
+      </div>
+
+      <!-- Search (SAP Global Search) -->
+      <div class="shellbar__search">
+        <i class="ph ph-magnifying-glass"></i>
+        <input type="text" placeholder="Pesquisar...">
+      </div>
+
+      <div class="shellbar__actions">
+        <button class="shellbar__icon-btn" title="Notificações">
+          <i class="ph ph-bell"></i>
+          <span class="shellbar__badge"></span>
+        </button>
+        <button class="shellbar__icon-btn" title="Configurações">
+          <i class="ph ph-gear"></i>
+        </button>
+        <button class="shellbar__icon-btn" title="Ajuda">
+          <i class="ph ph-question"></i>
+        </button>
+        <div class="shellbar__avatar" title="João Silva">JS</div>
+      </div>
+    </header>
+
+
+    <!-- SIDE NAVIGATION (Fiori Side Navigation) -->
+    <aside class="sidenav" id="sidenav">
+      <div class="sidenav__app-info">
+        <div class="sidenav__app-label">Módulo atual</div>
+      </div>
+
+      <nav class="nav-group">
+        <div class="nav-group__label">Visão geral</div>
+        <a href="#" class="nav-item active" data-tooltip="Início">
+          <span class="nav-item__icon"><i class="ph-fill ph-house"></i></span>
+          <span class="nav-item__label">Início</span>
+        </a>
+        <a href="#" class="nav-item" data-tooltip="Minha Caixa">
+          <span class="nav-item__icon"><i class="ph ph-inbox"></i></span>
+          <span class="nav-item__label">Minha Caixa</span>
+          <span class="nav-item__count">5</span>
+        </a>
+      </nav>
+
+      <nav class="nav-group">
+        <div class="nav-group__label">Processos</div>
+        <a href="#" class="nav-item" data-tooltip="Pedidos de Compra">
+          <span class="nav-item__icon"><i class="ph ph-shopping-cart-simple"></i></span>
+          <span class="nav-item__label">Pedidos de Compra</span>
+        </a>
+        <a href="#" class="nav-item" data-tooltip="Notas Fiscais">
+          <span class="nav-item__icon"><i class="ph ph-file-text"></i></span>
+          <span class="nav-item__label">Notas Fiscais</span>
+        </a>
+        <a href="#" class="nav-item" data-tooltip="Fornecedores">
+          <span class="nav-item__icon"><i class="ph ph-buildings"></i></span>
+          <span class="nav-item__label">Fornecedores</span>
+        </a>
+        <a href="#" class="nav-item" data-tooltip="Contratos">
+          <span class="nav-item__icon"><i class="ph ph-handshake"></i></span>
+          <span class="nav-item__label">Contratos</span>
+        </a>
+      </nav>
+
+      <nav class="nav-group">
+        <div class="nav-group__label">Análise</div>
+        <a href="#" class="nav-item" data-tooltip="Relatórios">
+          <span class="nav-item__icon"><i class="ph ph-chart-bar"></i></span>
+          <span class="nav-item__label">Relatórios</span>
+        </a>
+        <a href="#" class="nav-item" data-tooltip="KPIs">
+          <span class="nav-item__icon"><i class="ph ph-gauge"></i></span>
+          <span class="nav-item__label">KPIs</span>
+        </a>
+      </nav>
+
+      <div class="sidenav__footer">
+        <a href="#" class="nav-item" data-tooltip="Configurações">
+          <span class="nav-item__icon"><i class="ph ph-gear"></i></span>
+          <span class="nav-item__label">Configurações</span>
+        </a>
+        <a href="#" class="nav-item" data-tooltip="Sair">
+          <span class="nav-item__icon"><i class="ph ph-sign-out"></i></span>
+          <span class="nav-item__label">Sair</span>
+        </a>
+      </div>
+    </aside>
+
+
+    <!-- ================================================================
+         CONTENT — Object Page Pattern (Fiori)
+         Para List Report, substitua object-header pelo list-report-header
+         e o conteúdo pelo table-wrapper correspondente.
+    ================================================================ -->
+    <main class="content">
+
+      <!-- OBJECT HEADER -->
+      <div class="object-header">
+        <!-- Barra superior: breadcrumb + ações -->
+        <div class="object-header__top">
+          <div class="object-header__back">
+            <i class="ph ph-caret-left"></i>
+            Pedidos de Compra
+          </div>
+          <div class="object-header__breadcrumb">
+            <i class="ph ph-caret-right"></i>
+            <span>PED-2024-001</span>
+          </div>
+          <div class="object-header__actions">
+            <button class="btn btn-ghost btn--sm">
+              <i class="ph ph-pencil-simple"></i>
+              Editar
+            </button>
+            <button class="btn btn-ghost btn--sm">
+              <i class="ph ph-dots-three"></i>
+            </button>
+            <button class="btn btn-primary btn--sm">
+              <i class="ph ph-check"></i>
+              Aprovar
+            </button>
+          </div>
+        </div>
+
+        <!-- Objeto principal + key facts -->
+        <div class="object-header__main">
+          <div class="object-header__icon">
+            <i class="ph-fill ph-shopping-cart-simple"></i>
+          </div>
+          <div class="object-header__info">
+            <div class="object-header__title">Pedido de Compra PED-2024-001</div>
+            <div class="object-header__subtitle">
+              Vivix S.A. · Criado em 28/05/2024 por João Silva
+              &nbsp;·&nbsp;
+              <span class="status status--positive">Aprovado</span>
+            </div>
+          </div>
+          <div class="object-header__facts">
+            <div class="fact">
+              <div class="fact__label">Valor total</div>
+              <div class="fact__value">R$ 18.400</div>
+            </div>
+            <div class="fact">
+              <div class="fact__label">Itens</div>
+              <div class="fact__value">4</div>
+            </div>
+            <div class="fact">
+              <div class="fact__label">Entrega prev.</div>
+              <div class="fact__value" style="font-size:14px; padding-top:6px;">15/06/2024</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Anchor navigation (tabs) -->
+        <div class="anchor-nav">
+          <div class="anchor-tab active">Itens do Pedido</div>
+          <div class="anchor-tab">Notas de Entrega</div>
+          <div class="anchor-tab">Faturas</div>
+          <div class="anchor-tab">Aprovações</div>
+          <div class="anchor-tab">Histórico</div>
+        </div>
+      </div>
+
+      <!-- CONTENT BODY -->
+      <div class="content-body">
+
+        <!-- Alert contextual -->
+        <div class="alert alert--info" style="margin-bottom: var(--s-05);">
+          <i class="ph-fill ph-info" style="color:var(--color-info);"></i>
+          <div>Pedido aprovado em 29/05/2024. Aguardando confirmação de entrega do fornecedor.</div>
+        </div>
+
+        <!-- Seção: Itens do pedido -->
+        <div class="table-wrapper" style="margin-bottom: var(--s-06);">
+          <div class="table-toolbar">
+            <div class="table-toolbar__left">
+              <span class="table-title">Itens do Pedido</span>
+              <span class="table-count">4 itens</span>
+            </div>
+            <div class="table-toolbar__right">
+              <div class="search-input">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" placeholder="Filtrar itens...">
+              </div>
+              <button class="btn btn-ghost btn--sm btn--icon" title="Configurações da tabela">
+                <i class="ph ph-sliders"></i>
+              </button>
+            </div>
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Pos.</th>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th>Qtd.</th>
+                <th>UN</th>
+                <th>Preço unit.</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-label-md">001</td>
+                <td class="text-label-md">VX-10MM-CLR</td>
+                <td>Vidro Temperado 10mm Clear 2000×1000mm</td>
+                <td>50</td>
+                <td>m²</td>
+                <td>R$ 220,00</td>
+                <td style="font-weight:600;">R$ 11.000</td>
+                <td><span class="status status--positive">Confirmado</span></td>
+                <td><button class="btn btn-ghost btn--sm btn--icon"><i class="ph ph-dots-three"></i></button></td>
+              </tr>
+              <tr>
+                <td class="text-label-md">002</td>
+                <td class="text-label-md">VX-6MM-FOG</td>
+                <td>Vidro Laminado 6mm Fosco 1200×800mm</td>
+                <td>30</td>
+                <td>m²</td>
+                <td>R$ 180,00</td>
+                <td style="font-weight:600;">R$ 5.400</td>
+                <td><span class="status status--positive">Confirmado</span></td>
+                <td><button class="btn btn-ghost btn--sm btn--icon"><i class="ph ph-dots-three"></i></button></td>
+              </tr>
+              <tr>
+                <td class="text-label-md">003</td>
+                <td class="text-label-md">VX-ACC-SLK</td>
+                <td>Acessório: Silicone estrutural 600ml</td>
+                <td>20</td>
+                <td>un</td>
+                <td>R$ 45,00</td>
+                <td style="font-weight:600;">R$ 900</td>
+                <td><span class="status status--critical">Pendente</span></td>
+                <td><button class="btn btn-ghost btn--sm btn--icon"><i class="ph ph-dots-three"></i></button></td>
+              </tr>
+              <tr>
+                <td class="text-label-md">004</td>
+                <td class="text-label-md">VX-FRETE</td>
+                <td>Frete e seguro CIF — Recife/PE</td>
+                <td>1</td>
+                <td>sv</td>
+                <td>R$ 1.100,00</td>
+                <td style="font-weight:600;">R$ 1.100</td>
+                <td><span class="status status--neutral">N/A</span></td>
+                <td><button class="btn btn-ghost btn--sm btn--icon"><i class="ph ph-dots-three"></i></button></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="table-footer">
+            <span class="text-body-sm text-secondary-color">4 de 4 itens</span>
+            <div style="font-size:14px; font-weight:600; color:var(--text-primary);">
+              Total: R$ 18.400
+            </div>
+          </div>
+        </div>
+
+        <!-- Seção: KPI resumo inferior -->
+        <div class="grid-3" style="margin-bottom: var(--s-06);">
+          <div class="kpi-card">
+            <div class="kpi-card__label">Valor aprovado</div>
+            <div class="kpi-card__value positive">R$ 18.400</div>
+            <div class="kpi-card__trend up"><i class="ph-fill ph-check-circle"></i> Dentro do orçamento</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card__label">Prazo de entrega</div>
+            <div class="kpi-card__value">18 dias</div>
+            <div class="kpi-card__trend up"><i class="ph-fill ph-calendar-check"></i> No prazo</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card__label">Itens com pendência</div>
+            <div class="kpi-card__value negative">1</div>
+            <div class="kpi-card__trend down"><i class="ph-fill ph-warning"></i> Requer ação</div>
+          </div>
+        </div>
+
+      </div><!-- /content-body -->
+    </main>
+  </div><!-- /shell -->
+
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div class="modal__header">
+        <span class="modal__title">Título do diálogo</span>
+        <button class="btn btn-ghost btn--sm btn--icon" onclick="closeModal()">
+          <i class="ph ph-x"></i>
+        </button>
+      </div>
+      <div class="modal__body">
+        <p class="text-body-md">Conteúdo: formulários, confirmações, alertas de ação.</p>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="closeModal()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <i class="ph ph-check-circle"></i>
+    <span id="toast-msg">Operação realizada.</span>
+  </div>
+
+
+  <script>
+    function toggleNav() {
+      const shell = document.getElementById('shell');
+      if (window.innerWidth <= 768) {
+        shell.classList.toggle('mobile-open');
+      } else {
+        shell.classList.toggle('collapsed');
+      }
+    }
+
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        if (this.getAttribute('href') === '#') e.preventDefault();
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    document.querySelectorAll('.anchor-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.anchor-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    function openModal()  { document.getElementById('modal').classList.add('open'); }
+    function closeModal() { document.getElementById('modal').classList.remove('open'); }
+    document.getElementById('modal').addEventListener('click', e => {
+      if (e.target === document.getElementById('modal')) closeModal();
+    });
+
+    function showToast(msg, type='') {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      t.className = 'toast show ' + type;
+      setTimeout(() => { t.className = 'toast'; }, 3500);
+    }
+
+    document.addEventListener('click', function(e) {
+      const shell = document.getElementById('shell');
+      if (window.innerWidth <= 768 && shell.classList.contains('mobile-open')) {
+        if (!document.getElementById('sidenav').contains(e.target) &&
+            !e.target.closest('.shellbar__toggle')) {
+          shell.classList.remove('mobile-open');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

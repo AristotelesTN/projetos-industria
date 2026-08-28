@@ -1,0 +1,2798 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=ai-legible&utm_source=comment&utm_medium=referral&utm_id=782bdad0-ac75-44d4-8b10-176ebb1cb13d
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="hosting-provider" content="Netlify">
+<meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=782bdad0-ac75-44d4-8b10-176ebb1cb13d">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VIVIX · Design System GCB — Biblioteca de componentes Web: botões, formulários, tabelas, modais e estados.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Design System GCB">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:title" content="Componentes Web - VIVIX | Design System GCB">
+    <meta property="og:description" content="VIVIX · Design System GCB — Biblioteca de componentes Web: botões, formulários, tabelas, modais e estados.">
+    <meta property="og:url" content="https://gcb-ds.netlify.app/v-componentes-web.html">
+    <meta property="og:image" content="https://gcb-ds.netlify.app/assets/og/og-ds.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Design System GCB — Corporativo, Atiaia Energia e VIVIX">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Componentes Web - VIVIX | Design System GCB">
+    <meta name="twitter:description" content="VIVIX · Design System GCB — Biblioteca de componentes Web: botões, formulários, tabelas, modais e estados.">
+    <meta name="twitter:image" content="https://gcb-ds.netlify.app/assets/og/og-ds.png">
+    <title>Componentes Web - VIVIX | Design System GCB</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/icone-brennand.svg">
+    
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+        /* ========================================
+           RESET E VARIÁVEIS
+        ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Cores VIVIX */
+            --color-primary: #00b2a9;
+            --color-secondary-1: #005751;
+            --color-secondary-2: #e1e000;
+            --color-neutral-light: #f5f5f5;
+            --color-neutral-dark: #005751;
+            /* Aliases canônicos (ver CONTEXT.md > Aliases de tokens) */
+            --color-dark: var(--color-neutral-dark);
+            --color-accent: var(--color-secondary-2);
+            
+            /* Cores Semânticas */
+            --color-success: #24a148;
+            --color-warning: #f1c21b;
+            --color-error: #bb0000;
+            --color-info: #007acc;
+            
+            /* Cor de Interação */
+            --color-interactive: #0f62fe;
+            
+            /* Tokens */
+            --spacing-01: 2px;
+            --spacing-02: 4px;
+            --spacing-03: 8px;
+            --spacing-04: 12px;
+            --spacing-05: 16px;
+            --spacing-06: 24px;
+            --spacing-07: 32px;
+            --spacing-08: 40px;
+            --spacing-09: 48px;
+            --spacing-10: 64px;
+            
+            /* Elevações */
+            --elevation-01: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --elevation-02: 0 2px 6px rgba(0, 0, 0, 0.16);
+            --elevation-03: 0 4px 12px rgba(0, 0, 0, 0.20);
+            --elevation-04: 0 8px 24px rgba(0, 0, 0, 0.24);
+            
+            /* Bordas */
+            --radius-sm: 2px;
+            --radius-md: 4px;
+            --radius-lg: 8px;
+            --radius-full: 9999px;
+            
+            /* Animações */
+            --transition-fast: 100ms;
+            --transition-base: 200ms;
+            --transition-slow: 400ms;
+            --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* UI */
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-weight-regular: 400;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 600;
+            --ui-background: #ffffff;
+            --ui-01: #f4f4f4;
+            --ui-02: #ffffff;
+            --text-primary: #161616;
+            --text-secondary: #525252;
+            --text-disabled: #8d8d8d;
+            --border-subtle: #e0e0e0;
+            --border-strong: #8d8d8d;
+            --focus-color: #0f62fe;
+            --success-color: #24a148;
+            --error-color: #da1e28;
+            --warning-color: #f1c21b;
+            
+            /* Grayscale */
+            --gray-50: #fafafa;
+            --gray-100: #f5f5f5;
+            --gray-200: #eeeeee;
+            --gray-300: #e0e0e0;
+            --gray-400: #bdbdbd;
+            --gray-500: #9e9e9e;
+            --gray-600: #757575;
+            --gray-700: #616161;
+            --gray-800: #424242;
+            --gray-900: #212121;
+
+            /* ── Aliases (shells usam nomes curtos) ── */
+            --s-01: var(--spacing-01);
+            --s-02: var(--spacing-02);
+            --s-03: var(--spacing-03);
+            --s-04: var(--spacing-04);
+            --s-05: var(--spacing-05);
+            --s-06: var(--spacing-06);
+            --s-07: var(--spacing-07);
+            --s-08: var(--spacing-08);
+            --s-09: var(--spacing-09);
+            --s-10: var(--spacing-10);
+
+            --font: var(--font-family);
+            --fw-regular: var(--font-weight-regular);
+            --fw-medium: var(--font-weight-medium);
+            --fw-semibold: var(--font-weight-semibold);
+
+            --t-fast: var(--transition-fast);
+            --t-base: var(--transition-base);
+            --t-slow: var(--transition-slow);
+            --ease: var(--easing-standard);
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--ui-background);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        /* ========================================
+           LAYOUT
+        ======================================== */
+        .page-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            background: var(--ui-02);
+            border-right: 1px solid var(--border-subtle);
+            padding: var(--spacing-06);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            margin-bottom: var(--spacing-07);
+        }
+
+        .sidebar-logo {
+            height: 32px;
+            margin-bottom: var(--spacing-04);
+        }
+
+        .sidebar-title {
+            font-size: 1.125rem;
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--spacing-02);
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .sidebar-back {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-03);
+            padding: var(--spacing-04);
+            margin-bottom: var(--spacing-06);
+            background: var(--ui-01);
+            border-radius: 4px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .sidebar-back:hover {
+            background: var(--border-subtle);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: var(--spacing-02);
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: var(--spacing-03) var(--spacing-04);
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--ui-01);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav a.active {
+            background: var(--color-primary);
+            color: white;
+            font-weight: 500;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-disabled);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: var(--spacing-06) 0 var(--spacing-03);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: var(--spacing-08) var(--spacing-10);
+            max-width: 1280px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            gap: var(--spacing-03);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-07);
+        }
+
+        .breadcrumb a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-05);
+        }
+
+        .page-description {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-09);
+            max-width: 768px;
+        }
+
+        /* ========================================
+           SECTIONS
+        ======================================== */
+        .section {
+            margin-bottom: var(--spacing-10);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-06);
+            padding-bottom: var(--spacing-04);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .section-description {
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-06);
+        }
+
+        .subsection-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: var(--spacing-08);
+            margin-bottom: var(--spacing-05);
+        }
+
+        /* ========================================
+           COMPONENT SHOWCASE
+        ======================================== */
+        .component-showcase {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-07);
+            margin-bottom: var(--spacing-06);
+        }
+
+        .component-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-06);
+            padding-bottom: var(--spacing-05);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .component-name {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .component-preview {
+            background: var(--ui-01);
+            padding: var(--spacing-07);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-05);
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-05);
+            align-items: flex-start;
+        }
+
+        .component-specs {
+            background: var(--ui-01);
+            padding: var(--spacing-05);
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-05);
+        }
+
+        .component-code {
+            background: var(--text-primary);
+            color: #f4f4f4;
+            padding: var(--spacing-05);
+            border-radius: var(--radius-md);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .copy-code-btn {
+            position: absolute;
+            top: var(--spacing-04);
+            right: var(--spacing-04);
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: var(--spacing-03) var(--spacing-04);
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-base) var(--easing-standard);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-02);
+        }
+
+        .copy-code-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .copy-code-btn i {
+            font-size: 14px;
+        }
+
+        /* ========================================
+           ATOMS - BUTTONS
+        ======================================== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-03);
+            padding: var(--spacing-04) var(--spacing-05);
+            border: 1px solid transparent;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all var(--transition-base) var(--easing-standard);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        
+        .btn i {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .btn-sm i {
+            font-size: 16px;
+        }
+
+        .btn-lg i {
+            font-size: 20px;
+        }
+
+        .btn-icon-only i {
+            font-size: 18px;
+        }
+
+.btn:focus-visible {
+            outline: 2px solid var(--focus-color);
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--color-secondary-1);
+            border-color: var(--color-secondary-1);
+        }
+
+        .btn-primary:active {
+            transform: translateY(1px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text-primary);
+            border-color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-100);
+            border-color: var(--border-strong);
+        }
+
+        .btn-tertiary {
+            background: transparent;
+            color: var(--color-primary);
+            border-color: transparent;
+        }
+
+        .btn-tertiary:hover {
+            background: rgba(0, 178, 169, 0.1);
+        }
+
+        .btn-ghost,
+        .btn-secondary-outline {
+            background: #ffffff;
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .btn-ghost:hover,
+        .btn-secondary-outline:hover {
+            background: var(--gray-100);
+            border-color: var(--border-strong);
+        }
+
+        .btn-danger {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+
+        .btn-danger:hover {
+            background: var(--color-error);
+            filter: brightness(0.85);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .btn i,
+        .btn-primary i,
+        .btn-secondary i,
+        .btn-ghost i {
+            font-size: 18px;
+        }
+
+        .btn-sm {
+            padding: var(--spacing-02) var(--spacing-04);
+            font-size: 0.75rem;
+        }
+
+        .btn-lg {
+            padding: var(--spacing-05) var(--spacing-07);
+            font-size: 1rem;
+        }
+
+        .btn-icon-only {
+            padding: var(--spacing-04);
+            width: 40px;
+            height: 40px;
+        }
+
+        /* ========================================
+           ATOMS - INPUTS
+        ======================================== */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-03);
+            max-width: 320px;
+        }
+
+        .input-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .input-field {
+            padding: var(--spacing-04) var(--spacing-05);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-family: inherit;
+            color: var(--text-primary);
+            background: white;
+            transition: all var(--transition-base);
+        }
+
+        .input-field:hover {
+            border-color: var(--text-secondary);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 2px rgba(0, 178, 169, 0.2);
+        }
+
+        .input-field:disabled {
+            background: var(--ui-01);
+            color: var(--text-disabled);
+            cursor: not-allowed;
+        }
+
+        .input-field.error {
+            border-color: var(--error-color);
+        }
+
+        .input-helper {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .input-error {
+            font-size: 0.75rem;
+            color: var(--error-color);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-02);
+        }
+
+        /* ========================================
+           ATOMS - CHECKBOX / RADIO / TOGGLE
+        ======================================== */
+        .checkbox-wrapper,
+        .radio-wrapper {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-03);
+            cursor: pointer;
+            position: relative;
+            user-select: none;
+        }
+
+        /* Esconder input nativo */
+        .checkbox-wrapper input[type="checkbox"],
+        .radio-wrapper input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Checkbox customizado */
+        .checkbox-custom {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
+            background: white;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .checkbox-wrapper:hover .checkbox-custom {
+            border-color: var(--color-interactive);
+        }
+
+        .checkbox-wrapper input[type="checkbox"]:checked + .checkbox-custom {
+            background: var(--color-interactive);
+            border-color: var(--color-interactive);
+        }
+
+        .checkbox-wrapper input[type="checkbox"]:checked + .checkbox-custom::after {
+            content: '';
+            width: 4px;
+            height: 8px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            margin-bottom: 2px;
+        }
+
+        .checkbox-wrapper input[type="checkbox"]:focus + .checkbox-custom {
+            outline: 2px solid var(--color-interactive);
+            outline-offset: 2px;
+        }
+
+        /* Radio customizado */
+        .radio-custom {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-subtle);
+            border-radius: 50%;
+            background: white;
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .radio-wrapper:hover .radio-custom {
+            border-color: var(--color-interactive);
+        }
+
+        .radio-wrapper input[type="radio"]:checked + .radio-custom {
+            border-color: var(--color-interactive);
+        }
+
+        .radio-wrapper input[type="radio"]:checked + .radio-custom::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--color-interactive);
+        }
+
+        .radio-wrapper input[type="radio"]:focus + .radio-custom {
+            outline: 2px solid var(--color-interactive);
+            outline-offset: 2px;
+        }
+
+        /* Toggle */
+        .toggle-wrapper {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-04);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: var(--border-subtle);
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: background var(--transition-base);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform var(--transition-base);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .toggle-switch.active {
+            background: var(--color-interactive);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(24px);
+        }
+
+        /* ========================================
+           ATOMS - TAGS / BADGES
+        ======================================== */
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-02);
+            padding: var(--spacing-02) var(--spacing-04);
+            background: var(--ui-01);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .tag-primary {
+            background: rgba(0, 178, 169, 0.1);
+            color: var(--color-primary);
+        }
+
+        .tag-success {
+            background: rgba(36, 161, 72, 0.1);
+            color: var(--color-success);
+        }
+
+        .tag-error {
+            background: rgba(187, 0, 0, 0.1);
+            color: var(--color-error);
+        }
+
+        .tag-warning {
+            background: rgba(241, 194, 27, 0.2);
+            color: #8e6a00; /* Texto escuro para contraste */
+        }
+
+        .tag-info {
+            background: rgba(0, 122, 204, 0.1);
+            color: var(--color-info);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 var(--spacing-02);
+            background: var(--color-error);
+            color: white;
+            border-radius: var(--radius-full);
+            font-size: 0.625rem;
+            font-weight: 600;
+        }
+
+        /* ========================================
+           ATOMS - LINKS
+        ======================================== */
+        .link {
+            color: var(--color-interactive);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-02);
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        .link-subtle {
+            color: var(--text-secondary);
+        }
+
+        .link-subtle:hover {
+            color: var(--text-primary);
+        }
+
+        /* ========================================
+           ATOMS - DIVIDERS
+        ======================================== */
+        .divider {
+            height: 1px;
+            background: var(--border-subtle);
+            border: none;
+            margin: var(--spacing-06) 0;
+        }
+
+        .divider-vertical {
+            width: 1px;
+            height: 32px;
+            background: var(--border-subtle);
+            border: none;
+        }
+
+        /* ========================================
+           MOLECULES - SEARCH BAR
+        ======================================== */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-03);
+            padding: var(--spacing-04) var(--spacing-05);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            background: white;
+            max-width: 400px;
+            transition: all var(--transition-base);
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 2px rgba(0, 178, 169, 0.2);
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 0.875rem;
+            font-family: inherit;
+        }
+
+        .search-bar i {
+            color: var(--text-secondary);
+        }
+
+        /* ========================================
+           MOLECULES - DROPDOWN
+        ======================================== */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-trigger {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-03);
+            padding: var(--spacing-04) var(--spacing-05);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            background: white;
+            cursor: pointer;
+            font-size: 0.875rem;
+            min-width: 200px;
+            justify-content: space-between;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            min-width: 200px;
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            box-shadow: var(--elevation-02);
+            display: none;
+            z-index: 100;
+        }
+
+        .dropdown.active .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: var(--spacing-04) var(--spacing-05);
+            cursor: pointer;
+            transition: background var(--transition-base);
+            font-size: 0.875rem;
+        }
+
+        .dropdown-item:hover {
+            background: var(--ui-01);
+        }
+
+        .dropdown-item:first-child {
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+        }
+
+        .dropdown-item:last-child {
+            border-radius: 0 0 var(--radius-md) var(--radius-md);
+        }
+
+        /* ========================================
+           MOLECULES - TOOLTIP
+        ======================================== */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip-text {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            padding: var(--spacing-03) var(--spacing-04);
+            background: var(--text-primary);
+            color: white;
+            font-size: 0.75rem;
+            border-radius: var(--radius-sm);
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-base);
+            z-index: 1000;
+        }
+
+        .tooltip-text::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 4px solid transparent;
+            border-top-color: var(--text-primary);
+        }
+
+        .tooltip-container:hover .tooltip-text {
+            opacity: 1;
+        }
+
+        /* ========================================
+           MOLECULES - BREADCRUMBS
+        ======================================== */
+        .breadcrumbs {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-03);
+            font-size: 0.875rem;
+        }
+
+        .breadcrumbs a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color var(--transition-base);
+        }
+
+        .breadcrumbs a:hover {
+            color: var(--text-primary);
+        }
+
+        .breadcrumbs span {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* ========================================
+           MOLECULES - PAGINATION
+        ======================================== */
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-03);
+        }
+
+        .pagination-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            background: white;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            font-size: 0.875rem;
+        }
+
+        .pagination-btn:hover {
+            background: var(--ui-01);
+            border-color: var(--text-secondary);
+        }
+
+        .pagination-btn.active {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ========================================
+           ORGANISMS - CARDS
+        ======================================== */
+        .card {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-06);
+            transition: all var(--transition-base);
+        }
+
+        .card:hover {
+            box-shadow: var(--elevation-02);
+        }
+
+        .card-header {
+            margin-bottom: var(--spacing-05);
+            padding-bottom: var(--spacing-05);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-02);
+        }
+
+        .card-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .card-content {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-05);
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--spacing-05);
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        /* ========================================
+           ORGANISMS - TABLES
+        ======================================== */
+        .table-container {
+            overflow-x: auto;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            background: white;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            background: white;
+        }
+
+        .data-table thead {
+            background: var(--color-neutral-dark);
+        }
+
+        .data-table th {
+            padding: var(--spacing-05) var(--spacing-06);
+            text-align: left;
+            font-weight: 600;
+            color: white;
+            border-bottom: 2px solid var(--color-neutral-dark);
+        }
+
+        .data-table td {
+            padding: var(--spacing-05) var(--spacing-06);
+            border-bottom: 1px solid var(--border-subtle);
+            background: white;
+        }
+
+        .data-table tbody tr {
+            background: white;
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--ui-01);
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* ========================================
+           ORGANISMS - MODALS
+        ======================================== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--elevation-04);
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: var(--spacing-06);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: var(--spacing-03);
+            color: var(--text-secondary);
+            transition: color var(--transition-base);
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: var(--spacing-06);
+        }
+
+        .modal-footer {
+            padding: var(--spacing-06);
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-04);
+        }
+
+        /* ========================================
+           ORGANISMS - ACCORDION / TABS
+        ======================================== */
+        .accordion-item {
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-04);
+            background: white;
+            width: 100%;
+        }
+
+        .accordion-header {
+            padding: var(--spacing-05) var(--spacing-06);
+            background: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            transition: background var(--transition-base);
+            width: 100%;
+        }
+
+        .accordion-header:hover {
+            background: var(--ui-01);
+        }
+
+        .accordion-header i {
+            transition: transform var(--transition-base);
+            color: var(--text-secondary);
+        }
+
+        .accordion-item.active .accordion-header i {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--transition-slow) var(--easing-standard),
+                        padding var(--transition-slow) var(--easing-standard);
+            padding: 0 var(--spacing-06);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 500px;
+            padding: var(--spacing-05) var(--spacing-06) var(--spacing-06);
+        }
+
+        .tabs {
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            gap: var(--spacing-06);
+            margin-bottom: var(--spacing-06);
+        }
+
+        .tab {
+            padding: var(--spacing-04) var(--spacing-05);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all var(--transition-base);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ========================================
+           ORGANISMS - NAVIGATION
+        ======================================== */
+        .navbar {
+            background: white;
+            border-bottom: 1px solid var(--border-subtle);
+            padding: var(--spacing-05) var(--spacing-06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: var(--spacing-06);
+            list-style: none;
+        }
+
+        .navbar-item {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color var(--transition-base);
+        }
+
+        .navbar-item:hover {
+            color: var(--text-primary);
+        }
+
+        .navbar-item.active {
+            color: var(--color-primary);
+            font-weight: 500;
+        }
+
+        /* ========================================
+           TOAST
+        ======================================== */
+        .toast {
+            position: fixed;
+            bottom: var(--spacing-06);
+            right: var(--spacing-06);
+            background: var(--text-primary);
+            color: white;
+            padding: var(--spacing-05) var(--spacing-06);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-04);
+            box-shadow: var(--elevation-03);
+            transform: translateY(200%);
+            opacity: 0;
+            transition: all var(--transition-base);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .toast.success {
+            background: var(--success-color);
+        }
+
+        /* ========================================
+           RESPONSIVIDADE
+        ======================================== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .main-content {
+                padding: var(--spacing-06);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-wrapper {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid var(--border-subtle);
+            }
+
+            .component-preview {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        /* ========================================
+           GRID SYSTEM
+           Base 8px · compatível com Carbon spacing
+        ======================================== */
+
+        /* Container principal */
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-07);
+        }
+
+        /* Grid de colunas — 12 colunas com gap padrão */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: var(--spacing-06);
+        }
+
+        /* Spans de coluna */
+        .col-1  { grid-column: span 1; }
+        .col-2  { grid-column: span 2; }
+        .col-3  { grid-column: span 3; }
+        .col-4  { grid-column: span 4; }
+        .col-5  { grid-column: span 5; }
+        .col-6  { grid-column: span 6; }
+        .col-7  { grid-column: span 7; }
+        .col-8  { grid-column: span 8; }
+        .col-9  { grid-column: span 9; }
+        .col-10 { grid-column: span 10; }
+        .col-11 { grid-column: span 11; }
+        .col-12 { grid-column: span 12; }
+
+        /* Grids de uso frequente (shorthand) */
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-06); }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-06); }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-06); }
+
+        /* Responsividade dos grids */
+        @media (max-width: 1056px) {
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 672px) {
+            .grid,
+            .grid-2,
+            .grid-3,
+            .grid-4 { grid-template-columns: 1fr; }
+            .col-1, .col-2, .col-3, .col-4,
+            .col-5, .col-6, .col-7, .col-8,
+            .col-9, .col-10, .col-11 { grid-column: span 12; }
+        }
+
+        /* Utilitários de gap */
+        .gap-sm  { gap: var(--spacing-03); }
+        .gap-md  { gap: var(--spacing-05); }
+        .gap-lg  { gap: var(--spacing-07); }
+
+        /* Form grid — label acima do input, colunas opcionais */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-05) var(--spacing-06);
+        }
+        .form-grid .form-full { grid-column: 1 / -1; }
+        @media (max-width: 672px) { .form-grid { grid-template-columns: 1fr; } }
+
+        /* Page layout helpers */
+        .page-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-07);
+            max-width: 1280px;
+        }
+
+        /* ========================================
+           CLASSES DE TIPOGRAFIA
+           Escala completa do DS — fonte: v-fundamentos.html
+        ======================================== */
+
+        .text-display-01 {
+            font-size: var(--font-display-01);
+            font-weight: var(--font-weight-semibold);
+            line-height: 1.1;
+            letter-spacing: -0.5px;
+        }
+        .text-display-02 {
+            font-size: var(--font-display-02);
+            font-weight: var(--font-weight-semibold);
+            line-height: 1.1;
+            letter-spacing: -0.3px;
+        }
+        .text-h1 {
+            font-size: var(--font-h1);
+            font-weight: var(--font-weight-semibold);
+            line-height: 1.2;
+        }
+        .text-h2 {
+            font-size: var(--font-h2);
+            font-weight: var(--font-weight-semibold);
+            line-height: 1.2;
+        }
+        .text-h3 {
+            font-size: var(--font-h3);
+            font-weight: var(--font-weight-semibold);
+            line-height: 1.3;
+        }
+        .text-h4 {
+            font-size: var(--font-h4);
+            font-weight: var(--font-weight-semibold);
+            line-height: 1.3;
+        }
+        .text-h5 {
+            font-size: var(--font-h5);
+            font-weight: var(--font-weight-semibold);
+            line-height: 1.4;
+        }
+        .text-h6 {
+            font-size: var(--font-h6);
+            font-weight: var(--font-weight-semibold);
+            line-height: 1.4;
+        }
+        .text-body-xl {
+            font-size: var(--font-body-xl);
+            font-weight: var(--font-weight-regular);
+            line-height: 1.6;
+        }
+        .text-body-lg {
+            font-size: var(--font-body-lg);
+            font-weight: var(--font-weight-regular);
+            line-height: 1.6;
+        }
+        .text-body-md {
+            font-size: var(--font-body-md);
+            font-weight: var(--font-weight-regular);
+            line-height: 1.6;
+        }
+        .text-body-sm {
+            font-size: var(--font-body-sm);
+            font-weight: var(--font-weight-regular);
+            line-height: 1.5;
+        }
+        .text-label-lg {
+            font-size: var(--font-label-lg);
+            font-weight: var(--font-weight-medium);
+            line-height: 1.4;
+        }
+        .text-label-md {
+            font-size: var(--font-label-md);
+            font-weight: var(--font-weight-medium);
+            line-height: 1.4;
+        }
+        .text-label-sm {
+            font-size: var(--font-label-sm);
+            font-weight: var(--font-weight-medium);
+            line-height: 1.4;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .text-caption {
+            font-size: var(--font-caption);
+            font-weight: var(--font-weight-regular);
+            line-height: 1.4;
+        }
+
+        /* Cores de texto utilitárias */
+        .text-primary-color   { color: var(--text-primary); }
+        .text-secondary-color { color: var(--text-secondary); }
+        .text-disabled-color  { color: var(--text-disabled); }
+        .text-brand           { color: var(--color-primary); }
+        .text-success         { color: var(--color-success); }
+        .text-error           { color: var(--color-error); }
+        .text-warning         { color: #8e6a00; }
+        .text-info            { color: var(--color-info); }
+
+        /* Pesos de fonte */
+        .font-light    { font-weight: var(--font-weight-light); }
+        .font-regular  { font-weight: var(--font-weight-regular); }
+        .font-medium   { font-weight: var(--font-weight-medium); }
+        .font-semibold { font-weight: var(--font-weight-semibold); }
+
+        /* Alinhamentos */
+        .text-left   { text-align: left; }
+        .text-center { text-align: center; }
+        .text-right  { text-align: right; }
+
+    /* ── Loading States ── */
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid var(--border-subtle);
+      border-top-color: var(--color-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .spinner--sm { width: 16px; height: 16px; border-width: 2px; }
+    .spinner--lg { width: 48px; height: 48px; border-width: 4px; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--ui-01) 25%, var(--gray-200) 50%, var(--ui-01) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-sm);
+    }
+    .skeleton--text { height: 14px; margin-bottom: 8px; }
+    .skeleton--text:last-child { width: 60%; }
+    .skeleton--heading { height: 24px; width: 40%; margin-bottom: 16px; }
+    .skeleton--avatar { width: 40px; height: 40px; border-radius: 50%; }
+    .skeleton--card { height: 120px; border-radius: var(--radius-md); }
+    .skeleton--row { height: 48px; margin-bottom: 1px; }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a class='sidebar-back' href='ds.html'>
+                <i class="ph ph-arrow-left"></i>
+                Design System
+            </a>
+            
+            <div class="sidebar-header">
+                <img src="assets/logos/vivix-simbolo-v.svg" alt="Símbolo VIVIX" class="sidebar-logo">
+                <div class="sidebar-title">Componentes Web</div>
+                <div class="sidebar-subtitle">VIVIX</div>
+            </div>
+            
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href='v-fundamentos.html'>Fundamentos</a></li>
+                    <li><a href="v-componentes-web.html#" class="active">Componentes Web</a></li>
+                    <li><a href='v-componentes-powerbi.html'>Power BI</a></li>
+                    <li><a href='v-mendix.html'>Mendix</a></li>
+                    <li><a href='v-sap-btp.html'>SAP BTP</a></li>
+                </ul>
+                
+                <div style="margin-top: var(--spacing-06); padding-top: var(--spacing-06); border-top: 1px solid var(--border-subtle);">
+                    <div class="sidebar-section-title">Nesta página</div>
+                    
+                    <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-disabled); margin: var(--spacing-05) 0 var(--spacing-03); padding-left: var(--spacing-04);">ATOMS</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="v-componentes-web.html#buttons">Buttons</a></li>
+                        <li><a href="v-componentes-web.html#inputs">Inputs</a></li>
+                        <li><a href="v-componentes-web.html#checkbox-radio">Checkbox/Radio/Toggle</a></li>
+                        <li><a href="v-componentes-web.html#tags-badges">Tags/Badges</a></li>
+                        <li><a href="v-componentes-web.html#links">Links</a></li>
+                        <li><a href="v-componentes-web.html#dividers">Dividers</a></li>
+                    </ul>
+
+                    <hr style="border: none; border-top: 1px solid var(--border-subtle); margin: var(--spacing-06) 0;">
+
+                    <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-disabled); margin: var(--spacing-05) 0 var(--spacing-03); padding-left: var(--spacing-04);">MOLECULES</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="v-componentes-web.html#search">Search Bar</a></li>
+                        <li><a href="v-componentes-web.html#dropdown">Dropdown</a></li>
+                        <li><a href="v-componentes-web.html#tooltip">Tooltip</a></li>
+                        <li><a href="v-componentes-web.html#breadcrumbs">Breadcrumbs</a></li>
+                        <li><a href="v-componentes-web.html#pagination">Pagination</a></li>
+                    </ul>
+
+                    <hr style="border: none; border-top: 1px solid var(--border-subtle); margin: var(--spacing-06) 0;">
+
+                    <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-disabled); margin: var(--spacing-05) 0 var(--spacing-03); padding-left: var(--spacing-04);">ORGANISMS</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="v-componentes-web.html#cards">Cards</a></li>
+                        <li><a href="v-componentes-web.html#tables">Tables</a></li>
+                        <li><a href="v-componentes-web.html#modals">Modals</a></li>
+                        <li><a href="v-componentes-web.html#accordion-tabs">Accordion/Tabs</a></li>
+                        <li><a href="v-componentes-web.html#navigation">Navigation</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Breadcrumb -->
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href='ds.html'>Design System</a>
+                <span>/</span>
+                <span>VIVIX</span>
+                <span>/</span>
+                <span>Componentes Web</span>
+            </nav>
+
+            <!-- Page Header -->
+            <h1 class="page-title">Componentes Web</h1>
+            <p class="page-description">
+                Biblioteca de componentes reutilizáveis organizados por complexidade: Atoms (elementos básicos), Molecules (combinações simples) e Organisms (componentes complexos).
+            </p>
+
+            <!-- ========================================
+                 ATOMS
+            ========================================= -->
+            <section class="section">
+                <h2 class="section-title">Atoms</h2>
+                <p class="section-description">
+                    Elementos básicos e indivisíveis do sistema. Building blocks fundamentais para componentes mais complexos.
+                </p>
+
+                <!-- BUTTONS -->
+                <div id="buttons">
+                    <h3 class="subsection-title">Buttons</h3>
+                    
+                    <!-- Primary Button -->
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Primary Button</div>
+                            <button class="copy-code-btn" onclick="copyCode('btn-primary-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview">
+                            <button class="btn btn-primary">Button</button>
+                            <button class="btn btn-primary">
+                                <i class="ph ph-plus"></i>
+                                Com ícone
+                            </button>
+                            <button class="btn btn-primary" disabled>Disabled</button>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Specs:</strong> padding: 12px 16px | border-radius: 4px | font-size: 14px | font-weight: 500
+                        </div>
+                        <div class="component-code" id="btn-primary-code">&lt;button class="btn btn-primary"&gt;Button&lt;/button&gt;</div>
+                    </div>
+
+                    <!-- Secondary Button -->
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Secondary Button</div>
+                            <button class="copy-code-btn" onclick="copyCode('btn-secondary-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview">
+                            <button class="btn btn-secondary">Button</button>
+                            <button class="btn btn-secondary">
+                                <i class="ph ph-download-simple"></i>
+                                Download
+                            </button>
+                            <button class="btn btn-secondary" disabled>Disabled</button>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Uso:</strong> Ações secundárias, alternativas ao primary button
+                        </div>
+                        <div class="component-code" id="btn-secondary-code">&lt;button class="btn btn-secondary"&gt;Button&lt;/button&gt;</div>
+                    </div>
+
+                    <!-- Outras variações -->
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Outras Variações</div>
+                        </div>
+                        <div class="component-preview">
+                            <button class="btn btn-tertiary">Tertiary</button>
+                            <button class="btn btn-ghost">Ghost</button>
+                            <button class="btn btn-danger">Danger</button>
+                            <button class="btn btn-icon-only btn-primary">
+                                <i class="ph ph-heart"></i>
+                            </button>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Tertiary:</strong> Ações menos prioritárias | <strong>Ghost:</strong> Ações sutis | <strong>Danger:</strong> Ações destrutivas | <strong>Icon-only:</strong> Ações com apenas ícone
+                        </div>
+                    </div>
+
+                    <!-- Tamanhos -->
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Tamanhos</div>
+                        </div>
+                        <div class="component-preview">
+                            <button class="btn btn-primary btn-sm">Small</button>
+                            <button class="btn btn-primary">Default</button>
+                            <button class="btn btn-primary btn-lg">Large</button>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Small:</strong> .btn-sm | <strong>Default:</strong> .btn | <strong>Large:</strong> .btn-lg
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INPUTS -->
+                <div id="inputs">
+                    <h3 class="subsection-title">Inputs</h3>
+                    
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Text Input</div>
+                            <button class="copy-code-btn" onclick="copyCode('input-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview">
+                            <div class="input-group">
+                                <label class="input-label">Label</label>
+                                <input type="text" class="input-field" placeholder="Placeholder">
+                                <span class="input-helper">Helper text opcional</span>
+                            </div>
+
+                            <div class="input-group">
+                                <label class="input-label">Com erro</label>
+                                <input type="text" class="input-field error" value="Valor inválido">
+                                <span class="input-error">
+                                    <i class="ph ph-warning-circle"></i>
+                                    Mensagem de erro
+                                </span>
+                            </div>
+
+                            <div class="input-group">
+                                <label class="input-label">Disabled</label>
+                                <input type="text" class="input-field" value="Campo desabilitado" disabled>
+                            </div>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Estados:</strong> default, hover, focus, error, disabled | <strong>Tipos:</strong> text, email, password, number, tel
+                        </div>
+                        <div class="component-code" id="input-code">&lt;input type="text" class="input-field" placeholder="Placeholder"&gt;</div>
+                    </div>
+                </div>
+
+                <!-- CHECKBOX / RADIO / TOGGLE -->
+                <div id="checkbox-radio">
+                    <h3 class="subsection-title">Checkbox / Radio / Toggle</h3>
+                    
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Selection Controls</div>
+                            <button class="copy-code-btn" onclick="copyCode('checkbox-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview">
+                            <div style="display: flex; gap: var(--spacing-07); flex-wrap: wrap;">
+                                <div>
+                                    <div style="font-weight: 600; margin-bottom: var(--spacing-04); font-size: 0.875rem;">Checkbox</div>
+                                    <label class="checkbox-wrapper">
+                                        <input type="checkbox" checked>
+                                        <span class="checkbox-custom"></span>
+                                        <span>Opção 1</span>
+                                    </label>
+                                    <label class="checkbox-wrapper">
+                                        <input type="checkbox">
+                                        <span class="checkbox-custom"></span>
+                                        <span>Opção 2</span>
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <div style="font-weight: 600; margin-bottom: var(--spacing-04); font-size: 0.875rem;">Radio</div>
+                                    <label class="radio-wrapper">
+                                        <input type="radio" name="radio-example" checked>
+                                        <span class="radio-custom"></span>
+                                        <span>Opção A</span>
+                                    </label>
+                                    <label class="radio-wrapper">
+                                        <input type="radio" name="radio-example">
+                                        <span class="radio-custom"></span>
+                                        <span>Opção B</span>
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <div style="font-weight: 600; margin-bottom: var(--spacing-04); font-size: 0.875rem;">Toggle</div>
+                                    <div class="toggle-wrapper">
+                                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                                        <span>Ativado</span>
+                                    </div>
+                                    <div class="toggle-wrapper">
+                                        <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                                        <span>Desativado</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Uso:</strong> Checkbox (múltipla seleção) | Radio (seleção única) | Toggle (on/off states) | <strong>Cor:</strong> Azul interativo (#0f62fe)
+                        </div>
+                        <div class="component-code" id="checkbox-code">&lt;label class="checkbox-wrapper"&gt;
+  &lt;input type="checkbox"&gt;
+  &lt;span class="checkbox-custom"&gt;&lt;/span&gt;
+  &lt;span&gt;Label&lt;/span&gt;
+&lt;/label&gt;</div>
+                    </div>
+                </div>
+
+                <!-- TAGS / BADGES -->
+                <div id="tags-badges">
+                    <h3 class="subsection-title">Tags / Badges</h3>
+                    
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Tags</div>
+                            <button class="copy-code-btn" onclick="copyCode('tag-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview">
+                            <span class="tag">Default</span>
+                            <span class="tag tag-primary">Primary</span>
+                            <span class="tag tag-success">Success</span>
+                            <span class="tag tag-error">Error</span>
+                            <span class="tag tag-warning">Warning</span>
+                            <span class="tag">
+                                <i class="ph ph-x"></i>
+                                Com ícone
+                            </span>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Uso:</strong> Labels, categorias, filtros, status não-críticos
+                        </div>
+                        <div class="component-code" id="tag-code">&lt;span class="tag"&gt;Tag&lt;/span&gt;</div>
+                    </div>
+
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Badges</div>
+                            <button class="copy-code-btn" onclick="copyCode('badge-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview">
+                            <span class="badge">1</span>
+                            <span class="badge">9</span>
+                            <span class="badge">99+</span>
+                            <button class="btn btn-ghost" style="position: relative;">
+                                <i class="ph ph-bell"></i>
+                                Notificações
+                                <span class="badge" style="position: absolute; top: -4px; right: -4px;">3</span>
+                            </button>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Uso:</strong> Contadores, notificações não lidas, indicadores numéricos
+                        </div>
+                        <div class="component-code" id="badge-code">&lt;span class="badge"&gt;99+&lt;/span&gt;</div>
+                    </div>
+                </div>
+
+                <!-- LINKS -->
+                <div id="links">
+                    <h3 class="subsection-title">Links</h3>
+                    
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Links</div>
+                            <button class="copy-code-btn" onclick="copyCode('link-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview">
+                            <a href="v-componentes-web.html#" class="link">Link padrão</a>
+                            <a href="v-componentes-web.html#" class="link">
+                                Link com ícone
+                                <i class="ph ph-arrow-right"></i>
+                            </a>
+                            <a href="v-componentes-web.html#" class="link-subtle">Link sutil</a>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Padrão:</strong> .link (laranja primário) | <strong>Sutil:</strong> .link-subtle (cinza secundário)
+                        </div>
+                        <div class="component-code" id="link-code">&lt;a href="#" class="link"&gt;Link&lt;/a&gt;</div>
+                    </div>
+                </div>
+
+                <!-- DIVIDERS -->
+                <div id="dividers">
+                    <h3 class="subsection-title">Dividers</h3>
+                    
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Dividers</div>
+                            <button class="copy-code-btn" onclick="copyCode('divider-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview" style="flex-direction: column; width: 100%;">
+                            <div>Conteúdo acima</div>
+                            <hr class="divider">
+                            <div>Conteúdo abaixo</div>
+                            <div style="display: flex; gap: var(--spacing-05); align-items: center; margin-top: var(--spacing-06);">
+                                <div>Item 1</div>
+                                <div class="divider-vertical"></div>
+                                <div>Item 2</div>
+                                <div class="divider-vertical"></div>
+                                <div>Item 3</div>
+                            </div>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Horizontal:</strong> .divider | <strong>Vertical:</strong> .divider-vertical
+                        </div>
+                        <div class="component-code" id="divider-code">&lt;hr class="divider"&gt; | &lt;div class="divider-vertical"&gt;&lt;/div&gt;</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 MOLECULES
+            ========================================= -->
+            <section class="section">
+                <h2 class="section-title">Molecules</h2>
+                <p class="section-description">
+                    Combinações de atoms que formam componentes funcionais mais complexos.
+                </p>
+
+                <!-- SEARCH BAR -->
+                <div id="search">
+                    <h3 class="subsection-title">Search Bar</h3>
+                    
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Search Input</div>
+                            <button class="copy-code-btn" onclick="copyCode('search-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview">
+                            <div class="search-bar">
+                                <i class="ph ph-magnifying-glass"></i>
+                                <input type="text" placeholder="Buscar...">
+                            </div>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Composição:</strong> Input + ícone de search | <strong>Comportamento:</strong> Focus mostra borda primária
+                        </div>
+                        <div class="component-code" id="search-code">&lt;div class="search-bar"&gt;
+  &lt;i class="ph ph-magnifying-glass"&gt;&lt;/i&gt;
+  &lt;input type="text" placeholder="Buscar..."&gt;
+&lt;/div&gt;</div>
+                    </div>
+                </div>
+
+                <!-- DROPDOWN -->
+                <div id="dropdown">
+                    <h3 class="subsection-title">Dropdown</h3>
+                    
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Select Dropdown</div>
+                            <button class="copy-code-btn" onclick="copyCode('dropdown-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview">
+                            <div class="dropdown" onclick="this.classList.toggle('active')">
+                                <div class="dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
+                                    <span>Selecione uma opção</span>
+                                    <i class="ph ph-caret-down"></i>
+                                </div>
+                                <div class="dropdown-menu" role="listbox">
+                                    <div class="dropdown-item" role="option">Opção 1</div>
+                                    <div class="dropdown-item" role="option">Opção 2</div>
+                                    <div class="dropdown-item" role="option">Opção 3</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Estados:</strong> closed, open | <strong>Comportamento:</strong> Clique abre/fecha menu
+                        </div>
+                        <div class="component-code" id="dropdown-code">&lt;div class="dropdown"&gt;
+  &lt;div class="dropdown-trigger"&gt;...&lt;/div&gt;
+  &lt;div class="dropdown-menu"&gt;...&lt;/div&gt;
+&lt;/div&gt;</div>
+                    </div>
+                </div>
+
+                <!-- TOOLTIP -->
+                <div id="tooltip">
+                    <h3 class="subsection-title">Tooltip</h3>
+                    
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Hover Tooltip</div>
+                            <button class="copy-code-btn" onclick="copyCode('tooltip-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview">
+                            <div class="tooltip-container">
+                                <button class="btn btn-ghost" aria-describedby="tooltip-1">
+                                    <i class="ph ph-info"></i>
+                                    Hover aqui
+                                </button>
+                                <span class="tooltip-text" id="tooltip-1" role="tooltip">Tooltip informativo</span>
+                            </div>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Trigger:</strong> Hover | <strong>Posição:</strong> Top (padrão) | <strong>Uso:</strong> Informações contextuais
+                        </div>
+                        <div class="component-code" id="tooltip-code">&lt;div class="tooltip-container"&gt;
+  &lt;button&gt;...&lt;/button&gt;
+  &lt;span class="tooltip-text"&gt;Tooltip&lt;/span&gt;
+&lt;/div&gt;</div>
+                    </div>
+                </div>
+
+                <!-- BREADCRUMBS -->
+                <div id="breadcrumbs">
+                    <h3 class="subsection-title">Breadcrumbs</h3>
+                    
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Navigation Breadcrumbs</div>
+                            <button class="copy-code-btn" onclick="copyCode('breadcrumbs-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview">
+                            <nav class="breadcrumbs">
+                                <a href="v-componentes-web.html#">Home</a>
+                                <i class="ph ph-caret-right"></i>
+                                <a href="v-componentes-web.html#">Categoria</a>
+                                <i class="ph ph-caret-right"></i>
+                                <span>Página Atual</span>
+                            </nav>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Uso:</strong> Navegação hierárquica | <strong>Separador:</strong> ícone caret-right
+                        </div>
+                        <div class="component-code" id="breadcrumbs-code">&lt;nav class="breadcrumbs"&gt;
+  &lt;a href="#"&gt;Home&lt;/a&gt;
+  &lt;i class="ph ph-caret-right"&gt;&lt;/i&gt;
+  &lt;span&gt;Atual&lt;/span&gt;
+&lt;/nav&gt;</div>
+                    </div>
+                </div>
+
+                <!-- PAGINATION -->
+                <div id="pagination">
+                    <h3 class="subsection-title">Pagination</h3>
+                    
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Page Navigation</div>
+                            <button class="copy-code-btn" onclick="copyCode('pagination-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview">
+                            <div class="pagination">
+                                <button class="pagination-btn" disabled>
+                                    <i class="ph ph-caret-left"></i>
+                                </button>
+                                <button class="pagination-btn active">1</button>
+                                <button class="pagination-btn">2</button>
+                                <button class="pagination-btn">3</button>
+                                <span style="padding: 0 var(--spacing-03);">...</span>
+                                <button class="pagination-btn">10</button>
+                                <button class="pagination-btn">
+                                    <i class="ph ph-caret-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Estados:</strong> active, disabled | <strong>Uso:</strong> Navegação entre páginas de conteúdo
+                        </div>
+                        <div class="component-code" id="pagination-code">&lt;div class="pagination"&gt;
+  &lt;button class="pagination-btn"&gt;1&lt;/button&gt;
+  &lt;button class="pagination-btn active"&gt;2&lt;/button&gt;
+&lt;/div&gt;</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 ORGANISMS
+            ========================================= -->
+            <section class="section">
+                <h2 class="section-title">Organisms</h2>
+                <p class="section-description">
+                    Componentes complexos compostos por múltiplos atoms e molecules. Blocos funcionais completos.
+                </p>
+
+                <!-- CARDS -->
+                <div id="cards">
+                    <h3 class="subsection-title">Cards</h3>
+                    
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Content Card</div>
+                            <button class="copy-code-btn" onclick="copyCode('card-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview">
+                            <div class="card" style="max-width: 360px;">
+                                <div class="card-header">
+                                    <div class="card-title">Card Title</div>
+                                    <div class="card-subtitle">Subtítulo opcional</div>
+                                </div>
+                                <div class="card-content">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.
+                                </div>
+                                <div class="card-footer">
+                                    <span class="tag">Tag</span>
+                                    <button class="btn btn-tertiary btn-sm">Ação</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Seções:</strong> header (opcional), content, footer (opcional) | <strong>Comportamento:</strong> Hover eleva com sombra
+                        </div>
+                        <div class="component-code" id="card-code">&lt;div class="card"&gt;
+  &lt;div class="card-header"&gt;...&lt;/div&gt;
+  &lt;div class="card-content"&gt;...&lt;/div&gt;
+  &lt;div class="card-footer"&gt;...&lt;/div&gt;
+&lt;/div&gt;</div>
+                    </div>
+                </div>
+
+                <!-- TABLES -->
+                <div id="tables">
+                    <h3 class="subsection-title">Tables</h3>
+                    
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Data Table</div>
+                            <button class="copy-code-btn" onclick="copyCode('table-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview" style="width: 100%;">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Email</th>
+                                            <th>Status</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>João Silva</td>
+                                            <td>joao@exemplo.com</td>
+                                            <td><span class="tag tag-success">Ativo</span></td>
+                                            <td>
+                                                <button class="btn btn-icon-only btn-ghost btn-sm">
+                                                    <i class="ph ph-pencil-simple"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Maria Santos</td>
+                                            <td>maria@exemplo.com</td>
+                                            <td><span class="tag">Pendente</span></td>
+                                            <td>
+                                                <button class="btn btn-icon-only btn-ghost btn-sm">
+                                                    <i class="ph ph-pencil-simple"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pedro Costa</td>
+                                            <td>pedro@exemplo.com</td>
+                                            <td><span class="tag tag-error">Inativo</span></td>
+                                            <td>
+                                                <button class="btn btn-icon-only btn-ghost btn-sm">
+                                                    <i class="ph ph-pencil-simple"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Features:</strong> Hover em rows, scroll horizontal, header em destaque (verde escuro) | <strong>Uso:</strong> Dados tabulares, listas, dashboards
+                        </div>
+                        <div class="component-code" id="table-code">&lt;table class="data-table"&gt;
+  &lt;thead&gt;...&lt;/thead&gt;
+  &lt;tbody&gt;...&lt;/tbody&gt;
+&lt;/table&gt;</div>
+                    </div>
+                </div>
+
+                <!-- MODALS -->
+                <div id="modals">
+                    <h3 class="subsection-title">Modals</h3>
+                    
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Dialog Modal</div>
+                            <button class="copy-code-btn" onclick="copyCode('modal-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview">
+                            <button class="btn btn-primary" onclick="document.getElementById('demo-modal').classList.add('active')">
+                                Abrir Modal
+                            </button>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Seções:</strong> header, body, footer | <strong>Comportamento:</strong> Overlay com blur, fecha com X ou botão
+                        </div>
+                        <div class="component-code" id="modal-code">&lt;div class="modal-overlay"&gt;
+  &lt;div class="modal"&gt;
+    &lt;div class="modal-header"&gt;...&lt;/div&gt;
+    &lt;div class="modal-body"&gt;...&lt;/div&gt;
+    &lt;div class="modal-footer"&gt;...&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</div>
+                    </div>
+                </div>
+
+                <!-- ACCORDION / TABS -->
+                <div id="accordion-tabs">
+                    <h3 class="subsection-title">Accordion / Tabs</h3>
+                    
+                    <!-- Accordion -->
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Accordion</div>
+                            <button class="copy-code-btn" onclick="copyCode('accordion-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview" style="width: 100%; flex-direction: column; align-items: stretch;">
+                            <div class="accordion-item active">
+                                <div class="accordion-header" role="button" aria-expanded="true" onclick="this.parentElement.classList.toggle('active')">
+                                    <span>Seção 1</span>
+                                    <i class="ph ph-caret-down"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    Conteúdo da seção 1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <div class="accordion-header" role="button" aria-expanded="false" onclick="this.parentElement.classList.toggle('active')">
+                                    <span>Seção 2</span>
+                                    <i class="ph ph-caret-down"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    Conteúdo da seção 2. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <div class="accordion-header" role="button" aria-expanded="false" onclick="this.parentElement.classList.toggle('active')">
+                                    <span>Seção 3</span>
+                                    <i class="ph ph-caret-down"></i>
+                                </div>
+                                <div class="accordion-content">
+                                    Conteúdo da seção 3. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Comportamento:</strong> Clique expande/colapsa com animação suave | <strong>Ícone:</strong> Rotaciona 180° quando aberto | <strong>Uso:</strong> FAQs, conteúdo hierárquico
+                        </div>
+                        <div class="component-code" id="accordion-code">&lt;div class="accordion-item"&gt;
+  &lt;div class="accordion-header"&gt;...&lt;/div&gt;
+  &lt;div class="accordion-content"&gt;...&lt;/div&gt;
+&lt;/div&gt;</div>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Tabs</div>
+                            <button class="copy-code-btn" onclick="copyCode('tabs-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview" style="width: 100%; flex-direction: column;">
+                            <div class="tabs" role="tablist">
+                                <div class="tab active" role="tab" aria-selected="true" onclick="switchTab(event, 'tab1')">Tab 1</div>
+                                <div class="tab" role="tab" aria-selected="false" onclick="switchTab(event, 'tab2')">Tab 2</div>
+                                <div class="tab" role="tab" aria-selected="false" onclick="switchTab(event, 'tab3')">Tab 3</div>
+                            </div>
+                            <div id="tab1" class="tab-content active" role="tabpanel">Conteúdo da Tab 1</div>
+                            <div id="tab2" class="tab-content" role="tabpanel">Conteúdo da Tab 2</div>
+                            <div id="tab3" class="tab-content" role="tabpanel">Conteúdo da Tab 3</div>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Comportamento:</strong> Clique troca conteúdo | <strong>Indicador:</strong> Borda inferior primária
+                        </div>
+                        <div class="component-code" id="tabs-code">&lt;div class="tabs"&gt;
+  &lt;div class="tab active"&gt;Tab 1&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="tab-content active"&gt;...&lt;/div&gt;</div>
+                    </div>
+                </div>
+
+                <!-- NAVIGATION -->
+                <div id="navigation">
+                    <h3 class="subsection-title">Navigation</h3>
+                    
+                    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-07); line-height: 1.6;">
+                        Diretrizes de navegação baseadas em <strong>Carbon Design System</strong> e <strong>Material Design</strong> para criar interfaces intuitivas e acessíveis.
+                    </p>
+
+                    <!-- Quando Usar Cada Padrão -->
+                    <h4 style="font-size: 1.125rem; font-weight: 600; margin-top: var(--spacing-08); margin-bottom: var(--spacing-05);">Quando Usar Cada Padrão</h4>
+                    
+                    <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06); margin-bottom: var(--spacing-07);">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid var(--border-subtle);">
+                                    <th style="padding: var(--spacing-04); text-align: left; font-weight: 600; font-size: 14px;">Padrão</th>
+                                    <th style="padding: var(--spacing-04); text-align: left; font-weight: 600; font-size: 14px;">Quando Usar</th>
+                                    <th style="padding: var(--spacing-04); text-align: left; font-weight: 600; font-size: 14px;">Evite Se</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid var(--border-subtle);">
+                                    <td style="padding: var(--spacing-04); font-weight: 600; color: var(--text-primary);">Top Menu (Horizontal)</td>
+                                    <td style="padding: var(--spacing-04); color: var(--text-primary); font-size: 14px;">3-7 itens de navegação de mesmo nível hierárquico</td>
+                                    <td style="padding: var(--spacing-04); color: var(--text-secondary); font-size: 14px;">Mais de 8 itens ou hierarquia profunda</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid var(--border-subtle);">
+                                    <td style="padding: var(--spacing-04); font-weight: 600; color: var(--text-primary);">Side Menu (Lateral)</td>
+                                    <td style="padding: var(--spacing-04); color: var(--text-primary); font-size: 14px;">8+ itens, navegação hierárquica (submenus)</td>
+                                    <td style="padding: var(--spacing-04); color: var(--text-secondary); font-size: 14px;">Poucos itens de navegação simples</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid var(--border-subtle);">
+                                    <td style="padding: var(--spacing-04); font-weight: 600; color: var(--text-primary);">Mega Menu</td>
+                                    <td style="padding: var(--spacing-04); color: var(--text-primary); font-size: 14px;">Muitas categorias com subcategorias (e-commerce, portais)</td>
+                                    <td style="padding: var(--spacing-04); color: var(--text-secondary); font-size: 14px;">Aplicações focadas em uma tarefa</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid var(--border-subtle);">
+                                    <td style="padding: var(--spacing-04); font-weight: 600; color: var(--text-primary);">Burger Menu (☰)</td>
+                                    <td style="padding: var(--spacing-04); color: var(--text-primary); font-size: 14px;">Mobile/tablets (< 768px), espaço limitado</td>
+                                    <td style="padding: var(--spacing-04); color: var(--text-secondary); font-size: 14px;">Desktop com espaço disponível</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: var(--spacing-04); font-weight: 600; color: var(--text-primary);">Tabs</td>
+                                    <td style="padding: var(--spacing-04); color: var(--text-primary); font-size: 14px;">3-5 seções dentro de uma mesma página</td>
+                                    <td style="padding: var(--spacing-04); color: var(--text-secondary); font-size: 14px;">Navegação entre páginas diferentes</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Wireframes dos Padrões -->
+                    <h4 style="font-size: 1.125rem; font-weight: 600; margin-top: var(--spacing-08); margin-bottom: var(--spacing-05);">Wireframes dos Padrões</h4>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-07); margin-bottom: var(--spacing-07);">
+                        
+                        <!-- Wireframe 1: Top Menu -->
+                        <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06);">
+                            <h5 style="font-size: 14px; font-weight: 600; margin-bottom: var(--spacing-05); color: var(--text-primary);">1. Top Menu (Horizontal)</h5>
+                            <svg viewBox="0 0 400 300" style="width: 100%; border: 1px solid #e0e0e0; border-radius: 4px; margin-bottom: var(--spacing-05);">
+                                <!-- Top Menu -->
+                                <rect x="0" y="0" width="400" height="48" fill="#f5f5f5"/>
+                                <line x1="0" y1="48" x2="400" y2="48" stroke="#e0e0e0" stroke-width="1"/>
+                                <text x="16" y="28" fill="#161616" style="font-size: 14px; font-weight: 600;">Logo</text>
+                                <text x="280" y="28" fill="#161616" style="font-size: 12px;">Home</text>
+                                <text x="320" y="28" fill="#161616" style="font-size: 12px;">Produtos</text>
+                                <text x="370" y="28" fill="#161616" style="font-size: 12px;">Contato</text>
+                                
+                                <!-- Content Area -->
+                                <rect x="16" y="64" width="368" height="220" fill="#ffffff" stroke="#e0e0e0"/>
+                                <text x="200" y="180" text-anchor="middle" style="font-size: 12px;" fill="#525252">Área de Conteúdo</text>
+                            </svg>
+                            <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
+                                <strong>Uso:</strong> Sites institucionais, landing pages. Navegação sempre visível.<br>
+                                <strong>Máximo:</strong> 7 itens (regra de Miller)
+                            </p>
+                        </div>
+
+                        <!-- Wireframe 2: Side Menu -->
+                        <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06);">
+                            <h5 style="font-size: 14px; font-weight: 600; margin-bottom: var(--spacing-05); color: var(--text-primary);">2. Side Menu (Lateral)</h5>
+                            <svg viewBox="0 0 400 300" style="width: 100%; border: 1px solid #e0e0e0; border-radius: 4px; margin-bottom: var(--spacing-05);">
+                                <!-- Top Bar -->
+                                <rect x="0" y="0" width="400" height="48" fill="#f5f5f5"/>
+                                <line x1="0" y1="48" x2="400" y2="48" stroke="#e0e0e0" stroke-width="1"/>
+                                <text x="16" y="28" fill="#161616" style="font-size: 14px; font-weight: 600;">Logo</text>
+                                
+                                <!-- Sidebar -->
+                                <rect x="0" y="48" width="96" height="252" fill="#f9f9f9" stroke="#e0e0e0"/>
+                                <text x="12" y="76" style="font-size: 11px;" fill="#525252">Dashboard</text>
+                                <text x="12" y="100" style="font-size: 11px;" fill="#525252">Relatórios</text>
+                                <text x="12" y="124" style="font-size: 11px;" fill="#525252">Análises</text>
+                                <text x="12" y="148" style="font-size: 11px;" fill="#525252">Config</text>
+                                
+                                <!-- Content -->
+                                <rect x="104" y="64" width="280" height="220" fill="#ffffff" stroke="#e0e0e0"/>
+                                <text x="244" y="180" text-anchor="middle" style="font-size: 12px;" fill="#525252">Conteúdo Principal</text>
+                            </svg>
+                            <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
+                                <strong>Uso:</strong> Aplicações web, dashboards, sistemas.<br>
+                                <strong>Permite:</strong> Hierarquia (submenus expansíveis)
+                            </p>
+                        </div>
+
+                        <!-- Wireframe 3: Mega Menu -->
+                        <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06);">
+                            <h5 style="font-size: 14px; font-weight: 600; margin-bottom: var(--spacing-05); color: var(--text-primary);">3. Mega Menu</h5>
+                            <svg viewBox="0 0 400 300" style="width: 100%; border: 1px solid #e0e0e0; border-radius: 4px; margin-bottom: var(--spacing-05);">
+                                <!-- Top Menu -->
+                                <rect x="0" y="0" width="400" height="48" fill="#f5f5f5"/>
+                                <line x1="0" y1="48" x2="400" y2="48" stroke="#e0e0e0" stroke-width="1"/>
+                                <text x="16" y="28" fill="#161616" style="font-size: 14px; font-weight: 600;">Logo</text>
+                                <text x="280" y="28" fill="#161616" style="font-size: 12px;">Categorias ▼</text>
+                                
+                                <!-- Mega Menu Dropdown -->
+                                <rect x="200" y="48" width="184" height="140" fill="white" stroke="#e0e0e0" stroke-width="2"/>
+                                <text x="212" y="70" style="font-size: 10px; font-weight: 600;" fill="#161616">Eletrônicos</text>
+                                <text x="212" y="88" style="font-size: 9px;" fill="#525252">• Celulares</text>
+                                <text x="212" y="102" style="font-size: 9px;" fill="#525252">• Notebooks</text>
+                                <text x="212" y="116" style="font-size: 9px;" fill="#525252">• Tablets</text>
+                                
+                                <text x="300" y="70" style="font-size: 10px; font-weight: 600;" fill="#161616">Casa</text>
+                                <text x="300" y="88" style="font-size: 9px;" fill="#525252">• Móveis</text>
+                                <text x="300" y="102" style="font-size: 9px;" fill="#525252">• Decoração</text>
+                                
+                                <!-- Content Area -->
+                                <rect x="16" y="204" width="368" height="80" fill="#ffffff" stroke="#e0e0e0"/>
+                                <text x="200" y="248" text-anchor="middle" style="font-size: 12px;" fill="#525252">Conteúdo</text>
+                            </svg>
+                            <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
+                                <strong>Uso:</strong> E-commerce, portais com muitas categorias.<br>
+                                <strong>Mostra:</strong> Múltiplas colunas de subcategorias
+                            </p>
+                        </div>
+
+                        <!-- Wireframe 4: Burger Menu -->
+                        <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06);">
+                            <h5 style="font-size: 14px; font-weight: 600; margin-bottom: var(--spacing-05); color: var(--text-primary);">4. Burger Menu (Mobile)</h5>
+                            <svg viewBox="0 0 280 400" style="width: 70%; border: 1px solid #e0e0e0; border-radius: 4px; margin: 0 auto var(--spacing-05); display: block;">
+                                <!-- Top Bar -->
+                                <rect x="0" y="0" width="280" height="48" fill="#f5f5f5"/>
+                                <line x1="0" y1="48" x2="280" y2="48" stroke="#e0e0e0" stroke-width="1"/>
+                                <rect x="16" y="14" width="24" height="3" fill="#161616" rx="1"/>
+                                <rect x="16" y="21" width="24" height="3" fill="#161616" rx="1"/>
+                                <rect x="16" y="28" width="24" height="3" fill="#161616" rx="1"/>
+                                <text x="60" y="30" fill="#161616" style="font-size: 14px; font-weight: 600;">Logo</text>
+                                
+                                <!-- Side Menu (aberto) -->
+                                <rect x="0" y="48" width="180" height="352" fill="white" stroke="#e0e0e0" stroke-width="2"/>
+                                <text x="16" y="76" style="font-size: 13px; font-weight: 600;" fill="#161616">Menu</text>
+                                <line x1="16" y1="84" x2="164" y2="84" stroke="#e0e0e0" stroke-width="1"/>
+                                <text x="16" y="108" style="font-size: 12px;" fill="#525252">Home</text>
+                                <text x="16" y="132" style="font-size: 12px;" fill="#525252">Produtos</text>
+                                <text x="16" y="156" style="font-size: 12px;" fill="#525252">Sobre</text>
+                                <text x="16" y="180" style="font-size: 12px;" fill="#525252">Contato</text>
+                                
+                                <!-- Overlay -->
+                                <rect x="180" y="48" width="100" height="352" fill="rgba(0,0,0,0.3)"/>
+                            </svg>
+                            <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
+                                <strong>Uso:</strong> Obrigatório em mobile (< 768px).<br>
+                                <strong>Comportamento:</strong> Abre drawer lateral, overlay escurece fundo
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Boas Práticas -->
+                    <h4 style="font-size: 1.125rem; font-weight: 600; margin-top: var(--spacing-08); margin-bottom: var(--spacing-05);">Boas Práticas (Carbon + Material Design)</h4>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-06); margin-bottom: var(--spacing-07);">
+                        <div style="background: rgba(36, 161, 72, 0.1); border-left: 4px solid #24a148; padding: var(--spacing-05); border-radius: var(--radius-md);">
+                            <div style="font-weight: 600; margin-bottom: var(--spacing-03); color: #24a148;">✓ Sempre faça</div>
+                            <ul style="font-size: 14px; color: var(--text-primary); padding-left: 20px; line-height: 1.8;">
+                                <li>Indique visualmente a página ativa (cor, borda, negrito)</li>
+                                <li>Mantenha menu consistente em todas as páginas</li>
+                                <li>Use ícones + texto (mais claro que só ícones)</li>
+                                <li>Máximo de 7 itens no menu principal (regra de Miller)</li>
+                                <li>Forneça feedback visual (hover, focus, active)</li>
+                                <li>Torne navegação acessível via teclado (Tab, Enter)</li>
+                            </ul>
+                        </div>
+
+                        <div style="background: rgba(187, 0, 0, 0.1); border-left: 4px solid #bb0000; padding: var(--spacing-05); border-radius: var(--radius-md);">
+                            <div style="font-weight: 600; margin-bottom: var(--spacing-03); color: #bb0000;">✗ Evite</div>
+                            <ul style="font-size: 14px; color: var(--text-primary); padding-left: 20px; line-height: 1.8;">
+                                <li>Menus muito profundos (máximo 3 níveis)</li>
+                                <li>Esconder navegação crítica (principal sempre visível)</li>
+                                <li>Usar apenas ícones sem labels (ambíguo)</li>
+                                <li>Dropdowns complexos com delay para abrir</li>
+                                <li>Mais de 2 barras de navegação (confuso)</li>
+                                <li>Animações longas (> 300ms) ao abrir menus</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Breakpoints Responsivos -->
+                    <h4 style="font-size: 1.125rem; font-weight: 600; margin-top: var(--spacing-08); margin-bottom: var(--spacing-05);">Breakpoints Responsivos</h4>
+                    
+                    <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06); margin-bottom: var(--spacing-07);">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid var(--border-subtle);">
+                                    <th style="padding: var(--spacing-04); text-align: left; font-weight: 600; font-size: 14px;">Dispositivo</th>
+                                    <th style="padding: var(--spacing-04); text-align: left; font-weight: 600; font-size: 14px;">Largura</th>
+                                    <th style="padding: var(--spacing-04); text-align: left; font-weight: 600; font-size: 14px;">Padrão Recomendado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid var(--border-subtle);">
+                                    <td style="padding: var(--spacing-04); font-weight: 600;">Mobile</td>
+                                    <td style="padding: var(--spacing-04); color: var(--text-secondary); font-family: monospace;">< 768px</td>
+                                    <td style="padding: var(--spacing-04);">Burger Menu (☰)</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid var(--border-subtle);">
+                                    <td style="padding: var(--spacing-04); font-weight: 600;">Tablet</td>
+                                    <td style="padding: var(--spacing-04); color: var(--text-secondary); font-family: monospace;">768px - 1024px</td>
+                                    <td style="padding: var(--spacing-04);">Burger ou Top Menu (depende do contexto)</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: var(--spacing-04); font-weight: 600;">Desktop</td>
+                                    <td style="padding: var(--spacing-04); color: var(--text-secondary); font-family: monospace;">> 1024px</td>
+                                    <td style="padding: var(--spacing-04);">Top Menu ou Side Menu (conforme complexidade)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Princípio Fundamental -->
+                    <div style="background: rgba(0, 122, 204, 0.1); border-left: 4px solid #007acc; padding: var(--spacing-06); border-radius: var(--radius-md); margin-top: var(--spacing-07);">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-04);">
+                            <i class="ph-fill ph-info" style="font-size: 24px; color: #007acc;"></i>
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: var(--spacing-02); color: var(--text-primary);">Princípio fundamental (Nielsen Norman Group)</div>
+                                <div style="color: var(--text-primary); font-size: 15px;">
+                                    O usuário deve sempre saber: <strong>"Onde estou? De onde vim? Para onde posso ir?"</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Componente Pronto (exemplo simples) -->
+                    <h4 style="font-size: 1.125rem; font-weight: 600; margin-top: var(--spacing-09); margin-bottom: var(--spacing-05);">Componente Pronto: Top Menu</h4>
+                    
+                    <div class="component-showcase">
+                        <div class="component-header">
+                            <div class="component-name">Navigation Bar</div>
+                            <button class="copy-code-btn" onclick="copyCode('navbar-code')">
+                                <i class="ph ph-copy"></i>
+                                Copiar código
+                            </button>
+                        </div>
+                        <div class="component-preview" style="width: 100%;">
+                            <nav class="navbar" style="width: 100%;">
+                                <a href="v-componentes-web.html#" class="navbar-brand">Brand</a>
+                                <ul class="navbar-menu">
+                                    <li><a href="v-componentes-web.html#" class="navbar-item active">Home</a></li>
+                                    <li><a href="v-componentes-web.html#" class="navbar-item">Produtos</a></li>
+                                    <li><a href="v-componentes-web.html#" class="navbar-item">Sobre</a></li>
+                                    <li><a href="v-componentes-web.html#" class="navbar-item">Contato</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="component-specs">
+                            <strong>Altura:</strong> 56px | <strong>Estados:</strong> active, hover, focus | <strong>Responsivo:</strong> Colapsa em burger < 768px
+                        </div>
+                        <div class="component-code" id="navbar-code">&lt;nav class="navbar"&gt;
+  &lt;a class="navbar-brand"&gt;Brand&lt;/a&gt;
+  &lt;ul class="navbar-menu"&gt;
+    &lt;li&gt;&lt;a class="navbar-item active"&gt;Home&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a class="navbar-item"&gt;Produtos&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;</div>
+                    </div>
+
+                    <h3 class="subsection-title">Loading States</h3>
+
+                    <p style="margin-bottom: 16px; color: var(--text-secondary); font-size: 14px;">
+                        Indicadores de carregamento para feedback visual durante operações assíncronas.
+                    </p>
+
+                    <div class="component-demo" style="margin-bottom: 24px;">
+                        <p style="font-size: 12px; font-weight: 600; color: var(--text-disabled); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Spinner</p>
+                        <div style="display: flex; align-items: center; gap: 24px;">
+                            <div style="text-align: center;">
+                                <div class="spinner spinner--sm" style="margin: 0 auto 8px;"></div>
+                                <span style="font-size: 11px; color: var(--text-disabled);">Small (16px)</span>
+                            </div>
+                            <div style="text-align: center;">
+                                <div class="spinner" style="margin: 0 auto 8px;"></div>
+                                <span style="font-size: 11px; color: var(--text-disabled);">Default (24px)</span>
+                            </div>
+                            <div style="text-align: center;">
+                                <div class="spinner spinner--lg" style="margin: 0 auto 8px;"></div>
+                                <span style="font-size: 11px; color: var(--text-disabled);">Large (48px)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="component-demo" style="margin-bottom: 24px;">
+                        <p style="font-size: 12px; font-weight: 600; color: var(--text-disabled); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Skeleton Screens</p>
+                        <div style="max-width: 480px; padding: 16px; border: 1px solid var(--border-subtle); border-radius: 4px;">
+                            <div class="skeleton skeleton--heading"></div>
+                            <div class="skeleton skeleton--text"></div>
+                            <div class="skeleton skeleton--text"></div>
+                            <div class="skeleton skeleton--text"></div>
+                        </div>
+                    </div>
+
+                    <div class="component-demo">
+                        <p style="font-size: 12px; font-weight: 600; color: var(--text-disabled); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Skeleton — Table Rows</p>
+                        <div style="max-width: 640px; border: 1px solid var(--border-subtle); border-radius: 4px; overflow: hidden;">
+                            <div class="skeleton skeleton--row"></div>
+                            <div class="skeleton skeleton--row"></div>
+                            <div class="skeleton skeleton--row"></div>
+                            <div class="skeleton skeleton--row"></div>
+                            <div class="skeleton skeleton--row"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Demo (hidden by default) -->
+    <div id="demo-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title">Modal Title</div>
+                <button class="modal-close" aria-label="Fechar" onclick="document.getElementById('demo-modal').classList.remove('active')">
+                    <i class="ph ph-x" style="font-size: 20px;"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Este é um exemplo de modal. Você pode colocar qualquer conteúdo aqui: formulários, avisos, confirmações, etc.</p>
+                <p style="margin-top: var(--spacing-05);">O overlay escuro (backdrop) cobre o resto da página e pode ser clicado para fechar o modal.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="document.getElementById('demo-modal').classList.remove('active')">Cancelar</button>
+                <button class="btn btn-primary" onclick="document.getElementById('demo-modal').classList.remove('active')">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="ph ph-check-circle"></i>
+        <span id="toast-message">Copiado!</span>
+    </div>
+
+    <script>
+        // ========================================
+        // COPIAR CÓDIGO
+        // ========================================
+        function copyCode(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Código copiado!');
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+                showToast('Erro ao copiar', false);
+            });
+        }
+
+        // ========================================
+        // TOAST NOTIFICATION
+        // ========================================
+        function showToast(message, success = true) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.textContent = message;
+            
+            if (success) {
+                toast.classList.add('success');
+            } else {
+                toast.classList.remove('success');
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ========================================
+        // TABS SWITCHING
+        // ========================================
+        function switchTab(event, tabId) {
+            // Remove active de todas as tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active de todos os conteúdos
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Ativa a tab clicada
+            event.target.classList.add('active');
+            
+            // Ativa o conteúdo correspondente
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // ========================================
+        // SMOOTH SCROLL
+        // ========================================
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

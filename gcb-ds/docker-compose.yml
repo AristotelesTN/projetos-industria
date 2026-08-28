@@ -1,0 +1,9 @@
+services:
+  gcb-ds:
+    build: .
+    container_name: gcb-ds
+    ports:
+      - "8080:80"
+    volumes:
+      - ./site:/usr/share/nginx/html:ro
+    restart: unless-stopped

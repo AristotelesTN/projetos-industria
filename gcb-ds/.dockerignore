@@ -1,0 +1,5 @@
+.git
+.mirror-tmp
+README.md
+scripts/
+docker-compose.yml

@@ -1,0 +1,2296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=ai-legible&utm_source=comment&utm_medium=referral&utm_id=782bdad0-ac75-44d4-8b10-176ebb1cb13d
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="hosting-provider" content="Netlify">
+<meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=782bdad0-ac75-44d4-8b10-176ebb1cb13d">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VIVIX · Design System GCB — Diretrizes para dashboards Power BI: cores, gráficos, header e layout.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Design System GCB">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:title" content="Power BI - VIVIX | Design System GCB">
+    <meta property="og:description" content="VIVIX · Design System GCB — Diretrizes para dashboards Power BI: cores, gráficos, header e layout.">
+    <meta property="og:url" content="https://gcb-ds.netlify.app/v-componentes-powerbi.html">
+    <meta property="og:image" content="https://gcb-ds.netlify.app/assets/og/og-ds.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Design System GCB — Corporativo, Atiaia Energia e VIVIX">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Power BI - VIVIX | Design System GCB">
+    <meta name="twitter:description" content="VIVIX · Design System GCB — Diretrizes para dashboards Power BI: cores, gráficos, header e layout.">
+    <meta name="twitter:image" content="https://gcb-ds.netlify.app/assets/og/og-ds.png">
+    <title>Power BI - VIVIX | Design System GCB</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/icone-brennand.svg">
+    
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+        /* ========================================
+           RESET E VARIÁVEIS
+        ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Cores Corporativo */
+            --color-primary: #00b2a9;
+            --color-secondary-1: #005751;
+            --color-secondary-2: #e1e000;
+            --color-neutral-light: #f5f5f5;
+            --color-neutral-dark: #005751;
+            
+            /* Cores Semânticas */
+            --color-success: #24a148;
+            --color-warning: #f1c21b;
+            --color-error: #bb0000;
+            --color-info: #007acc;
+            
+            /* Paleta Categórica para Dados (6 cores harmoniosas com brand) */
+            --data-1: #00b2a9;  /* Laranja primário */
+            --data-2: #005751;  /* Verde escuro */
+            --data-3: #e1e000;  /* Amarelo */
+            --data-4: #005751;  /* Laranja escuro */
+            --data-5: #007acc;  /* Azul info */
+            --data-6: #24a148;  /* Verde success */
+            
+            /* Escala de Cinza para Dashboards */
+            --gray-50: #fafafa;
+            --gray-100: #f5f5f5;
+            --gray-200: #eeeeee;
+            --gray-300: #e0e0e0;
+            --gray-400: #bdbdbd;
+            --gray-500: #9e9e9e;
+            --gray-600: #757575;
+            --gray-700: #616161;
+            --gray-800: #424242;
+            --gray-900: #212121;
+            
+            /* Tokens */
+            --spacing-01: 2px;
+            --spacing-02: 4px;
+            --spacing-03: 8px;
+            --spacing-04: 12px;
+            --spacing-05: 16px;
+            --spacing-06: 24px;
+            --spacing-07: 32px;
+            --spacing-08: 40px;
+            --spacing-09: 48px;
+            --spacing-10: 64px;
+            
+            --elevation-01: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --elevation-02: 0 2px 6px rgba(0, 0, 0, 0.16);
+            --elevation-03: 0 4px 12px rgba(0, 0, 0, 0.20);
+            
+            --radius-sm: 2px;
+            --radius-md: 4px;
+            --radius-lg: 8px;
+            
+            --transition-base: 200ms;
+            --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+            
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-weight-regular: 400;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 600;
+            --ui-background: #ffffff;
+            --ui-01: #f4f4f4;
+            --text-primary: #161616;
+            --text-secondary: #525252;
+            --text-disabled: #8d8d8d;
+            --border-subtle: #e0e0e0;
+            --border-strong: #8d8d8d;
+            --color-interactive: #0f62fe;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--ui-background);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        /* ========================================
+           LAYOUT
+        ======================================== */
+        .page-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            background: var(--ui-02, white);
+            border-right: 1px solid var(--border-subtle);
+            padding: var(--spacing-06);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            margin-bottom: var(--spacing-07);
+        }
+
+        .sidebar-logo {
+            height: 32px;
+            margin-bottom: var(--spacing-04);
+        }
+
+        .sidebar-title {
+            font-size: 1.125rem;
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--spacing-02);
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .sidebar-back {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-03);
+            padding: var(--spacing-04);
+            margin-bottom: var(--spacing-06);
+            background: var(--ui-01);
+            border-radius: 4px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .sidebar-back:hover {
+            background: var(--border-subtle);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: var(--spacing-02);
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: var(--spacing-03) var(--spacing-04);
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--ui-01);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav a.active {
+            background: var(--color-primary);
+            color: white;
+            font-weight: 500;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: var(--spacing-08) var(--spacing-10);
+            max-width: 1280px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            gap: var(--spacing-03);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-07);
+        }
+
+        .breadcrumb a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-05);
+        }
+
+        .page-description {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-09);
+            max-width: 768px;
+        }
+
+        /* ========================================
+           SECTIONS
+        ======================================== */
+        .section {
+            margin-bottom: var(--spacing-10);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-06);
+            padding-bottom: var(--spacing-04);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .section-description {
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-06);
+            font-size: 1rem;
+        }
+
+        .subsection-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: var(--spacing-08);
+            margin-bottom: var(--spacing-05);
+        }
+
+        /* ========================================
+           CARDS
+        ======================================== */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-06);
+            margin-bottom: var(--spacing-07);
+        }
+
+        .principle-card {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-07);
+            transition: all var(--transition-base);
+        }
+
+        .principle-card:hover {
+            box-shadow: var(--elevation-02);
+            transform: translateY(-2px);
+        }
+
+        .principle-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary-1) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-bottom: var(--spacing-05);
+        }
+
+        .principle-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-04);
+        }
+
+        .principle-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        /* ========================================
+           ALERT BOXES
+        ======================================== */
+        .alert {
+            padding: var(--spacing-06);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-06) 0;
+            border-left: 4px solid;
+            display: flex;
+            gap: var(--spacing-04);
+            align-items: flex-start;
+        }
+
+        .alert-icon {
+            flex-shrink: 0;
+            font-size: 20px;
+        }
+
+        .alert.critical {
+            background: rgba(187, 0, 0, 0.1);
+            border-color: var(--color-error);
+        }
+
+        .alert.critical .alert-icon {
+            color: var(--color-error);
+        }
+
+        .alert.warning {
+            background: rgba(241, 194, 27, 0.1);
+            border-color: var(--color-warning);
+        }
+
+        .alert.warning .alert-icon {
+            color: #8e6a00;
+        }
+
+        .alert.info {
+            background: rgba(0, 122, 204, 0.1);
+            border-color: var(--color-info);
+        }
+
+        .alert.info .alert-icon {
+            color: var(--color-info);
+        }
+
+        .alert strong {
+            font-weight: 600;
+        }
+
+        /* ========================================
+           PALETA DE CORES
+        ======================================== */
+        .color-palette {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: var(--spacing-05);
+            margin: var(--spacing-06) 0;
+        }
+
+        .color-card {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .color-swatch {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.125rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .color-info {
+            padding: var(--spacing-05);
+        }
+
+        .color-name {
+            font-weight: 600;
+            margin-bottom: var(--spacing-02);
+            font-size: 0.875rem;
+        }
+
+        .color-code {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-03);
+            cursor: pointer;
+            padding: var(--spacing-03) var(--spacing-04);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            background: white;
+            transition: all var(--transition-base) var(--easing-standard);
+        }
+
+        .color-code:hover {
+            background: var(--gray-100);
+            border-color: var(--border-strong);
+        }
+
+        .color-code-hex {
+            flex: 1;
+        }
+
+        .color-code-icon {
+            font-size: 16px;
+            color: var(--text-secondary);
+            transition: color var(--transition-base) var(--easing-standard);
+        }
+
+        .color-code:hover .color-code-icon {
+            color: var(--text-primary);
+        }
+
+        .color-usage {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: var(--spacing-03);
+        }
+
+        /* ========================================
+           GRAYSCALE
+        ======================================== */
+        .grayscale-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: var(--spacing-04);
+            margin: var(--spacing-06) 0;
+        }
+
+        .gray-card {
+            text-align: center;
+        }
+
+        .gray-swatch {
+            height: 60px;
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--spacing-03);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .gray-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-02);
+        }
+
+        .gray-code {
+            font-size: 0.625rem;
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--text-secondary);
+        }
+
+        /* ========================================
+           CHECKLIST
+        ======================================== */
+        .checklist {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-07);
+            margin: var(--spacing-06) 0;
+        }
+
+        .checklist-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-05);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-04);
+        }
+
+        .checklist-item {
+            padding: var(--spacing-05);
+            margin: var(--spacing-03) 0;
+            background: var(--ui-01);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-04);
+            font-size: 0.875rem;
+        }
+
+        .checklist-item i {
+            color: var(--color-primary);
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        /* ========================================
+           COMPARISON TABLE
+        ======================================== */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--spacing-06) 0;
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .comparison-table th {
+            background: var(--color-neutral-dark);
+            color: white;
+            padding: var(--spacing-05) var(--spacing-06);
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .comparison-table td {
+            padding: var(--spacing-05) var(--spacing-06);
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.875rem;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:hover {
+            background: var(--ui-01);
+        }
+
+        .chart-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .do {
+            color: var(--text-primary);
+            font-weight: 400;
+        }
+
+        .dont {
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* ========================================
+           EXAMPLES
+        ======================================== */
+        .example-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-07);
+            margin: var(--spacing-06) 0;
+        }
+
+        .example-panel {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-06);
+        }
+
+        .example-label {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-03);
+            padding: var(--spacing-03) var(--spacing-05);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-05);
+        }
+
+        .example-label.bad {
+            background: var(--color-error);
+            color: white;
+        }
+
+        .example-label.good {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .example-content {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* ========================================
+           RESPONSIVE
+        ======================================== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .main-content {
+                padding: var(--spacing-06);
+            }
+
+            .example-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-wrapper {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid var(--border-subtle);
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ========================================
+           CHART EXAMPLES (SVG)
+        ======================================== */
+        .chart-examples-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-07);
+            margin: var(--spacing-08) 0;
+        }
+
+        .chart-example {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-06);
+        }
+
+        .chart-example-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-02);
+        }
+
+        .chart-example-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-06);
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: auto;
+        }
+
+        .chart-label {
+            font-family: var(--font-family);
+            font-size: 12px;
+            fill: var(--text-secondary);
+        }
+
+        .chart-value {
+            font-family: var(--font-family);
+            font-size: 11px;
+            fill: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .kpi-card {
+            background: var(--gray-100);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-06);
+            text-align: center;
+        }
+
+        .kpi-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--spacing-03);
+        }
+
+        .kpi-value {
+            font-size: 40px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1;
+            margin-bottom: var(--spacing-02);
+        }
+
+        .kpi-trend {
+            font-size: 14px;
+            color: var(--color-success);
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .chart-examples-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ========================================
+           DASHBOARD HEADER COMPONENT
+        ======================================== */
+        .dashboard-header {
+            background: var(--color-neutral-dark);
+            height: 80px;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--spacing-07);
+            position: relative;
+            margin-bottom: var(--spacing-07);
+        }
+
+        .dashboard-header::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background: white;
+            clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
+        }
+
+        .dashboard-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-04);
+            position: relative;
+            z-index: 1;
+        }
+
+        .dashboard-logo-icon {
+            width: 48px;
+            height: 48px;
+        }
+
+        .dashboard-logo-text {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .dashboard-logo-text span {
+            font-weight: 400;
+        }
+
+        /* ========================================
+           BEFORE/AFTER EXAMPLES
+        ======================================== */
+        .before-after-section {
+            margin: var(--spacing-08) 0;
+        }
+
+        .toggle-container {
+            display: flex;
+            gap: 0;
+            margin-bottom: 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        /* Tab/Toggle Button - para alternar conteúdo */
+        .toggle-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            border-bottom: 1px solid var(--border-subtle);
+            padding: var(--spacing-04) var(--spacing-06);
+            font-family: var(--font-family);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 0;
+            transition: all var(--transition-base) var(--easing-standard);
+            position: relative;
+            margin-bottom: -1px;
+        }
+
+        .toggle-btn:hover {
+            color: var(--text-primary);
+            background: var(--gray-100);
+        }
+
+        .toggle-btn.active {
+            color: var(--text-primary);
+            font-weight: 600;
+            background: transparent;
+            border-bottom-color: var(--color-interactive);
+            border-bottom-width: 2px;
+        }
+
+        /* ========================================
+           BOTÕES PADRONIZADOS
+        ======================================== */
+        /* Primary Button - Laranja (ações principais) */
+        .btn-primary,
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-03);
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: var(--spacing-04) var(--spacing-06);
+            font-family: var(--font-family);
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-base) var(--easing-standard);
+            text-decoration: none;
+        }
+
+        .btn-primary:hover,
+        .download-btn:hover {
+            background: var(--color-secondary-1);
+            transform: translateY(-1px);
+            box-shadow: var(--elevation-02);
+        }
+
+        .btn-primary i,
+        .download-btn i {
+            font-size: 18px;
+        }
+
+        /* Secondary Button - Ghost/Outline com fill (ações secundárias) */
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-03);
+            background: white;
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+            padding: var(--spacing-04) var(--spacing-06);
+            font-family: var(--font-family);
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-base) var(--easing-standard);
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-100);
+            border-color: var(--border-strong);
+        }
+
+        .btn-secondary i {
+            font-size: 18px;
+        }
+
+        /* ========================================
+           TOAST NOTIFICATION
+        ======================================== */
+        .toast {
+            position: fixed;
+            bottom: var(--spacing-06);
+            right: var(--spacing-06);
+            background: var(--text-primary);
+            color: white;
+            padding: var(--spacing-05) var(--spacing-06);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-04);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transform: translateY(200%);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            pointer-events: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .toast.success {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .toast i {
+            font-size: 20px;
+        }
+
+        .example-content {
+            display: none;
+            margin-top: var(--spacing-06);
+        }
+
+        .example-content.active {
+            display: block;
+        }
+
+        .example-label {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-02);
+            padding: var(--spacing-02) var(--spacing-04);
+            border-radius: var(--radius-md);
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: var(--spacing-04);
+        }
+
+        .example-label i {
+            font-size: 14px;
+        }
+
+        .example-label.before {
+            background: rgba(187, 0, 0, 0.1);
+            color: var(--color-error);
+        }
+
+        .example-label.after {
+            background: rgba(36, 161, 72, 0.1);
+            color: var(--color-success);
+        }
+
+        .comparison-side-by-side {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-07);
+            margin: var(--spacing-06) 0;
+        }
+
+        .comparison-panel {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-06);
+        }
+
+        .comparison-panel.before {
+            border-left: 4px solid var(--color-error);
+        }
+
+        .comparison-panel.after {
+            border-left: 4px solid var(--color-success);
+        }
+
+        @media (max-width: 768px) {
+            .comparison-side-by-side {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-header::after {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a class='sidebar-back' href='ds.html'>
+                <i class="ph ph-arrow-left"></i>
+                Design System
+            </a>
+            
+            <div class="sidebar-header">
+                <img src="assets/logos/vivix-simbolo-v.svg" alt="Símbolo VIVIX" class="sidebar-logo">
+                <div class="sidebar-title">Power BI</div>
+                <div class="sidebar-subtitle">VIVIX</div>
+            </div>
+            
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href='v-fundamentos.html'>Fundamentos</a></li>
+                    <li><a href='v-componentes-web.html'>Componentes Web</a></li>
+                    <li><a href="v-componentes-powerbi.html#" class="active">Power BI</a></li>
+                    <li><a href='v-mendix.html'>Mendix</a></li>
+                    <li><a href='v-sap-btp.html'>SAP BTP</a></li>
+                </ul>
+                
+                <div style="margin-top: var(--spacing-06); padding-top: var(--spacing-06); border-top: 1px solid var(--border-subtle);">
+                    <div style="font-size: 0.75rem; font-weight: var(--font-weight-semibold); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--spacing-03);">Nesta página</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="v-componentes-powerbi.html#principios">Princípios</a></li>
+                        <li><a href="v-componentes-powerbi.html#cores">Sistema de Cores</a></li>
+                        <li><a href="v-componentes-powerbi.html#graficos">Escolha de Gráficos</a></li>
+                        <li><a href="v-componentes-powerbi.html#checklist">Checklist Crítico</a></li>
+                        <li><a href="v-componentes-powerbi.html#diretrizes">Diretrizes Técnicas</a></li>
+                        <li><a href="v-componentes-powerbi.html#header">Header de Dashboard</a></li>
+                        <li><a href="v-componentes-powerbi.html#antes-depois">Antes vs. Depois</a></li>
+                        <li><a href="v-componentes-powerbi.html#layout-grid">Layout: Grid 8px</a></li>
+                        <li><a href="v-componentes-powerbi.html#navegacao">Navegação e Filtros</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Breadcrumb -->
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href='ds.html'>Design System</a>
+                <span>/</span>
+                <span>VIVIX</span>
+                <span>/</span>
+                <span>Power BI</span>
+            </nav>
+
+            <!-- Page Header -->
+            <h1 class="page-title">Power BI</h1>
+            <p class="page-description">
+                Diretrizes práticas para criação de dashboards eficientes, acessíveis e orientados a decisão. Foco em propósito, clareza e acionabilidade.
+            </p>
+
+            <!-- ALERT WARNING -->
+            <div class="alert warning">
+                <i class="ph-fill ph-warning alert-icon"></i>
+                <div>
+                    <strong>Regra de Ouro:</strong> Todo dashboard deve responder claramente: <strong>"Qual decisão isso apoia?"</strong> Se você não consegue articular a decisão que o dashboard facilita, ele não deveria existir.
+                </div>
+            </div>
+
+            <!-- ========================================
+                 PRINCÍPIOS FUNDAMENTAIS
+            ========================================= -->
+            <section id="principios" class="section">
+                <h2 class="section-title">1. Princípios Fundamentais</h2>
+                <p class="section-description">
+                    Fundamentos inegociáveis para dashboards que realmente funcionam. Priorize sempre decisão sobre decoração.
+                </p>
+
+                <div class="card-grid">
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-target"></i>
+                        </div>
+                        <h3 class="principle-title">Propósito antes de forma</h3>
+                        <p class="principle-description">
+                            Cada visual deve servir uma decisão específica. Bordas decorativas, efeitos 3D e gradientes raramente servem ao propósito. Remova tudo que não apoia diretamente a ação.
+                        </p>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-eye"></i>
+                        </div>
+                        <h3 class="principle-title">Hierarquia visual clara</h3>
+                        <p class="principle-description">
+                            Guie o olho do usuário do mais importante ao detalhe. Use tamanho, posição e contraste estrategicamente. KPIs críticos devem dominar visualmente.
+                        </p>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-subtract"></i>
+                        </div>
+                        <h3 class="principle-title">Menos é mais</h3>
+                        <p class="principle-description">
+                            Um dashboard sobrecarregado é um dashboard inútil. Limite a 5-7 KPIs por página. Se precisa de mais, crie páginas separadas ou use drill-down.
+                        </p>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-text-aa"></i>
+                        </div>
+                        <h3 class="principle-title">Legibilidade é sagrada</h3>
+                        <p class="principle-description">
+                            Tamanho de fonte mínimo: 10pt para labels, 12pt para texto corrido. Contraste WCAG AA obrigatório. Nunca sacrifique legibilidade por estética.
+                        </p>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-palette"></i>
+                        </div>
+                        <h3 class="principle-title">Cores com propósito</h3>
+                        <p class="principle-description">
+                            Verde/vermelho apenas para positivo/negativo. Use paleta categórica para séries. Nunca use mais de 6 cores simultâneas (daltonismo).
+                        </p>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-clock-counter-clockwise"></i>
+                        </div>
+                        <h3 class="principle-title">Contexto temporal</h3>
+                        <p class="principle-description">
+                            Sempre mostre comparações: vs. período anterior, vs. meta, vs. forecast. Um número isolado não informa decisão.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 SISTEMA DE CORES
+            ========================================= -->
+            <section id="cores" class="section">
+                <h2 class="section-title">2. Sistema de Cores</h2>
+                <p class="section-description">
+                    Paleta otimizada para dashboards, com foco em acessibilidade e diferenciação clara. Adaptada da identidade corporativa.
+                </p>
+
+                <!-- Cores Semânticas -->
+                <h3 class="subsection-title">Cores Semânticas (nunca mudam)</h3>
+                <div class="alert warning">
+                    <i class="ph-fill ph-warning alert-icon"></i>
+                    <div>
+                        <strong>Importante:</strong> Use verde/vermelho APENAS para positivo/negativo. Nunca use verde/vermelho para categorias sem significado semântico (ex: produtos, regiões).
+                    </div>
+                </div>
+
+                <div class="color-palette">
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #24a148;">
+                            <i class="ph-fill ph-check" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div class="color-info">
+                            <div class="color-name">Success</div>
+                            <div class="color-code" onclick="copyHex('#24a148', this)">
+                                <span class="color-code-hex">#24a148</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Metas batidas, variações positivas</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #bb0000;">
+                            <i class="ph-fill ph-x" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div class="color-info">
+                            <div class="color-name">Error</div>
+                            <div class="color-code" onclick="copyHex('#bb0000', this)">
+                                <span class="color-code-hex">#bb0000</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Metas não batidas, variações negativas</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #f1c21b;">
+                            <i class="ph-fill ph-warning" style="color: #161616; font-size: 24px;"></i>
+                        </div>
+                        <div class="color-info">
+                            <div class="color-name">Warning</div>
+                            <div class="color-code" onclick="copyHex('#f1c21b', this)">
+                                <span class="color-code-hex">#f1c21b</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Atenção, tendências preocupantes</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #007acc;">
+                            <i class="ph-fill ph-info" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div class="color-info">
+                            <div class="color-name">Info</div>
+                            <div class="color-code" onclick="copyHex('#007acc', this)">
+                                <span class="color-code-hex">#007acc</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Informações neutras, tooltips</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Paleta Categórica -->
+                <h3 class="subsection-title">Paleta Categórica (para séries de dados)</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-05);">
+                    Use esta paleta quando precisar diferenciar categorias (produtos, regiões, unidades). Ordem de prioridade visual: 1 → 6.
+                </p>
+
+                <div class="color-palette">
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #00b2a9;">1</div>
+                        <div class="color-info">
+                            <div class="color-name">Data 1 (primário)</div>
+                            <div class="color-code" onclick="copyHex('#00b2a9', this)">
+                                <span class="color-code-hex">#00b2a9</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Categoria mais importante</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #005751;">2</div>
+                        <div class="color-info">
+                            <div class="color-name">Data 2</div>
+                            <div class="color-code" onclick="copyHex('#005751', this)">
+                                <span class="color-code-hex">#005751</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Segunda categoria</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #e1e000;">3</div>
+                        <div class="color-info">
+                            <div class="color-name">Data 3</div>
+                            <div class="color-code" onclick="copyHex('#e1e000', this)">
+                                <span class="color-code-hex">#e1e000</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Terceira categoria</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #005751;">4</div>
+                        <div class="color-info">
+                            <div class="color-name">Data 4</div>
+                            <div class="color-code" onclick="copyHex('#005751', this)">
+                                <span class="color-code-hex">#005751</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Quarta categoria</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #007acc;">5</div>
+                        <div class="color-info">
+                            <div class="color-name">Data 5</div>
+                            <div class="color-code" onclick="copyHex('#007acc', this)">
+                                <span class="color-code-hex">#007acc</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Quinta categoria</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #24a148;">6</div>
+                        <div class="color-info">
+                            <div class="color-name">Data 6</div>
+                            <div class="color-code" onclick="copyHex('#24a148', this)">
+                                <span class="color-code-hex">#24a148</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Sexta categoria (máximo)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert warning">
+                    <i class="ph-fill ph-warning alert-icon"></i>
+                    <div>
+                        <strong>Limite crítico:</strong> Nunca use mais de 6 cores em um mesmo gráfico. Se precisa de mais categorias, agrupe as menores em "Outros" ou use filtros interativos.
+                    </div>
+                </div>
+
+                <!-- Escala de Cinza -->
+                <h3 class="subsection-title">Escala de Cinza (fundos, bordas, texto)</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-05);">
+                    Use cinzas para elementos estruturais. Fundo de dashboard: Gray-50 ou Gray-100.
+                </p>
+
+                <div class="grayscale-grid">
+                    <div class="gray-card">
+                        <div class="gray-swatch" style="background: #fafafa;"></div>
+                        <div class="gray-label">Gray-50</div>
+                        <div class="gray-code">#fafafa</div>
+                    </div>
+                    <div class="gray-card">
+                        <div class="gray-swatch" style="background: #f5f5f5;"></div>
+                        <div class="gray-label">Gray-100</div>
+                        <div class="gray-code">#f5f5f5</div>
+                    </div>
+                    <div class="gray-card">
+                        <div class="gray-swatch" style="background: #eeeeee;"></div>
+                        <div class="gray-label">Gray-200</div>
+                        <div class="gray-code">#eeeeee</div>
+                    </div>
+                    <div class="gray-card">
+                        <div class="gray-swatch" style="background: #e0e0e0;"></div>
+                        <div class="gray-label">Gray-300</div>
+                        <div class="gray-code">#e0e0e0</div>
+                    </div>
+                    <div class="gray-card">
+                        <div class="gray-swatch" style="background: #bdbdbd;"></div>
+                        <div class="gray-label">Gray-400</div>
+                        <div class="gray-code">#bdbdbd</div>
+                    </div>
+                    <div class="gray-card">
+                        <div class="gray-swatch" style="background: #9e9e9e;"></div>
+                        <div class="gray-label">Gray-500</div>
+                        <div class="gray-code">#9e9e9e</div>
+                    </div>
+                    <div class="gray-card">
+                        <div class="gray-swatch" style="background: #757575;"></div>
+                        <div class="gray-label">Gray-600</div>
+                        <div class="gray-code">#757575</div>
+                    </div>
+                    <div class="gray-card">
+                        <div class="gray-swatch" style="background: #616161;"></div>
+                        <div class="gray-label">Gray-700</div>
+                        <div class="gray-code">#616161</div>
+                    </div>
+                    <div class="gray-card">
+                        <div class="gray-swatch" style="background: #424242;"></div>
+                        <div class="gray-label">Gray-800</div>
+                        <div class="gray-code">#424242</div>
+                    </div>
+                    <div class="gray-card">
+                        <div class="gray-swatch" style="background: #212121;"></div>
+                        <div class="gray-label">Gray-900</div>
+                        <div class="gray-code">#212121</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 ESCOLHA DE GRÁFICOS
+            ========================================= -->
+            <section id="graficos" class="section">
+                <h2 class="section-title">3. Escolha de Gráficos</h2>
+                <p class="section-description">
+                    O tipo de gráfico determina se o insight será imediato ou perdido. Escolha com base no tipo de comparação necessária.
+                </p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Tipo de Gráfico</th>
+                            <th>Quando Usar</th>
+                            <th>Quando NÃO Usar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="chart-name">Barra Horizontal</span></td>
+                            <td class="do">Ranking, comparação de categorias (top 10 produtos)</td>
+                            <td class="dont">Evolução temporal, parte-do-todo</td>
+                        </tr>
+                        <tr>
+                            <td><span class="chart-name">Barra Vertical</span></td>
+                            <td class="do">Comparação temporal discreta (vendas por mês)</td>
+                            <td class="dont">Mais de 12 categorias (ilegível)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="chart-name">Linha</span></td>
+                            <td class="do">Tendências ao longo do tempo (30+ pontos)</td>
+                            <td class="dont">Comparação de categorias sem ordem</td>
+                        </tr>
+                        <tr>
+                            <td><span class="chart-name">Pizza</span></td>
+                            <td class="do">Parte-do-todo com 2-3 fatias</td>
+                            <td class="dont">Mais de 5 fatias, comparação temporal</td>
+                        </tr>
+                        <tr>
+                            <td><span class="chart-name">Cartão (KPI)</span></td>
+                            <td class="do">Métrica única crítica (receita total, NPS)</td>
+                            <td class="dont">Comparar múltiplas categorias</td>
+                        </tr>
+                        <tr>
+                            <td><span class="chart-name">Tabela</span></td>
+                            <td class="do">Valores precisos, múltiplas dimensões</td>
+                            <td class="dont">Mostrar tendências (use gráfico)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="chart-name">Scatter Plot</span></td>
+                            <td class="do">Correlação entre 2 variáveis</td>
+                            <td class="dont">Séries temporais simples</td>
+                        </tr>
+                        <tr>
+                            <td><span class="chart-name">Mapa</span></td>
+                            <td class="do">Distribuição geográfica relevante</td>
+                            <td class="dont">Geografia irrelevante para decisão</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert warning">
+                    <i class="ph-fill ph-warning alert-icon"></i>
+                    <div>
+                        <strong>Nunca use:</strong> Gráficos 3D, gauge com ponteiro, gráficos de rosquilla com mais de 5 fatias, WordClouds em contexto executivo.
+                    </div>
+                </div>
+
+                <!-- Exemplos Visuais -->
+                <h3 style="font-size: 1.25rem; font-weight: 600; margin-top: var(--spacing-09); margin-bottom: var(--spacing-05);">Exemplos Visuais</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-06);">
+                    Referências visuais de como aplicar a paleta categórica em diferentes tipos de gráficos.
+                </p>
+
+                <div class="chart-examples-grid">
+                    <!-- Exemplo 1: Barra Horizontal -->
+                    <div class="chart-example">
+                        <div class="chart-example-title">Barra Horizontal</div>
+                        <div class="chart-example-subtitle">Ranking / Comparação de categorias</div>
+                        <svg viewBox="0 0 400 180" class="chart-svg">
+                            <!-- Grade de fundo -->
+                            <line x1="100" y1="0" x2="100" y2="180" stroke="#e0e0e0" stroke-width="1"/>
+                            <line x1="200" y1="0" x2="200" y2="180" stroke="#e0e0e0" stroke-width="1"/>
+                            <line x1="300" y1="0" x2="300" y2="180" stroke="#e0e0e0" stroke-width="1"/>
+                            
+                            <!-- Barras -->
+                            <rect x="100" y="20" width="280" height="24" fill="#00b2a9" rx="2"/>
+                            <rect x="100" y="60" width="220" height="24" fill="#005751" rx="2"/>
+                            <rect x="100" y="100" width="160" height="24" fill="#e1e000" rx="2"/>
+                            <rect x="100" y="140" width="120" height="24" fill="#005751" rx="2"/>
+                            
+                            <!-- Labels -->
+                            <text x="95" y="37" text-anchor="end" class="chart-label">Produto A</text>
+                            <text x="95" y="77" text-anchor="end" class="chart-label">Produto B</text>
+                            <text x="95" y="117" text-anchor="end" class="chart-label">Produto C</text>
+                            <text x="95" y="157" text-anchor="end" class="chart-label">Produto D</text>
+                            
+                            <!-- Valores (APÓS as barras) -->
+                            <text x="390" y="37" text-anchor="start" class="chart-value">280</text>
+                            <text x="330" y="77" text-anchor="start" class="chart-value">220</text>
+                            <text x="270" y="117" text-anchor="start" class="chart-value">160</text>
+                            <text x="230" y="157" text-anchor="start" class="chart-value">120</text>
+                        </svg>
+                    </div>
+
+                    <!-- Exemplo 2: Linha -->
+                    <div class="chart-example">
+                        <div class="chart-example-title">Gráfico de Linha</div>
+                        <div class="chart-example-subtitle">Tendências ao longo do tempo</div>
+                        <svg viewBox="0 0 400 180" class="chart-svg">
+                            <!-- Grade de fundo -->
+                            <line x1="40" y1="30" x2="40" y2="150" stroke="#e0e0e0" stroke-width="1"/>
+                            <line x1="40" y1="150" x2="380" y2="150" stroke="#e0e0e0" stroke-width="1"/>
+                            
+                            <!-- Linha 1 -->
+                            <polyline points="60,120 120,90 180,100 240,70 300,80 360,50" 
+                                      fill="none" stroke="#00b2a9" stroke-width="3"/>
+                            <circle cx="60" cy="120" r="4" fill="#00b2a9"/>
+                            <circle cx="120" cy="90" r="4" fill="#00b2a9"/>
+                            <circle cx="180" cy="100" r="4" fill="#00b2a9"/>
+                            <circle cx="240" cy="70" r="4" fill="#00b2a9"/>
+                            <circle cx="300" cy="80" r="4" fill="#00b2a9"/>
+                            <circle cx="360" cy="50" r="4" fill="#00b2a9"/>
+                            
+                            <!-- Linha 2 -->
+                            <polyline points="60,130 120,110 180,115 240,95 300,100 360,80" 
+                                      fill="none" stroke="#005751" stroke-width="3"/>
+                            <circle cx="60" cy="130" r="4" fill="#005751"/>
+                            <circle cx="120" cy="110" r="4" fill="#005751"/>
+                            <circle cx="180" cy="115" r="4" fill="#005751"/>
+                            <circle cx="240" cy="95" r="4" fill="#005751"/>
+                            <circle cx="300" cy="100" r="4" fill="#005751"/>
+                            <circle cx="360" cy="80" r="4" fill="#005751"/>
+                            
+                            <!-- Labels eixo X -->
+                            <text x="60" y="165" text-anchor="middle" class="chart-label">Jan</text>
+                            <text x="120" y="165" text-anchor="middle" class="chart-label">Fev</text>
+                            <text x="180" y="165" text-anchor="middle" class="chart-label">Mar</text>
+                            <text x="240" y="165" text-anchor="middle" class="chart-label">Abr</text>
+                            <text x="300" y="165" text-anchor="middle" class="chart-label">Mai</text>
+                            <text x="360" y="165" text-anchor="middle" class="chart-label">Jun</text>
+                        </svg>
+                    </div>
+
+                    <!-- Exemplo 3: KPI Card -->
+                    <div class="chart-example">
+                        <div class="chart-example-title">Cartão KPI</div>
+                        <div class="chart-example-subtitle">Métrica única crítica</div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Receita Total</div>
+                            <div class="kpi-value">R$ 2,4M</div>
+                            <div class="kpi-trend">
+                                <i class="ph-fill ph-arrow-up"></i> +12,5% vs. mês anterior
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exemplo 4: Pizza -->
+                    <div class="chart-example">
+                        <div class="chart-example-title">Gráfico de Pizza</div>
+                        <div class="chart-example-subtitle">Parte-do-todo (máx. 3 fatias)</div>
+                        <svg viewBox="0 0 400 180" class="chart-svg">
+                            <!-- Pizza (cálculos matemáticos precisos) -->
+                            <g transform="translate(140, 90)">
+                                <!-- Fatia 1: 50% (180 graus = semicírculo superior) -->
+                                <path d="M 0,0 L 0,-70 A 70,70 0 1,1 0,70 Z" fill="#00b2a9"/>
+                                <!-- Fatia 2: 30% (108 graus) -->
+                                <path d="M 0,0 L 0,70 A 70,70 0 0,1 -42.15,55.43 Z" fill="#005751"/>
+                                <!-- Fatia 3: 20% (72 graus) -->
+                                <path d="M 0,0 L -42.15,55.43 A 70,70 0 0,1 0,-70 Z" fill="#e1e000"/>
+                            </g>
+                            
+                            <!-- Legenda -->
+                            <rect x="250" y="40" width="12" height="12" fill="#00b2a9" rx="2"/>
+                            <text x="268" y="50" class="chart-label">Unidade A (50%)</text>
+                            
+                            <rect x="250" y="70" width="12" height="12" fill="#005751" rx="2"/>
+                            <text x="268" y="80" class="chart-label">Unidade B (30%)</text>
+                            
+                            <rect x="250" y="100" width="12" height="12" fill="#e1e000" rx="2"/>
+                            <text x="268" y="110" class="chart-label">Unidade C (20%)</text>
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 CHECKLIST CRÍTICO
+            ========================================= -->
+            <section id="checklist" class="section">
+                <h2 class="section-title">4. Checklist Crítico</h2>
+                <p class="section-description">
+                    Verifique estes pontos antes de publicar qualquer dashboard. Um "não" em qualquer item exige correção imediata.
+                </p>
+
+                <div class="checklist">
+                    <div class="checklist-title">
+                        <i class="ph-fill ph-clipboard-text"></i>
+                        Antes de Publicar
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-square"></i>
+                        <span><strong>Propósito claro:</strong> Consigo explicar em uma frase qual decisão este dashboard apoia?</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-square"></i>
+                        <span><strong>Hierarquia visual:</strong> O KPI mais importante é o maior elemento da página?</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-square"></i>
+                        <span><strong>Contexto temporal:</strong> Todos os KPIs têm comparação (vs. mês anterior, vs. meta, etc)?</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-square"></i>
+                        <span><strong>Legibilidade:</strong> Todos os textos têm no mínimo 10pt e contraste adequado?</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-square"></i>
+                        <span><strong>Cores semânticas corretas:</strong> Verde/vermelho usados apenas para positivo/negativo?</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-square"></i>
+                        <span><strong>Máximo de cores:</strong> Nenhum gráfico usa mais de 6 cores simultâneas?</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-square"></i>
+                        <span><strong>Gráficos apropriados:</strong> Cada visual é o melhor tipo para aquela comparação?</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-square"></i>
+                        <span><strong>Densidade adequada:</strong> Máximo de 7 KPIs/visuais por página?</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-square"></i>
+                        <span><strong>Performance:</strong> Dashboard carrega em menos de 5 segundos?</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-square"></i>
+                        <span><strong>Mobile-friendly:</strong> Funciona em tablet (se aplicável ao público)?</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 DIRETRIZES TÉCNICAS
+            ========================================= -->
+            <section id="diretrizes" class="section">
+                <h2 class="section-title">5. Diretrizes Técnicas Power BI</h2>
+
+                <h3 class="subsection-title">Formatação de Visuais</h3>
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Títulos:</strong> Fonte 14pt, bold, cor Gray-900 (#212121)</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Labels de eixo:</strong> Fonte 10-12pt, regular, cor Gray-700 (#616161)</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Data labels:</strong> Mostrar apenas em KPIs e barras (não em linhas com 20+ pontos)</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Gridlines:</strong> Cor Gray-300 (#e0e0e0), espessura 1px, apenas horizontal</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Fundo de visual:</strong> Branco (#ffffff) ou Gray-50 (#fafafa)</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Bordas:</strong> 1px sólida, Gray-300 (#e0e0e0), border-radius 4px</span>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">Layout da Página</h3>
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Fundo de página:</strong> Gray-100 (#f5f5f5) - nunca branco puro</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Margens:</strong> 24px em todos os lados (padding uniforme)</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Espaçamento entre visuais:</strong> 16px (gap consistente)</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Grid:</strong> Alinhar todos os visuais em grid de 8px (snap to grid)</span>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">Interatividade</h3>
+                <div class="alert info">
+                    <i class="ph-fill ph-info alert-icon"></i>
+                    <div>
+                        <strong>Filtros visíveis:</strong> Sempre mostre filtros ativos no topo da página. Usuários precisam saber o que estão vendo.
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">Performance</h3>
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Máximo de visuais por página:</strong> 7 (limite técnico para performance)</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Aggregações:</strong> Sempre no modelo, nunca no visual (performance crítica)</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Tabelas grandes:</strong> Limitar a 50 linhas por padrão, usar scroll/paginação</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 HEADER DE DASHBOARD
+            ========================================= -->
+            <section id="header" class="section">
+                <h2 class="section-title">6. Header de Dashboard</h2>
+                <p class="section-description">
+                    Componente padrão para identificação visual em todos os dashboards Power BI.
+                </p>
+
+                <h3 style="font-size: 1.25rem; font-weight: 600; margin-top: var(--spacing-07); margin-bottom: var(--spacing-05);">Prévia do Componente</h3>
+
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-06);">
+                    Header oficial dos dashboards <strong>VIVIX</strong>. Use sempre esta arte — não recrie o header dentro do Power BI.
+                </p>
+
+                <!-- Preview VIVIX -->
+                <div style="background: #f5f5f5; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06); margin-bottom: var(--spacing-07);">
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: var(--spacing-04); font-weight: 600;">
+                        Header VIVIX
+                    </p>
+                    <img
+                        src="assets/components/header-dashboard-vivix.png"
+                        alt="Header de dashboard VIVIX"
+                        style="width: 100%; height: auto; display: block; border: 1px solid #e0e0e0; border-radius: 2px; margin-bottom: var(--spacing-05);"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                    />
+                    <!-- Fallback VIVIX -->
+                    <div style="display: none; background: #005751; height: 120px; border-radius: 2px; padding: 0 32px; align-items: center; position: relative; overflow: hidden; margin-bottom: var(--spacing-05);">
+                        <span style="color: white; font-size: 24px; font-weight: 600; font-family: var(--font-family); letter-spacing: .08em;">
+                            vivix<span style="display: block; font-size: 10px; font-weight: 400; letter-spacing: .22em;">VIDROS PLANOS</span>
+                        </span>
+                        <div style="position: absolute; right: 0; top: 0; width: 250px; height: 100%; background: white; clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <p style="font-size: 11px; color: var(--text-secondary); font-style: italic; margin: 0;">
+                            Dimensões: 1920px × 120px
+                        </p>
+                        <a href="assets/components/header-dashboard-vivix.png" download="header-dashboard-vivix.png" class="btn-secondary">
+                            <i class="ph-fill ph-download-simple"></i>
+                            Baixar PNG
+                        </a>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-05);">Especificações Técnicas</h3>
+                
+                <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06);">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Elemento</th>
+                                <th>Especificação</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="chart-name">Dimensões</span></td>
+                                <td>Largura × Altura (Full HD)</td>
+                                <td>1920px × 120px</td>
+                            </tr>
+                            <tr>
+                                <td><span class="chart-name">Formato</span></td>
+                                <td>Arquivo de imagem</td>
+                                <td>PNG com transparência</td>
+                            </tr>
+                            <tr>
+                                <td><span class="chart-name">Variações</span></td>
+                                <td>Versão única da marca</td>
+                                <td>header-dashboard-vivix.png</td>
+                            </tr>
+                            <tr>
+                                <td><span class="chart-name">Localização</span></td>
+                                <td>Pasta de assets</td>
+                                <td>/assets/components/</td>
+                            </tr>
+                            <tr>
+                                <td><span class="chart-name">Cor de fundo</span></td>
+                                <td>Verde escuro VIVIX</td>
+                                <td>#005751</td>
+                            </tr>
+                            <tr>
+                                <td><span class="chart-name">Logo</span></td>
+                                <td>Logotipo VIVIX</td>
+                                <td>60px altura</td>
+                            </tr>
+                            <tr>
+                                <td><span class="chart-name">Tipografia</span></td>
+                                <td>Prometo Bold / Inter</td>
+                                <td>24px / Semibold 600 / Branco</td>
+                            </tr>
+                            <tr>
+                                <td><span class="chart-name">Corte diagonal</span></td>
+                                <td>Branco à direita (15% início)</td>
+                                <td>Largura: ~250px</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert info" style="margin-top: var(--spacing-06);">
+                    <i class="ph-fill ph-info alert-icon"></i>
+                    <div>
+                        <strong>Implementação no Power BI:</strong> Insira a imagem como fundo de um retângulo fixo no topo de todas as páginas. Use "Fixar no topo" para manter visível durante scroll.
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 ANTES/DEPOIS - EXEMPLOS INTERATIVOS
+            ========================================= -->
+            <section id="antes-depois" class="section">
+                <h2 class="section-title">7. Exemplos: Antes vs. Depois</h2>
+                <p class="section-description">
+                    Comparações visuais de problemas comuns e suas soluções seguindo as diretrizes.
+                </p>
+
+                <!-- Exemplo 1: Pizza vs Barra -->
+                <div class="before-after-section">
+                    <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-05);">Exemplo 1: Gráfico de Pizza com Muitas Categorias</h3>
+                    
+                    <div class="toggle-container">
+                        <button class="toggle-btn active" onclick="showExample('pizza-before', this, 'example1')">Antes</button>
+                        <button class="toggle-btn" onclick="showExample('pizza-after', this, 'example1')">Depois</button>
+                    </div>
+
+                    <div id="pizza-before" class="example-content active" data-group="example1">
+                        <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06);">
+                            <span class="example-label before">
+                                <i class="ph-fill ph-x-circle"></i>
+                                Problema: Pizza com 8+ fatias
+                            </span>
+                            
+                            <div style="margin: var(--spacing-06) 0; text-align: center;">
+                                <svg viewBox="0 0 300 200" style="width: 100%; max-width: 400px; margin: 0 auto;">
+                                    <!-- Pizza complexa com muitas fatias (8 fatias de 45 graus cada) -->
+                                    <g transform="translate(150, 100)">
+                                        <path d="M 0,0 L 0,-80 A 80,80 0 0,1 56.6,-56.6 Z" fill="#00b2a9"/>
+                                        <path d="M 0,0 L 56.6,-56.6 A 80,80 0 0,1 80,0 Z" fill="#005751"/>
+                                        <path d="M 0,0 L 80,0 A 80,80 0 0,1 56.6,56.6 Z" fill="#e1e000"/>
+                                        <path d="M 0,0 L 56.6,56.6 A 80,80 0 0,1 0,80 Z" fill="#005751"/>
+                                        <path d="M 0,0 L 0,80 A 80,80 0 0,1 -56.6,56.6 Z" fill="#007acc"/>
+                                        <path d="M 0,0 L -56.6,56.6 A 80,80 0 0,1 -80,0 Z" fill="#24a148"/>
+                                        <path d="M 0,0 L -80,0 A 80,80 0 0,1 -56.6,-56.6 Z" fill="#bb0000"/>
+                                        <path d="M 0,0 L -56.6,-56.6 A 80,80 0 0,1 0,-80 Z" fill="#f1c21b"/>
+                                    </g>
+                                </svg>
+                                <div style="font-size: 14px; font-weight: 600; color: #161616; margin-top: 12px;">Vendas por Categoria</div>
+                            </div>
+
+                            <div class="alert info">
+                                <i class="ph-fill ph-info alert-icon"></i>
+                                <div>
+                                    <strong>Problemas identificados:</strong><br>
+                                    • Impossível comparar fatias similares<br>
+                                    • Muitas cores confundem em vez de informar<br>
+                                    • Legenda separada dificulta leitura<br>
+                                    • Não há hierarquia clara (o que é mais importante?)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="pizza-after" class="example-content" data-group="example1">
+                        <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06);">
+                            <span class="example-label after">
+                                <i class="ph-fill ph-check-circle"></i>
+                                Solução: Barra Horizontal Ordenada (Top 5 + Outros)
+                            </span>
+                            
+                            <div style="margin: var(--spacing-06) 0;">
+                                <svg viewBox="0 0 500 250" style="width: 100%; max-width: 600px;">
+                                    <!-- Grade -->
+                                    <line x1="120" y1="30" x2="120" y2="230" stroke="#e0e0e0" stroke-width="1"/>
+                                    <line x1="220" y1="30" x2="220" y2="230" stroke="#e0e0e0" stroke-width="1"/>
+                                    <line x1="320" y1="30" x2="320" y2="230" stroke="#e0e0e0" stroke-width="1"/>
+                                    <line x1="420" y1="30" x2="420" y2="230" stroke="#e0e0e0" stroke-width="1"/>
+                                    
+                                    <!-- Barras -->
+                                    <rect x="120" y="40" width="280" height="22" fill="#00b2a9" rx="2"/>
+                                    <rect x="120" y="75" width="220" height="22" fill="#00b2a9" rx="2"/>
+                                    <rect x="120" y="110" width="170" height="22" fill="#00b2a9" rx="2"/>
+                                    <rect x="120" y="145" width="130" height="22" fill="#00b2a9" rx="2"/>
+                                    <rect x="120" y="180" width="90" height="22" fill="#00b2a9" rx="2"/>
+                                    <rect x="120" y="215" width="150" height="22" fill="#9e9e9e" rx="2"/>
+                                    
+                                    <!-- Labels -->
+                                    <text x="115" y="56" text-anchor="end" style="font-size: 12px; fill: #525252;">Eletrônicos</text>
+                                    <text x="115" y="91" text-anchor="end" style="font-size: 12px; fill: #525252;">Móveis</text>
+                                    <text x="115" y="126" text-anchor="end" style="font-size: 12px; fill: #525252;">Vestuário</text>
+                                    <text x="115" y="161" text-anchor="end" style="font-size: 12px; fill: #525252;">Alimentos</text>
+                                    <text x="115" y="196" text-anchor="end" style="font-size: 12px; fill: #525252;">Livros</text>
+                                    <text x="115" y="231" text-anchor="end" style="font-size: 12px; fill: #525252;">Outros (3)</text>
+                                    
+                                    <!-- Valores -->
+                                    <text x="405" y="56" text-anchor="end" style="font-size: 11px; font-weight: 500; fill: #161616;">R$ 680K</text>
+                                    <text x="345" y="91" text-anchor="end" style="font-size: 11px; font-weight: 500; fill: #161616;">R$ 520K</text>
+                                    <text x="295" y="126" text-anchor="end" style="font-size: 11px; font-weight: 500; fill: #161616;">R$ 384K</text>
+                                    <text x="255" y="161" text-anchor="end" style="font-size: 11px; font-weight: 500; fill: #161616;">R$ 280K</text>
+                                    <text x="215" y="196" text-anchor="end" style="font-size: 11px; font-weight: 500; fill: #161616;">R$ 176K</text>
+                                    <text x="275" y="231" text-anchor="end" style="font-size: 11px; font-weight: 500; fill: #161616;">R$ 360K</text>
+                                    
+                                    <text x="250" y="20" text-anchor="middle" style="font-size: 14px; font-weight: 600; fill: #161616;">Top 5 Categorias por Vendas</text>
+                                </svg>
+                            </div>
+
+                            <div class="alert info">
+                                <i class="ph-fill ph-check-circle alert-icon"></i>
+                                <div>
+                                    <strong>Melhorias aplicadas:</strong><br>
+                                    • Comparação imediata e precisa entre valores<br>
+                                    • Ordenação decrescente mostra prioridades<br>
+                                    • Top 5 + "Outros" agregado (reduz ruído visual)<br>
+                                    • Labels integrados às barras (legibilidade)<br>
+                                    • Cor única laranja = uma dimensão de dados
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exemplo 2: KPI sem contexto vs com contexto -->
+                <div class="before-after-section">
+                    <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-05);">Exemplo 2: KPI Card Sem Contexto</h3>
+                    
+                    <div class="toggle-container">
+                        <button class="toggle-btn active" onclick="showExample('kpi-before', this, 'example2')">Antes</button>
+                        <button class="toggle-btn" onclick="showExample('kpi-after', this, 'example2')">Depois</button>
+                    </div>
+
+                    <div id="kpi-before" class="example-content active" data-group="example2">
+                        <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06);">
+                            <span class="example-label before">
+                                <i class="ph-fill ph-x-circle"></i>
+                                Problema: Valor isolado sem contexto
+                            </span>
+                            
+                            <div style="margin: var(--spacing-06) 0; display: flex; justify-content: center;">
+                                <div style="background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 4px; padding: 24px; text-align: center; width: 280px;">
+                                    <div style="font-size: 12px; color: #525252; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Receita Total</div>
+                                    <div style="font-size: 48px; font-weight: 600; color: #161616; line-height: 1;">R$ 2,4M</div>
+                                </div>
+                            </div>
+
+                            <div class="alert info">
+                                <i class="ph-fill ph-info alert-icon"></i>
+                                <div>
+                                    <strong>Problemas identificados:</strong><br>
+                                    • Sem referência: é bom ou ruim?<br>
+                                    • Não indica ação ou tendência<br>
+                                    • Usuário precisa lembrar meta ou comparar manualmente<br>
+                                    • Valor absoluto sem significado estratégico
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="kpi-after" class="example-content" data-group="example2">
+                        <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06);">
+                            <span class="example-label after">
+                                <i class="ph-fill ph-check-circle"></i>
+                                Solução: KPI com contexto, tendência e comparação
+                            </span>
+                            
+                            <div style="margin: var(--spacing-06) 0; display: flex; justify-content: center;">
+                                <div style="background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 4px; padding: 24px; text-align: center; width: 280px;">
+                                    <div style="font-size: 12px; color: #525252; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Receita Total</div>
+                                    <div style="font-size: 48px; font-weight: 600; color: #161616; line-height: 1; margin-bottom: 12px;">R$ 2,4M</div>
+                                    <div style="font-size: 14px; color: #24a148; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                        <i class="ph-fill ph-arrow-up"></i>
+                                        <span>+12,5% vs. mês anterior</span>
+                                    </div>
+                                    <div style="font-size: 12px; color: #525252; margin-top: 8px;">Meta: R$ 2,2M (109%)</div>
+                                </div>
+                            </div>
+
+                            <div class="alert info">
+                                <i class="ph-fill ph-check-circle alert-icon"></i>
+                                <div>
+                                    <strong>Melhorias aplicadas:</strong><br>
+                                    • Comparação vs. período anterior (+12,5%)<br>
+                                    • Cor verde indica performance positiva<br>
+                                    • Meta explícita com percentual de atingimento<br>
+                                    • Seta visual reforça tendência de crescimento<br>
+                                    • Usuário entende imediatamente: "está indo bem, manter estratégia"
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 LAYOUT: GRID 8PX
+            ========================================= -->
+            <section id="layout-grid" class="section">
+                <h2 class="section-title">8. Layout: Grid 8px</h2>
+                <p class="section-description">
+                    Sistema de grid baseado em múltiplos de 8px para criar layouts consistentes e alinhados em todos os dashboards.
+                </p>
+
+                <div class="alert info" style="margin-bottom: var(--spacing-07);">
+                    <i class="ph-fill ph-info alert-icon"></i>
+                    <div>
+                        <strong>Por que 8px?</strong> Múltiplos de 8 criam ritmo visual consistente, facilitam alinhamento e funcionam bem em diferentes resoluções de tela.
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-05);">Escala de Espaçamento</h3>
+                
+                <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06); margin-bottom: var(--spacing-07);">
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-05);">
+                        <div style="text-align: center;">
+                            <div style="width: 8px; height: 8px; background: var(--color-primary); margin: 0 auto var(--spacing-03);"></div>
+                            <div style="font-weight: 600; font-size: 14px;">8px</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Base</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 16px; height: 16px; background: var(--color-primary); margin: 0 auto var(--spacing-03);"></div>
+                            <div style="font-weight: 600; font-size: 14px;">16px</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Pequeno</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 24px; height: 24px; background: var(--color-primary); margin: 0 auto var(--spacing-03);"></div>
+                            <div style="font-weight: 600; font-size: 14px;">24px</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Médio</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 32px; height: 32px; background: var(--color-primary); margin: 0 auto var(--spacing-03);"></div>
+                            <div style="font-weight: 600; font-size: 14px;">32px</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Grande</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-05);">Exemplos de Layouts (Wireframes)</h3>
+
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-07); margin-top: var(--spacing-06);">
+                    <!-- Layout 1: Dashboard Executivo -->
+                    <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06);">
+                        <h4 style="font-size: 14px; font-weight: 600; margin-bottom: var(--spacing-05); color: var(--text-primary);">Dashboard Executivo</h4>
+                        <svg viewBox="0 0 400 300" style="width: 100%; border: 1px solid #e0e0e0;">
+                            <!-- Header -->
+                            <rect x="0" y="0" width="400" height="32" fill="#005751"/>
+                            <text x="16" y="20" fill="white" style="font-size: 12px; font-weight: 600;">Logo + Título</text>
+                            
+                            <!-- KPI Cards (4 colunas) -->
+                            <rect x="16" y="48" width="84" height="60" fill="#f5f5f5" stroke="#e0e0e0"/>
+                            <rect x="108" y="48" width="84" height="60" fill="#f5f5f5" stroke="#e0e0e0"/>
+                            <rect x="200" y="48" width="84" height="60" fill="#f5f5f5" stroke="#e0e0e0"/>
+                            <rect x="292" y="48" width="92" height="60" fill="#f5f5f5" stroke="#e0e0e0"/>
+                            <text x="58" y="82" text-anchor="middle" style="font-size: 10px;" fill="#525252">KPI 1</text>
+                            <text x="150" y="82" text-anchor="middle" style="font-size: 10px;" fill="#525252">KPI 2</text>
+                            <text x="242" y="82" text-anchor="middle" style="font-size: 10px;" fill="#525252">KPI 3</text>
+                            <text x="338" y="82" text-anchor="middle" style="font-size: 10px;" fill="#525252">KPI 4</text>
+                            
+                            <!-- Gráficos (2 colunas) -->
+                            <rect x="16" y="124" width="180" height="160" fill="#f5f5f5" stroke="#e0e0e0"/>
+                            <rect x="204" y="124" width="180" height="160" fill="#f5f5f5" stroke="#e0e0e0"/>
+                            <text x="106" y="210" text-anchor="middle" style="font-size: 10px;" fill="#525252">Gráfico Principal</text>
+                            <text x="294" y="210" text-anchor="middle" style="font-size: 10px;" fill="#525252">Gráfico Secundário</text>
+                        </svg>
+                        <p style="font-size: 12px; color: var(--text-secondary); margin-top: var(--spacing-04);">
+                            <strong>Uso:</strong> Visão geral para executivos. 4 KPIs + 2 gráficos principais.
+                        </p>
+                    </div>
+
+                    <!-- Layout 2: Dashboard Operacional -->
+                    <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06);">
+                        <h4 style="font-size: 14px; font-weight: 600; margin-bottom: var(--spacing-05); color: var(--text-primary);">Dashboard Operacional</h4>
+                        <svg viewBox="0 0 400 300" style="width: 100%; border: 1px solid #e0e0e0;">
+                            <!-- Header -->
+                            <rect x="0" y="0" width="400" height="32" fill="#005751"/>
+                            <text x="16" y="20" fill="white" style="font-size: 12px; font-weight: 600;">Logo + Título</text>
+                            
+                            <!-- Filtros -->
+                            <rect x="16" y="48" width="368" height="24" fill="#f9f9f9" stroke="#e0e0e0"/>
+                            <text x="24" y="64" style="font-size: 10px;" fill="#525252">Filtros: Data | Região | Produto</text>
+                            
+                            <!-- Layout 3 colunas -->
+                            <rect x="16" y="88" width="116" height="196" fill="#f5f5f5" stroke="#e0e0e0"/>
+                            <rect x="140" y="88" width="116" height="196" fill="#f5f5f5" stroke="#e0e0e0"/>
+                            <rect x="264" y="88" width="120" height="196" fill="#f5f5f5" stroke="#e0e0e0"/>
+                            <text x="74" y="190" text-anchor="middle" style="font-size: 10px;" fill="#525252">Tabela</text>
+                            <text x="198" y="190" text-anchor="middle" style="font-size: 10px;" fill="#525252">Gráfico</text>
+                            <text x="324" y="190" text-anchor="middle" style="font-size: 10px;" fill="#525252">Métricas</text>
+                        </svg>
+                        <p style="font-size: 12px; color: var(--text-secondary); margin-top: var(--spacing-04);">
+                            <strong>Uso:</strong> Análise detalhada. Filtros visíveis + 3 painéis lado a lado.
+                        </p>
+                    </div>
+
+                    <!-- Layout 3: Dashboard com Sidebar -->
+                    <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06);">
+                        <h4 style="font-size: 14px; font-weight: 600; margin-bottom: var(--spacing-05); color: var(--text-primary);">Dashboard com Menu Lateral</h4>
+                        <svg viewBox="0 0 400 300" style="width: 100%; border: 1px solid #e0e0e0;">
+                            <!-- Header -->
+                            <rect x="0" y="0" width="400" height="32" fill="#005751"/>
+                            <text x="16" y="20" fill="white" style="font-size: 12px; font-weight: 600;">Logo + Título</text>
+                            
+                            <!-- Sidebar -->
+                            <rect x="0" y="32" width="80" height="268" fill="#f9f9f9" stroke="#e0e0e0"/>
+                            <text x="8" y="52" style="font-size: 9px;" fill="#525252">Menu 1</text>
+                            <text x="8" y="72" style="font-size: 9px;" fill="#525252">Menu 2</text>
+                            <text x="8" y="92" style="font-size: 9px;" fill="#525252">Menu 3</text>
+                            
+                            <!-- Content Area -->
+                            <rect x="88" y="48" width="296" height="236" fill="#f5f5f5" stroke="#e0e0e0"/>
+                            <text x="236" y="170" text-anchor="middle" style="font-size: 10px;" fill="#525252">Área de Conteúdo</text>
+                        </svg>
+                        <p style="font-size: 12px; color: var(--text-secondary); margin-top: var(--spacing-04);">
+                            <strong>Uso:</strong> Multi-página. Menu lateral para navegação entre seções.
+                        </p>
+                    </div>
+
+                    <!-- Layout 4: Dashboard de Análise -->
+                    <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06);">
+                        <h4 style="font-size: 14px; font-weight: 600; margin-bottom: var(--spacing-05); color: var(--text-primary);">Dashboard de Análise Profunda</h4>
+                        <svg viewBox="0 0 400 300" style="width: 100%; border: 1px solid #e0e0e0;">
+                            <!-- Header -->
+                            <rect x="0" y="0" width="400" height="32" fill="#005751"/>
+                            <text x="16" y="20" fill="white" style="font-size: 12px; font-weight: 600;">Logo + Título</text>
+                            
+                            <!-- Gráfico Principal -->
+                            <rect x="16" y="48" width="368" height="140" fill="#f5f5f5" stroke="#e0e0e0"/>
+                            <text x="200" y="122" text-anchor="middle" style="font-size: 10px;" fill="#525252">Gráfico de Linha Principal</text>
+                            
+                            <!-- 3 Cards Inferiores -->
+                            <rect x="16" y="204" width="116" height="80" fill="#f5f5f5" stroke="#e0e0e0"/>
+                            <rect x="140" y="204" width="116" height="80" fill="#f5f5f5" stroke="#e0e0e0"/>
+                            <rect x="264" y="204" width="120" height="80" fill="#f5f5f5" stroke="#e0e0e0"/>
+                            <text x="74" y="248" text-anchor="middle" style="font-size: 10px;" fill="#525252">Detalhe 1</text>
+                            <text x="198" y="248" text-anchor="middle" style="font-size: 10px;" fill="#525252">Detalhe 2</text>
+                            <text x="324" y="248" text-anchor="middle" style="font-size: 10px;" fill="#525252">Detalhe 3</text>
+                        </svg>
+                        <p style="font-size: 12px; color: var(--text-secondary); margin-top: var(--spacing-04);">
+                            <strong>Uso:</strong> Foco em um gráfico principal + detalhes de suporte.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="alert warning" style="margin-top: var(--spacing-07);">
+                    <i class="ph-fill ph-warning alert-icon"></i>
+                    <div>
+                        <strong>Regra crítica:</strong> Todos os elementos devem estar alinhados ao grid de 8px. Use "Snap to Grid" no Power BI para garantir alinhamento perfeito.
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 NAVEGAÇÃO E FILTROS
+            ========================================= -->
+            <section id="navegacao" class="section">
+                <h2 class="section-title">9. Padrões de Navegação</h2>
+                <p class="section-description">
+                    Diretrizes baseadas em Carbon Design System e Material Design para criar navegação intuitiva e acessível.
+                </p>
+
+                <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-05);">Quando Usar Cada Padrão</h3>
+
+                <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06); margin-bottom: var(--spacing-07);">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo de Navegação</th>
+                                <th>Quando Usar</th>
+                                <th>Exemplo de Uso</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="chart-name">Menu Top (Tabs)</span></td>
+                                <td class="do">3-5 páginas de mesmo nível hierárquico</td>
+                                <td class="dont">Dashboard: Visão Geral | Vendas | Operações | Financeiro</td>
+                            </tr>
+                            <tr>
+                                <td><span class="chart-name">Menu Lateral</span></td>
+                                <td class="do">6+ páginas ou hierarquia profunda</td>
+                                <td class="dont">Sistema: Dashboard / Relatórios / Análises / Configurações</td>
+                            </tr>
+                            <tr>
+                                <td><span class="chart-name">Breadcrumb</span></td>
+                                <td class="do">Navegação hierárquica (3+ níveis)</td>
+                                <td class="dont">Empresa > Unidade > Departamento > Equipe</td>
+                            </tr>
+                            <tr>
+                                <td><span class="chart-name">Dropdown</span></td>
+                                <td class="do">Seleção de contexto (não navegação)</td>
+                                <td class="dont">Filtro: Selecione o Período</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-05);">Posicionamento de Filtros</h3>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-06); margin-bottom: var(--spacing-07);">
+                    <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06);">
+                        <h4 style="font-size: 14px; font-weight: 600; margin-bottom: var(--spacing-04); color: var(--color-success); display: flex; align-items: center; gap: 6px;">
+                            <i class="ph-fill ph-check-circle"></i>
+                            Filtros no Topo
+                        </h4>
+                        <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: var(--spacing-05);">
+                            <strong>Use quando:</strong> 2-4 filtros principais afetam toda a página
+                        </p>
+                        <ul style="font-size: 14px; color: var(--text-secondary); padding-left: 20px; line-height: 1.6;">
+                            <li>Filtros globais (Data, Região, Produto)</li>
+                            <li>Aplicam-se a todos os visuais da página</li>
+                            <li>Usuário precisa ver filtros ativos sempre</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: white; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--spacing-06);">
+                        <h4 style="font-size: 14px; font-weight: 600; margin-bottom: var(--spacing-04); color: var(--color-success); display: flex; align-items: center; gap: 6px;">
+                            <i class="ph-fill ph-check-circle"></i>
+                            Painel Lateral de Filtros
+                        </h4>
+                        <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: var(--spacing-05);">
+                            <strong>Use quando:</strong> 5+ filtros ou filtros complexos
+                        </p>
+                        <ul style="font-size: 14px; color: var(--text-secondary); padding-left: 20px; line-height: 1.6;">
+                            <li>Muitos filtros ocupariam muito espaço horizontal</li>
+                            <li>Filtros hierárquicos ou dependentes</li>
+                            <li>Painel pode ser colapsável para ganhar espaço</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--spacing-05);">Boas Práticas de Navegação</h3>
+
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Sempre mostre filtros ativos:</strong> Usuário precisa saber o que está vendo (período, região, etc.)</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Máximo de 7 itens no menu:</strong> Memória de curto prazo humana suporta 5-9 itens (regra de Miller)</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Indique página ativa:</strong> Use cor, negrito ou barra lateral para destacar onde o usuário está</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Botão "Limpar Filtros":</strong> Sempre forneça forma rápida de resetar visualização</span>
+                    </div>
+                    <div class="checklist-item">
+                        <i class="ph ph-check-circle"></i>
+                        <span><strong>Feedback visual:</strong> Hover, click e estado ativo devem ter indicação clara</span>
+                    </div>
+                </div>
+
+                <div class="alert info" style="margin-top: var(--spacing-06);">
+                    <i class="ph-fill ph-info alert-icon"></i>
+                    <div>
+                        <strong>Princípio fundamental:</strong> "Onde estou? De onde vim? Para onde posso ir?" - O usuário deve sempre saber estas 3 respostas.
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="ph ph-check-circle"></i>
+        <span id="toast-message">Copiado!</span>
+    </div>
+
+    <script>
+        // Copiar código hexadecimal
+        function copyHex(hexCode, element) {
+            navigator.clipboard.writeText(hexCode).then(() => {
+                showToast(`${hexCode} copiado!`);
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+            });
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.textContent = message;
+            toast.classList.add('success');
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.classList.remove('success');
+                }, 300);
+            }, 2000);
+        }
+
+        // Toggle entre exemplos Antes/Depois
+        function showExample(exampleId, buttonElement, groupName) {
+            // Remove active de todos os botões do grupo
+            const container = buttonElement.parentElement;
+            const buttons = container.querySelectorAll('.toggle-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Adiciona active no botão clicado
+            buttonElement.classList.add('active');
+            
+            // Esconde todos os exemplos do grupo
+            const allExamples = document.querySelectorAll(`[data-group="${groupName}"]`);
+            allExamples.forEach(example => example.classList.remove('active'));
+            
+            // Mostra o exemplo selecionado
+            const selectedExample = document.getElementById(exampleId);
+            if (selectedExample) {
+                selectedExample.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

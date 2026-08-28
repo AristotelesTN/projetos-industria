@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=ai-legible&utm_source=comment&utm_medium=referral&utm_id=782bdad0-ac75-44d4-8b10-176ebb1cb13d
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="hosting-provider" content="Netlify">
+<meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=782bdad0-ac75-44d4-8b10-176ebb1cb13d">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Fio · Tecnova — hub de navegação do Projeto Fio, Fio Start e Design System GCB">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Design System GCB">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:title" content="Fio · Tecnova">
+    <meta property="og:description" content="Fio · Tecnova — hub de navegação do Projeto Fio, Fio Start e Design System GCB">
+    <meta property="og:url" content="https://gcb-ds.netlify.app/">
+    <meta property="og:image" content="https://gcb-ds.netlify.app/assets/og/og-fio.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Fio · Tecnova — pipeline de design do problema à especificação">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Fio · Tecnova">
+    <meta name="twitter:description" content="Fio · Tecnova — hub de navegação do Projeto Fio, Fio Start e Design System GCB">
+    <meta name="twitter:image" content="https://gcb-ds.netlify.app/assets/og/og-fio.png">
+    <title>Fio · Tecnova</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/icone-brennand.svg">
+
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* ========================================
+           RESET E FUNDAMENTOS
+        ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Tokens Carbon Design System */
+            --spacing-01: 2px;
+            --spacing-02: 4px;
+            --spacing-03: 8px;
+            --spacing-04: 12px;
+            --spacing-05: 16px;
+            --spacing-06: 24px;
+            --spacing-07: 32px;
+            --spacing-08: 40px;
+            --spacing-09: 48px;
+            --spacing-10: 64px;
+            --spacing-11: 80px;
+
+            /* Tipografia */
+            --font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-weight-regular: 400;
+            --font-weight-semibold: 600;
+            --font-weight-bold: 700;
+
+            /* Elevações (Carbon) */
+            --elevation-01: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --elevation-02: 0 2px 6px rgba(0, 0, 0, 0.16);
+            --elevation-03: 0 4px 12px rgba(0, 0, 0, 0.20);
+
+            /* Cores UI */
+            --ui-background: #edece5;
+            --ui-01: #f4f4f4;
+            --ui-02: #ffffff;
+            --text-primary: #161616;
+            --text-secondary: #525252;
+            --text-disabled: #8d8d8d;
+            --border-subtle: #e0e0e0;
+            --focus-color: #0f62fe;
+        }
+
+        body {
+            font-family: var(--font-family-primary);
+            background-color: var(--ui-background);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        /* ========================================
+           LAYOUT PRINCIPAL
+        ======================================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-08);
+        }
+
+        /* Header */
+        .ds-header {
+            background-color: var(--ui-02);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: var(--spacing-06) 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-04);
+        }
+
+        .header-logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+        }
+
+        .header-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: var(--spacing-11) 0 var(--spacing-10);
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: var(--font-weight-bold);
+            line-height: 1.2;
+            margin-bottom: var(--spacing-05);
+            color: var(--text-primary);
+        }
+
+        .hero-description {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 640px;
+            margin: 0 auto var(--spacing-08);
+            line-height: 1.6;
+        }
+
+        /* ========================================
+           GRID DE CARDS
+        ======================================== */
+        .brands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--spacing-06);
+            padding-bottom: var(--spacing-11);
+        }
+
+        .brand-card {
+            /* vidro: o fundo cinza + ruído aparecem desfocados por trás */
+            background: rgba(255, 255, 255, .55);
+            backdrop-filter: blur(20px) saturate(1.6);
+            -webkit-backdrop-filter: blur(20px) saturate(1.6);
+            border: 1px solid rgba(255, 255, 255, .65);
+            padding: var(--spacing-07);
+            transition: transform .2s cubic-bezier(.4, 0, .2, 1);
+            cursor: pointer;
+            position: relative;
+            /* sem overflow:hidden — ele clipava o brilho externo do glow */
+            text-decoration: none;
+            display: block;
+        }
+
+
+        .brand-card:hover {
+            /* sem border-color de marca e sem sombra: quem marca o hover é o glow */
+            transform: translateY(-3px);
+        }
+
+
+        .brand-card:focus {
+            outline: 2px solid var(--focus-color);
+            outline-offset: 2px;
+        }
+
+        .brand-card[data-brand="fio-start"],
+        .brand-card[data-brand="projeto-fio"] {
+            --brand-color: #004952;   /* GCB 03 — verde-azulado escuro */
+        }
+
+        .brand-card[data-brand="design-system"] {
+            --brand-color: #e25015;   /* GCB 02 — laranja escuro */
+        }
+
+        .brand-icon-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-06);
+            font-size: 2rem;
+            line-height: 1;
+            color: var(--brand-color);
+        }
+
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-03);
+        }
+
+        .brand-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: var(--spacing-05);
+        }
+
+        /* ========================================
+           FOOTER
+        ======================================== */
+        .ds-footer {
+            background: transparent;
+            border-top: 1px solid color-mix(in srgb, var(--text-primary) 12%, transparent);
+            padding: var(--spacing-07) 0;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        /* ========================================
+           RESPONSIVIDADE
+        ======================================== */
+        @media (max-width: 672px) {
+            .container {
+                padding: 0 var(--spacing-05);
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .brands-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ========================================
+           ACESSIBILIDADE
+        ======================================== */
+        /* nome do produto em linha única */
+        .header-names {
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: var(--spacing-03);
+        }
+        .header-sep { color: var(--text-disabled); }
+        .header-title, .header-subtitle { display: inline; }
+
+
+        @media (max-width: 600px) {
+            /* em telas estreitas volta a empilhar — evita o separador órfão no fim da linha */
+            .header-names { flex-direction: column; gap: 0; }
+            .header-sep { display: none; }
+        }
+
+        /* ========================================
+           REFINO DA ABERTURA
+           1. Ruído sutil no fundo (cards "soltam" da tela)
+           2. Entrada dos cards em cascata
+           3. Border glow direcional — adaptado de reactbits.dev/components/border-glow
+              Original: cards escuros, mesh roxo/rosa/azul, blends plus-lighter/soft-light.
+              Aqui: fundo claro e cor da própria marca de cada card, via --brand-color.
+        ======================================== */
+
+        /* ---- 1. Ruído ---- */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: .55;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E");
+        }
+        body > * { position: relative; z-index: 1; }
+
+        .brands-grid { position: relative; }
+
+        /* ---- 2. Entrada em cascata ---- */
+        @keyframes card-rise {
+            from { opacity: 0; transform: translateY(14px) scale(.985); }
+            to   { opacity: 1; transform: none; }
+        }
+        .brand-card {
+            opacity: 0;
+            animation: card-rise .55s cubic-bezier(.22, .61, .36, 1) forwards;
+            animation-delay: calc(var(--i, 0) * 90ms + 120ms);
+        }
+
+        /* raio dos cards — um token só, o glow acompanha */
+        .brand-card,
+        .brand-card::after { border-radius: var(--card-radius, 16px); }
+        .brand-card > .edge-light { border-radius: calc(var(--card-radius, 16px) + var(--glow-padding)); }
+        .brand-card > .edge-light::before { border-radius: var(--card-radius, 16px); }
+
+        /* Cor do glow.
+           GCB 03 (#004952) é mais escuro que o fundo, então em baixa opacidade lê
+           como sombra, não como luz. O glow usa um tom mais claro do mesmo matiz;
+           ícone e borda seguem a cor cheia da marca. */
+        .brand-card {
+            --glow-color: var(--brand-color);   /* halo externo */
+            --ring-color: var(--brand-color);   /* anel de 2px na borda */
+        }
+        .brand-card[data-brand="fio-start"],
+        .brand-card[data-brand="projeto-fio"],
+        .brand-card[data-brand="corporativo"],
+        .brand-card[data-brand="atiaia"] {
+            --glow-color: color-mix(in oklch, var(--brand-color) 48%, #ffffff);
+        }
+
+        /* ---- 3. Border glow ---- */
+        .brand-card {
+            --edge-proximity: 0;      /* 0-100 — quão perto da borda está o ponteiro */
+            --cursor-angle: 45deg;    /* direção do ponteiro a partir do centro */
+            --edge-sensitivity: 26;   /* a partir de quando o brilho externo acende */
+            --color-sensitivity: 30;  /* a partir de quando a borda colorida acende */
+            --cone-spread: 26;        /* largura do cone direcional, em % */
+            --glow-padding: 34px;     /* alcance do brilho para fora do card */
+            --ring-width: 2px;        /* espessura do anel colorido */
+            isolation: isolate;
+        }
+
+        /* Anel colorido revelado por um cone que segue o ponteiro.
+           Antes usava o truque padding-box/border-box, que pinta um branco opaco
+           sobre o card — como aqui o ::after é sobreposto, isso lavava o conteúdo
+           no hover. Agora é um anel de verdade: máscara content-box (exclude)
+           define a espessura, e o cone entra por intersect. */
+        .brand-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            padding: var(--ring-width, 2px);
+            background: conic-gradient(from 210deg,
+                color-mix(in srgb, var(--ring-color) 96%, #fff) 0%,
+                var(--ring-color) 30%,
+                color-mix(in srgb, var(--ring-color) 88%, #fff) 52%,
+                var(--ring-color) 74%,
+                color-mix(in srgb, var(--ring-color) 96%, #fff) 100%);
+            -webkit-mask:
+                conic-gradient(from var(--cursor-angle) at center,
+                    #000 calc(var(--cone-spread) * 1%),
+                    transparent calc((var(--cone-spread) + 15) * 1%),
+                    transparent calc((100 - var(--cone-spread) - 15) * 1%),
+                    #000 calc((100 - var(--cone-spread)) * 1%)),
+                linear-gradient(#000 0 0) content-box,
+                linear-gradient(#000 0 0);
+            -webkit-mask-composite: source-in, xor;
+            mask:
+                conic-gradient(from var(--cursor-angle) at center,
+                    #000 calc(var(--cone-spread) * 1%),
+                    transparent calc((var(--cone-spread) + 15) * 1%),
+                    transparent calc((100 - var(--cone-spread) - 15) * 1%),
+                    #000 calc((100 - var(--cone-spread)) * 1%)),
+                linear-gradient(#000 0 0) content-box,
+                linear-gradient(#000 0 0);
+            mask-composite: intersect, exclude;
+            opacity: min(.96, calc((var(--edge-proximity) - var(--color-sensitivity)) / (100 - var(--color-sensitivity))));
+            transition: opacity .25s ease-out;
+        }
+
+        /* brilho externo */
+        .brand-card > .edge-light {
+            position: absolute;
+            inset: calc(var(--glow-padding) * -1);
+            border-radius: calc(4px + var(--glow-padding));
+            pointer-events: none;
+            z-index: -1;
+            mask-image: conic-gradient(
+                from var(--cursor-angle) at center,
+                #000 3%, transparent 11%, transparent 89%, #000 97%);
+            opacity: calc((var(--edge-proximity) - var(--edge-sensitivity)) / (100 - var(--edge-sensitivity)));
+            transition: opacity .25s ease-out;
+        }
+        .brand-card > .edge-light::before {
+            content: '';
+            position: absolute;
+            inset: var(--glow-padding);
+            border-radius: var(--card-radius, 16px);
+            box-shadow:
+                0 0 2px 0 color-mix(in srgb, var(--glow-color) 80%, transparent),
+                0 0 6px 0 color-mix(in srgb, var(--glow-color) 62%, transparent),
+                0 0 14px 0 color-mix(in srgb, var(--glow-color) 45%, transparent),
+                0 0 30px 2px color-mix(in srgb, var(--glow-color) 30%, transparent),
+                0 0 60px 6px color-mix(in srgb, var(--glow-color) 18%, transparent);
+        }
+
+        /* sem ponteiro: nada aceso */
+        .brand-card:not(:hover)::after,
+        .brand-card:not(:hover) > .edge-light {
+            opacity: 0;
+            transition: opacity .6s ease-in-out;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .brand-card { opacity: 1; animation: none; }
+            .brand-card::after,
+            .brand-card > .edge-light { display: none; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--focus-color);
+            outline-offset: 2px;
+        }
+
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="ds-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-logo">
+                    <img src="assets/icons/icone-brennand.svg" alt="Ícone Grupo Cornélio Brennand">
+                    <div class="header-names">
+                        <span class="header-title">Fio</span>
+                        <span class="header-sep">·</span>
+                        <span class="header-subtitle">Tecnova · Soluções Digitais</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1 class="hero-title">Fio · Tecnova</h1>
+                <p class="hero-description">
+                    Pipeline de design • Do problema à especificação
+                </p>
+            </div>
+        </section>
+
+        <section class="container">
+            <div class="brands-grid">
+                <a aria-label='Acessar Fio Start' class='brand-card' data-brand='fio-start' href='fio-start.html'>
+                    <div class="brand-icon-container">
+                        <i class="ph ph-magic-wand" aria-hidden="true"></i>
+                    </div>
+                    <h2 class="brand-name">Fio Start</h2>
+                    <p class="brand-description">
+                        Pipeline simplificado para usuários gerais. Da ideia ao protótipo em 4 fases.
+                    </p>
+                </a>
+
+                <a aria-label='Acessar Projeto Fio' class='brand-card' data-brand='projeto-fio' href='projeto-fio.html'>
+                    <div class="brand-icon-container">
+                        <i class="ph ph-blueprint" aria-hidden="true"></i>
+                    </div>
+                    <h2 class="brand-name">Projeto Fio</h2>
+                    <p class="brand-description">
+                        Pipeline completo para designers. 9 fases com técnicas e skills acionáveis.
+                    </p>
+                </a>
+
+                <a aria-label='Acessar Design System' class='brand-card' data-brand='design-system' href='ds.html'>
+                    <div class="brand-icon-container">
+                        <i class="ph ph-swatches" aria-hidden="true"></i>
+                    </div>
+                    <h2 class="brand-name">Design System</h2>
+                    <p class="brand-description">
+                        Tokens, componentes e diretrizes para Vivix, Atiaia e Corporativo.
+                    </p>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="ds-footer">
+        <div class="container">
+            <div class="footer-content">
+                Tecnova · Grupo Cornélio Brennand
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    /* Border glow direcional — adaptado de reactbits.dev/components/border-glow.
+       Mede a proximidade do ponteiro com a borda (0-100) e o ângulo a partir do
+       centro, e publica os dois como custom properties que o CSS consome. */
+    (function () {
+        var cards = Array.prototype.slice.call(document.querySelectorAll('.brand-card'));
+        if (!cards.length) return;
+
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        cards.forEach(function (card, i) {
+            card.style.setProperty('--i', i);          /* escalona a entrada */
+            if (reduce) return;
+
+            if (!card.querySelector('.edge-light')) {
+                var glow = document.createElement('span');
+                glow.className = 'edge-light';
+                glow.setAttribute('aria-hidden', 'true');
+                card.insertBefore(glow, card.firstChild);
+            }
+
+            card.addEventListener('pointermove', function (e) {
+                var r = card.getBoundingClientRect();
+                var cx = r.width / 2, cy = r.height / 2;
+                var dx = (e.clientX - r.left) - cx;
+                var dy = (e.clientY - r.top) - cy;
+
+                /* proximidade da borda: 0 no centro, 1 na borda */
+                var kx = dx === 0 ? Infinity : cx / Math.abs(dx);
+                var ky = dy === 0 ? Infinity : cy / Math.abs(dy);
+                var edge = Math.min(Math.max(1 / Math.min(kx, ky), 0), 1);
+
+                var deg = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+                if (deg < 0) deg += 360;
+
+                card.style.setProperty('--edge-proximity', (edge * 100).toFixed(2));
+                card.style.setProperty('--cursor-angle', deg.toFixed(2) + 'deg');
+            });
+
+            card.addEventListener('pointerleave', function () {
+                card.style.setProperty('--edge-proximity', '0');
+            });
+        });
+    })();
+    </script>
+</body>
+</html>

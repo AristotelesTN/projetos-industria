@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=ai-legible&utm_source=comment&utm_medium=referral&utm_id=782bdad0-ac75-44d4-8b10-176ebb1cb13d
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="hosting-provider" content="Netlify">
+<meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=782bdad0-ac75-44d4-8b10-176ebb1cb13d">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VIVIX · Design System GCB — Diretrizes SAP BTP: Fiori Elements, floorplans e componentes UI5.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Design System GCB">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:title" content="SAP BTP - VIVIX | Design System GCB">
+    <meta property="og:description" content="VIVIX · Design System GCB — Diretrizes SAP BTP: Fiori Elements, floorplans e componentes UI5.">
+    <meta property="og:url" content="https://gcb-ds.netlify.app/v-sap-btp.html">
+    <meta property="og:image" content="https://gcb-ds.netlify.app/assets/og/og-ds.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Design System GCB — Corporativo, Atiaia Energia e VIVIX">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SAP BTP - VIVIX | Design System GCB">
+    <meta name="twitter:description" content="VIVIX · Design System GCB — Diretrizes SAP BTP: Fiori Elements, floorplans e componentes UI5.">
+    <meta name="twitter:image" content="https://gcb-ds.netlify.app/assets/og/og-ds.png">
+    <title>SAP BTP - VIVIX | Design System GCB</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/icone-brennand.svg">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+        /* ========================================
+           DESIGN TOKENS
+        ======================================== */
+        :root {
+            /* Cores GCB */
+            --color-primary: #00b2a9;
+            --color-primary-dark: #005751;
+            --color-secondary: #005751;
+            --color-interactive: #0f62fe;
+            --color-success: #24a148;
+            --color-warning: #f1c21b;
+            --color-error: #bb0000;
+            --color-info: #007acc;
+            
+            /* Grayscale */
+            --gray-100: #fafafa;
+            --gray-200: #f5f5f5;
+            --gray-300: #e0e0e0;
+            --gray-400: #c6c6c6;
+            --gray-500: #8d8d8d;
+            --gray-600: #525252;
+            --gray-700: #393939;
+            --gray-800: #262626;
+            --gray-900: #161616;
+            
+            /* Spacing */
+            --spacing-01: 2px;
+            --spacing-02: 4px;
+            --spacing-03: 8px;
+            --spacing-04: 12px;
+            --spacing-05: 16px;
+            --spacing-06: 24px;
+            --spacing-07: 32px;
+            --spacing-08: 40px;
+            --spacing-09: 48px;
+            --spacing-10: 64px;
+            
+            /* Typography */
+            --font-primary: 'Inter', -apple-system, sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 600;
+            
+            /* UI */
+            --ui-01: #f4f4f4;
+            --ui-02: #ffffff;
+            --text-primary: #161616;
+            --text-secondary: #525252;
+            --text-disabled: #8d8d8d;
+            --border-subtle: #e0e0e0;
+            --border-strong: #8d8d8d;
+            
+            /* Radius */
+            --radius-sm: 2px;
+            --radius-md: 4px;
+            --radius-lg: 8px;
+            
+            /* Transitions */
+            --transition-base: 0.2s;
+            --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ========================================
+           RESET
+        ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            color: var(--text-primary);
+            background: var(--gray-100);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ========================================
+           LAYOUT
+        ======================================== */
+        .page-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            background: var(--ui-02);
+            border-right: 1px solid var(--border-subtle);
+            padding: var(--spacing-06);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            margin-bottom: var(--spacing-07);
+        }
+
+        .sidebar-logo {
+            height: 32px;
+            margin-bottom: var(--spacing-04);
+        }
+
+        .sidebar-title {
+            font-size: 1.125rem;
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: var(--spacing-02);
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: var(--spacing-02);
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: var(--spacing-03) var(--spacing-04);
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--ui-01);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav a.active {
+            background: var(--color-primary);
+            color: white;
+            font-weight: var(--font-weight-medium);
+        }
+
+        .sidebar-back {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-03);
+            padding: var(--spacing-04);
+            margin-bottom: var(--spacing-06);
+            background: var(--ui-01);
+            border-radius: 4px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .sidebar-back:hover {
+            background: var(--border-subtle);
+            color: var(--text-primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: var(--spacing-08) var(--spacing-10);
+            max-width: 1280px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            gap: var(--spacing-03);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-07);
+        }
+
+        .breadcrumb a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* ========================================
+           TYPOGRAPHY
+        ======================================== */
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-05);
+        }
+
+        .page-description {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-08);
+            line-height: 1.6;
+        }
+
+        .section {
+            margin-bottom: var(--spacing-10);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-05);
+            padding-bottom: var(--spacing-04);
+            border-bottom: 2px solid var(--border-subtle);
+        }
+
+        .subsection-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: var(--spacing-07);
+            margin-bottom: var(--spacing-05);
+        }
+
+        /* ========================================
+           COMPONENTS
+        ======================================== */
+        
+        /* Alert Boxes */
+        .alert {
+            display: flex;
+            gap: var(--spacing-04);
+            padding: var(--spacing-05);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-06);
+            border-left: 4px solid;
+        }
+
+        .alert-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .alert.info {
+            background: #e5f2ff;
+            border-color: var(--color-info);
+            color: #003d73;
+        }
+
+        .alert.info .alert-icon {
+            color: var(--color-info);
+        }
+
+        .alert.success {
+            background: #e7f5ec;
+            border-color: var(--color-success);
+            color: #0f5223;
+        }
+
+        .alert.success .alert-icon {
+            color: var(--color-success);
+        }
+
+        .alert.warning {
+            background: #fef8e6;
+            border-color: var(--color-warning);
+            color: #5c4e00;
+        }
+
+        .alert.warning .alert-icon {
+            color: #8f6b00;
+        }
+
+        .alert.critical {
+            background: #ffeef0;
+            border-color: var(--color-error);
+            color: #5a0a0a;
+        }
+
+        .alert.critical .alert-icon {
+            color: var(--color-error);
+        }
+
+        /* Principle Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-06);
+            margin-bottom: var(--spacing-08);
+        }
+
+        .principle-card {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-06);
+            transition: all var(--transition-base);
+        }
+
+        .principle-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .principle-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-05);
+            color: var(--color-primary);
+            font-size: 24px;
+        }
+
+        .principle-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-04);
+        }
+
+        .principle-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Tables */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: var(--spacing-07);
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .comparison-table thead {
+            background: var(--gray-100);
+        }
+
+        .comparison-table th {
+            padding: var(--spacing-05);
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-subtle);
+        }
+
+        .comparison-table td {
+            padding: var(--spacing-05);
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.875rem;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table code {
+            background: var(--gray-100);
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            color: var(--color-primary);
+        }
+
+        /* Color Cards */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--spacing-05);
+            margin-bottom: var(--spacing-08);
+        }
+
+        .color-card {
+            background: white;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .color-swatch {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.125rem;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .color-info {
+            padding: var(--spacing-05);
+        }
+
+        .color-name {
+            font-weight: 600;
+            margin-bottom: var(--spacing-02);
+        }
+
+        .color-code {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-03);
+            cursor: pointer;
+            padding: var(--spacing-03) var(--spacing-04);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            background: white;
+            transition: all var(--transition-base) var(--easing-standard);
+            margin-bottom: var(--spacing-03);
+        }
+
+        .color-code:hover {
+            background: var(--gray-100);
+            border-color: var(--border-strong);
+        }
+
+        .color-code-hex {
+            flex: 1;
+        }
+
+        .color-code-icon {
+            font-size: 16px;
+            color: var(--text-secondary);
+            transition: color var(--transition-base) var(--easing-standard);
+        }
+
+        .color-code:hover .color-code-icon {
+            color: var(--text-primary);
+        }
+
+        .color-usage {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: var(--gray-900);
+            color: #e0e0e0;
+            padding: var(--spacing-06);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            margin-bottom: var(--spacing-07);
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #161616;
+            color: white;
+            padding: 16px 20px;
+            border-radius: 4px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.show {
+            display: flex;
+        }
+
+        .toast.success {
+            background: #24a148;
+        }
+
+        .toast i {
+            font-size: 20px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                padding: var(--spacing-06) var(--spacing-06);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-wrapper {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid var(--border-subtle);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a class='sidebar-back' href='ds.html'>
+                <i class="ph ph-arrow-left"></i>
+                Design System
+            </a>
+            
+            <div class="sidebar-header">
+                <img src="assets/logos/vivix-simbolo-v.svg" alt="Símbolo VIVIX" class="sidebar-logo">
+                <div class="sidebar-title">SAP BTP</div>
+                <div class="sidebar-subtitle">VIVIX</div>
+            </div>
+            
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a href='v-fundamentos.html'>Fundamentos</a></li>
+                    <li><a href='v-componentes-web.html'>Componentes Web</a></li>
+                    <li><a href='v-componentes-powerbi.html'>Power BI</a></li>
+                    <li><a href='v-mendix.html'>Mendix</a></li>
+                    <li><a class='active' href='v-sap-btp.html'>SAP BTP</a></li>
+                </ul>
+                
+                <div style="margin-top: var(--spacing-06); padding-top: var(--spacing-06); border-top: 1px solid var(--border-subtle);">
+                    <div style="font-size: 0.75rem; font-weight: var(--font-weight-semibold); color: var(--text-disabled); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--spacing-03);">Nesta página</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="v-sap-btp.html#introducao">Introdução</a></li>
+                        <li><a href="v-sap-btp.html#principios">Princípios Fundamentais</a></li>
+                        <li><a href="v-sap-btp.html#mapeamento">Mapeamento GCB → SAP</a></li>
+                        <li><a href="v-sap-btp.html#fiori-elements">Fiori Elements</a></li>
+                        <li><a href="v-sap-btp.html#componentes-ui5">Componentes UI5</a></li>
+                        <li><a href="v-sap-btp.html#layouts">Padrões de Layout</a></li>
+                        <li><a href="v-sap-btp.html#forms">Forms e Validação</a></li>
+                        <li><a href="v-sap-btp.html#data-display">Data Display</a></li>
+                        <li><a href="v-sap-btp.html#responsive">Responsive Design</a></li>
+                        <li><a href="v-sap-btp.html#nao-fazer">Anti-patterns</a></li>
+                        <li><a href="v-sap-btp.html#checklist">Checklist</a></li>
+                        <li><a href="v-sap-btp.html#recursos">Recursos</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href='ds.html'>Design System</a>
+                <span>/</span>
+                <span>VIVIX</span>
+                <span>/</span>
+                <span>SAP BTP</span>
+            </nav>
+
+            <h1 class="page-title">SAP Business Technology Platform</h1>
+            <p class="page-description">
+                Diretrizes para aplicações SAP BTP (UI5, Fiori) seguindo a identidade visual GCB. Este guia cobre customização de temas, componentes UI5 e padrões SAP Fiori adaptados para o Grupo Cornélio Brennand.
+            </p>
+
+            <!-- ========================================
+                 INTRODUÇÃO
+            ======================================== -->
+            <section id="introducao" class="section">
+                <h2 class="section-title">Introdução</h2>
+                
+                <p style="margin-bottom: var(--spacing-06); line-height: 1.6;">
+                    SAP BTP (Business Technology Platform) é a plataforma de desenvolvimento da SAP para criar aplicações corporativas. As aplicações seguem o <strong>SAP Fiori Design System</strong> e utilizam <strong>SAPUI5</strong> como framework.
+                </p>
+
+                <div class="alert info">
+                    <i class="ph-fill ph-info alert-icon"></i>
+                    <div>
+                        <strong>Filosofia: Theme Before Custom</strong><br>
+                        Customize a aplicação através de temas SAP (Theme Designer) ao invés de CSS custom. Isso garante compatibilidade com atualizações e consistência visual.
+                    </div>
+                </div>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Stack tecnológico:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li><strong>Framework:</strong> SAPUI5 (OpenUI5 para projetos open source)</li>
+                    <li><strong>Design System:</strong> SAP Fiori 3</li>
+                    <li><strong>Theming:</strong> SAP Theme Designer ou UI Theme Designer</li>
+                    <li><strong>Ícones:</strong> SAP Icons (built-in) + Phosphor Icons (suplementar)</li>
+                    <li><strong>Tipografia:</strong> SAP 72 (padrão Fiori) ou Inter (alternativa GCB)</li>
+                </ul>
+            </section>
+
+            <!-- ========================================
+                 PRINCÍPIOS FUNDAMENTAIS
+            ======================================== -->
+            <section id="principios" class="section">
+                <h2 class="section-title">Princípios Fundamentais</h2>
+
+                <div class="card-grid">
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-palette"></i>
+                        </div>
+                        <h3 class="principle-title">Fiori First</h3>
+                        <p class="principle-description">
+                            Use componentes e padrões Fiori nativos. Eles já são otimizados para responsividade, acessibilidade e UX corporativa.
+                        </p>
+                        <a href="https://experience.sap.com/fiori-design/" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 0.875rem; color: var(--color-interactive); text-decoration: none;">
+                            <i class="ph ph-arrow-square-out"></i>
+                            SAP Fiori Design Guidelines
+                        </a>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-swatches"></i>
+                        </div>
+                        <h3 class="principle-title">Theme Designer Only</h3>
+                        <p class="principle-description">
+                            Customize cores e espaçamentos via Theme Designer. Evite CSS custom inline que pode quebrar com atualizações da SAP.
+                        </p>
+                        <a href="https://help.sap.com/docs/UI_THEME_DESIGNER" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 0.875rem; color: var(--color-interactive); text-decoration: none;">
+                            <i class="ph ph-arrow-square-out"></i>
+                            UI Theme Designer Docs
+                        </a>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-layout"></i>
+                        </div>
+                        <h3 class="principle-title">Floorplans Padrão</h3>
+                        <p class="principle-description">
+                            Use Fiori Floorplans (List Report, Object Page, Overview Page). Não crie layouts do zero.
+                        </p>
+                        <a href="https://experience.sap.com/fiori-design-web/floorplans/" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 0.875rem; color: var(--color-interactive); text-decoration: none;">
+                            <i class="ph ph-arrow-square-out"></i>
+                            Fiori Floorplans
+                        </a>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-devices"></i>
+                        </div>
+                        <h3 class="principle-title">Responsive by Default</h3>
+                        <p class="principle-description">
+                            Componentes UI5 são responsivos nativamente. Configure breakpoints mas não recrie comportamentos mobile.
+                        </p>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-shield-check"></i>
+                        </div>
+                        <h3 class="principle-title">Acessibilidade WCAG</h3>
+                        <p class="principle-description">
+                            Fiori já cumpre WCAG 2.1 AA. Mantenha labels, ARIA roles e keyboard navigation funcionando.
+                        </p>
+                    </div>
+
+                    <div class="principle-card">
+                        <div class="principle-icon">
+                            <i class="ph-fill ph-rocket-launch"></i>
+                        </div>
+                        <h3 class="principle-title">Performance First</h3>
+                        <p class="principle-description">
+                            Lazy loading de views, paginação server-side em tabelas, cache de dados. Siga SAP Best Practices.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Continua na próxima parte do arquivo... -->
+
+            <!-- ========================================
+                 MAPEAMENTO GCB → SAP
+            ======================================== -->
+            <section id="mapeamento" class="section">
+                <h2 class="section-title">Mapeamento: Fundamentos GCB → SAP BTP</h2>
+
+                <h3 class="subsection-title">Cores</h3>
+                
+                <div class="alert success">
+                    <i class="ph-fill ph-check-circle alert-icon"></i>
+                    <div>
+                        <strong>Totalmente Aplicável</strong><br>
+                        Todas as cores GCB podem ser aplicadas via Theme Designer customizando os parâmetros de cor do tema Fiori.
+                    </div>
+                </div>
+
+                <div class="color-grid">
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #00b2a9;">
+                            <i class="ph-fill ph-paint-bucket" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div class="color-info">
+                            <div class="color-name">Brand Primary</div>
+                            <div class="color-code" onclick="copyHex('#00b2a9', this)">
+                                <span class="color-code-hex">#00b2a9</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Parâmetro: sapBrandColor</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #005751;">
+                            <i class="ph-fill ph-circle-half-tilt" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div class="color-info">
+                            <div class="color-name">Brand Secondary</div>
+                            <div class="color-code" onclick="copyHex('#005751', this)">
+                                <span class="color-code-hex">#005751</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Shell header, navigation</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #0f62fe;">
+                            <i class="ph-fill ph-cursor-click" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div class="color-info">
+                            <div class="color-name">Interactive Blue</div>
+                            <div class="color-code" onclick="copyHex('#0f62fe', this)">
+                                <span class="color-code-hex">#0f62fe</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Parâmetro: sapLinkColor</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #24a148;">
+                            <i class="ph-fill ph-check" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div class="color-info">
+                            <div class="color-name">Success</div>
+                            <div class="color-code" onclick="copyHex('#24a148', this)">
+                                <span class="color-code-hex">#24a148</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Parâmetro: sapPositiveColor</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #f1c21b;">
+                            <i class="ph-fill ph-warning" style="color: #161616; font-size: 24px;"></i>
+                        </div>
+                        <div class="color-info">
+                            <div class="color-name">Warning</div>
+                            <div class="color-code" onclick="copyHex('#f1c21b', this)">
+                                <span class="color-code-hex">#f1c21b</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Parâmetro: sapCriticalColor</div>
+                        </div>
+                    </div>
+
+                    <div class="color-card">
+                        <div class="color-swatch" style="background: #bb0000;">
+                            <i class="ph-fill ph-x" style="color: white; font-size: 24px;"></i>
+                        </div>
+                        <div class="color-info">
+                            <div class="color-name">Error</div>
+                            <div class="color-code" onclick="copyHex('#bb0000', this)">
+                                <span class="color-code-hex">#bb0000</span>
+                                <i class="ph ph-copy color-code-icon"></i>
+                            </div>
+                            <div class="color-usage">Parâmetro: sapNegativeColor</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">Tipografia</h3>
+                
+                <div class="alert warning">
+                    <i class="ph-fill ph-warning alert-icon"></i>
+                    <div>
+                        <strong>Parcialmente Aplicável</strong><br>
+                        SAP Fiori usa <strong>SAP 72</strong> como fonte padrão. Para aplicar Inter, customize via Theme Designer (parâmetro sapFontFamily).
+                    </div>
+                </div>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Fonte GCB</th>
+                            <th style="width: 30%;">Status SAP</th>
+                            <th style="width: 40%;">Solução</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Inter</strong></td>
+                            <td>Não nativa</td>
+                            <td>Customize sapFontFamily via Theme Designer. Host Inter via CDN.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Prometo Bold</strong></td>
+                            <td>Não suportada</td>
+                            <td>Use SAP 72 Bold para títulos institucionais ou host Praxis via CDN.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>IBM Plex Mono</strong></td>
+                            <td>Não nativa</td>
+                            <td>Use monospace do sistema ou host IBM Plex Mono para código.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subsection-title">Ícones</h3>
+                
+                <div class="alert info">
+                    <i class="ph-fill ph-info alert-icon"></i>
+                    <div>
+                        <strong>Use SAP Icons como Primário</strong><br>
+                        SAP UI5 vem com +500 ícones SAP Icons nativos. Use Phosphor Icons apenas para casos não cobertos pela biblioteca SAP.
+                    </div>
+                </div>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Biblioteca</th>
+                            <th style="width: 70%;">Quando Usar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>SAP Icons</strong></td>
+                            <td>Sempre que possível. Nativos no UI5, otimizados para Fiori.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phosphor Icons</strong></td>
+                            <td>Apenas para ícones não disponíveis em SAP Icons (ex: redes sociais).</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Referência SAP Icons:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li><a href="https://ui5.sap.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html" target="_blank" style="color: var(--color-interactive);">SAP Icons Explorer</a></li>
+                </ul>
+
+                <h3 class="subsection-title">Espaçamentos</h3>
+                
+                <div class="alert success">
+                    <i class="ph-fill ph-check-circle alert-icon"></i>
+                    <div>
+                        <strong>Totalmente Aplicável</strong><br>
+                        SAP Fiori usa sistema baseado em REM (0.5rem = 8px). Compatible com grid 8px do GCB.
+                    </div>
+                </div>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">GCB Token</th>
+                            <th style="width: 25%;">Fiori Equivalent</th>
+                            <th style="width: 20%;">REM</th>
+                            <th style="width: 30%;">Uso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>--spacing-03</code> (8px)</td>
+                            <td>sapUiTinyMargin</td>
+                            <td>0.5rem</td>
+                            <td>Espaçamento mínimo</td>
+                        </tr>
+                        <tr>
+                            <td><code>--spacing-04</code> (12px)</td>
+                            <td>-</td>
+                            <td>0.75rem</td>
+                            <td>Custom (use CSS)</td>
+                        </tr>
+                        <tr>
+                            <td><code>--spacing-05</code> (16px)</td>
+                            <td>sapUiSmallMargin</td>
+                            <td>1rem</td>
+                            <td>Entre elementos relacionados</td>
+                        </tr>
+                        <tr>
+                            <td><code>--spacing-06</code> (24px)</td>
+                            <td>sapUiMediumMargin</td>
+                            <td>1.5rem</td>
+                            <td>Entre componentes</td>
+                        </tr>
+                        <tr>
+                            <td><code>--spacing-07</code> (32px)</td>
+                            <td>sapUiLargeMargin</td>
+                            <td>2rem</td>
+                            <td>Entre seções</td>
+                        </tr>
+                        <tr>
+                            <td><code>--spacing-10</code> (64px)</td>
+                            <td>-</td>
+                            <td>4rem</td>
+                            <td>Custom (use CSS)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ========================================
+                 FIORI ELEMENTS
+            ======================================== -->
+            <section id="fiori-elements" class="section">
+                <h2 class="section-title">Fiori Elements (Templates)</h2>
+
+                <p style="margin-bottom: var(--spacing-06); line-height: 1.6;">
+                    <strong>Fiori Elements</strong> são templates prontos para acelerar desenvolvimento. Use ao invés de criar telas do zero.
+                </p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Template</th>
+                            <th style="width: 70%;">Quando Usar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>List Report</strong></td>
+                            <td>Listagem de dados com filtros, busca e ações. Exemplo: Lista de pedidos, usuários, produtos.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Object Page</strong></td>
+                            <td>Detalhes de um registro com header, facets e seções. Exemplo: Detalhe de pedido, perfil de usuário.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Overview Page</strong></td>
+                            <td>Dashboard com cards KPI e gráficos. Exemplo: Visão geral de vendas, operações.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Worklist</strong></td>
+                            <td>Lista simples de tarefas/items. Exemplo: Aprovações pendentes, notificações.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Analytical List Page</strong></td>
+                            <td>Listagem com visualização analítica (gráficos + tabela). Exemplo: Análise de vendas por região.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert info">
+                    <i class="ph-fill ph-lightbulb alert-icon"></i>
+                    <div>
+                        <strong>Priorize Fiori Elements sobre Freestyle UI5</strong><br>
+                        Fiori Elements gera automaticamente UI baseada em metadados OData. Menos código, mais manutenibilidade.
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 COMPONENTES UI5
+            ======================================== -->
+            <section id="componentes-ui5" class="section">
+                <h2 class="section-title">Componentes SAPUI5</h2>
+
+                <h3 class="subsection-title">Buttons</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Tipo</th>
+                            <th style="width: 35%;">UI5 Component</th>
+                            <th style="width: 40%;">Customização GCB</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Primary</strong></td>
+                            <td><code>sap.m.Button</code><br>type="Emphasized"</td>
+                            <td>Cor: <code>#00b2a9</code> via Theme Designer (sapButton_Emphasized_Background)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Secondary</strong></td>
+                            <td><code>sap.m.Button</code><br>type="Default"</td>
+                            <td>Borda: <code>#e0e0e0</code>, texto: <code>#161616</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Danger</strong></td>
+                            <td><code>sap.m.Button</code><br>type="Reject"</td>
+                            <td>Cor: <code>#bb0000</code> (sapButton_Reject_Background)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Link</strong></td>
+                            <td><code>sap.m.Link</code></td>
+                            <td>Cor: <code>#0f62fe</code> (sapLinkColor)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subsection-title">Tables</h3>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Diretrizes:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li>Use <code>sap.m.Table</code> para listas mobile-friendly</li>
+                    <li>Use <code>sap.ui.table.Table</code> para dados tabulares complexos (desktop)</li>
+                    <li>Header: background <code>#f5f5f5</code>, texto <code>#161616</code> bold</li>
+                    <li>Rows alternadas: branco / <code>#fafafa</code></li>
+                    <li>Hover: <code>#f5f5f5</code></li>
+                    <li>Paginação: sempre server-side para mais de 100 registros</li>
+                </ul>
+
+                <h3 class="subsection-title">Forms (sap.ui.layout.form)</h3>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Estrutura recomendada:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li>Use <code>SimpleForm</code> para formulários simples</li>
+                    <li>Labels sempre acima dos inputs (não à esquerda)</li>
+                    <li>Inputs altura mínima: 44px (touch-friendly)</li>
+                    <li>Required fields: asterisco vermelho <code>#bb0000</code> após label</li>
+                    <li>Validação: ValueState="Error/Success/Warning" com mensagem inline</li>
+                </ul>
+            </section>
+
+            <!-- ========================================
+                 PADRÕES DE LAYOUT
+            ======================================== -->
+            <section id="layouts" class="section">
+                <h2 class="section-title">Padrões de Layout</h2>
+
+                <h3 class="subsection-title">Shell (sap.m.Shell + ShellBar)</h3>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Especificações:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-06); line-height: 1.8;">
+                    <li>ShellBar altura: 44px (mobile) / 56px (desktop)</li>
+                    <li>Background: <code>#005751</code> (verde escuro GCB)</li>
+                    <li>Logo GCB à esquerda (60px largura)</li>
+                    <li>Título da aplicação: branco, fonte SAP 72 Bold 16px</li>
+                    <li>Ícones utilitários à direita (notificações, perfil)</li>
+                </ul>
+
+                <h3 class="subsection-title">Layout Responsivo (sap.ui.layout)</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Breakpoint</th>
+                            <th style="width: 25%;">Tamanho</th>
+                            <th style="width: 45%;">Comportamento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Phone</strong></td>
+                            <td>< 600px</td>
+                            <td>1 coluna, navegação bottom bar, tabelas viram cards</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tablet</strong></td>
+                            <td>600-1024px</td>
+                            <td>2 colunas, side navigation opcional</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Desktop</strong></td>
+                            <td>> 1024px</td>
+                            <td>3-4 colunas, master-detail layouts</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subsection-title">Master-Detail Pattern</h3>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Quando usar:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li>Lista de items à esquerda (Master) + detalhe à direita (Detail)</li>
+                    <li>Master: 320-400px largura fixa</li>
+                    <li>Detail: flex grow, min-width 600px</li>
+                    <li>Mobile: empilha (Master como drawer)</li>
+                </ul>
+            </section>
+
+            <!-- ========================================
+                 FORMS E VALIDAÇÃO
+            ======================================== -->
+            <section id="forms" class="section">
+                <h2 class="section-title">Forms e Validação</h2>
+
+                <h3 class="subsection-title">Input States</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Estado</th>
+                            <th style="width: 35%;">ValueState</th>
+                            <th style="width: 40%;">Estilo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Default</strong></td>
+                            <td>None</td>
+                            <td>Border <code>#e0e0e0</code>, altura 44px</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Error</strong></td>
+                            <td>Error</td>
+                            <td>Border <code>#bb0000</code>, mensagem vermelha abaixo</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Success</strong></td>
+                            <td>Success</td>
+                            <td>Border <code>#24a148</code>, ícone check verde</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Warning</strong></td>
+                            <td>Warning</td>
+                            <td>Border <code>#f1c21b</code>, mensagem amarela</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Information</strong></td>
+                            <td>Information</td>
+                            <td>Border <code>#007acc</code>, ícone info azul</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="subsection-title">Validation Messages</h3>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Diretrizes:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li>Validação em tempo real (onBlur ou onChange)</li>
+                    <li>Mensagens específicas: "Email inválido" ao invés de "Erro"</li>
+                    <li>Use MessageBox para erros críticos de submit</li>
+                    <li>Use MessageToast para confirmações (ex: "Salvo com sucesso")</li>
+                    <li>Required fields: asterisco após label + validação obrigatória</li>
+                </ul>
+            </section>
+
+            <!-- ========================================
+                 DATA DISPLAY
+            ======================================== -->
+            <section id="data-display" class="section">
+                <h2 class="section-title">Data Display</h2>
+
+                <h3 class="subsection-title">Object Page (Fiori Pattern)</h3>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Estrutura:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-06); line-height: 1.8;">
+                    <li><strong>Header:</strong> Título + status + ações principais</li>
+                    <li><strong>Header Facets:</strong> KPIs e informações resumidas</li>
+                    <li><strong>Sections:</strong> Conteúdo detalhado organizado em abas/seções</li>
+                    <li><strong>Footer:</strong> Ações de salvar/cancelar (fixo no bottom)</li>
+                </ul>
+
+                <h3 class="subsection-title">Charts (sap.viz / sap.suite.ui.microchart)</h3>
+
+                <p style="margin-bottom: var(--spacing-05);"><strong>Paleta de cores GCB para gráficos:</strong></p>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li>Categórica: <code>#00b2a9, #005751, #0f62fe, #24a148, #f1c21b, #bb0000</code></li>
+                    <li>Sequencial (baixo → alto): <code>#ffe4cc → #00b2a9 → #005751</code></li>
+                    <li>Divergente (negativo ↔ positivo): <code>#bb0000 ↔ #f5f5f5 ↔ #24a148</code></li>
+                </ul>
+
+                <h3 class="subsection-title">Status Indicators</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Status</th>
+                            <th style="width: 30%;">Cor</th>
+                            <th style="width: 40%;">Componente</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Success / Aprovado</td>
+                            <td><code>#24a148</code></td>
+                            <td>ObjectStatus state="Success"</td>
+                        </tr>
+                        <tr>
+                            <td>Warning / Pendente</td>
+                            <td><code>#f1c21b</code></td>
+                            <td>ObjectStatus state="Warning"</td>
+                        </tr>
+                        <tr>
+                            <td>Error / Rejeitado</td>
+                            <td><code>#bb0000</code></td>
+                            <td>ObjectStatus state="Error"</td>
+                        </tr>
+                        <tr>
+                            <td>Information / Em Análise</td>
+                            <td><code>#007acc</code></td>
+                            <td>ObjectStatus state="Information"</td>
+                        </tr>
+                        <tr>
+                            <td>None / Neutro</td>
+                            <td><code>#8d8d8d</code></td>
+                            <td>ObjectStatus state="None"</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ========================================
+                 RESPONSIVE DESIGN
+            ======================================== -->
+            <section id="responsive" class="section">
+                <h2 class="section-title">Responsive Design</h2>
+
+                <h3 class="subsection-title">Device-Specific Guidelines</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Device</th>
+                            <th style="width: 80%;">Ajustes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Mobile</strong></td>
+                            <td>
+                                - Tables viram List com cards<br>
+                                - Forms sempre 1 coluna<br>
+                                - Navegação: bottom bar ou drawer<br>
+                                - Touch targets mínimo 44x44px<br>
+                                - Padding reduzido: 16px ao invés de 32px
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tablet</strong></td>
+                            <td>
+                                - Forms podem ter 2 colunas<br>
+                                - Master-Detail funciona lado a lado<br>
+                                - Navegação: side panel colapsável<br>
+                                - Padding: 24px
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Desktop</strong></td>
+                            <td>
+                                - Layout completo (3-4 colunas)<br>
+                                - Tables com todas as colunas visíveis<br>
+                                - Navegação: sidebar fixa<br>
+                                - Padding: 32-48px
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert critical">
+                    <i class="ph-fill ph-warning-octagon alert-icon"></i>
+                    <div>
+                        <strong>Obrigatório:</strong> Teste em dispositivos reais (não apenas emuladores). Use SAP Fiori Client app para testes mobile.
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 ANTI-PATTERNS
+            ======================================== -->
+            <section id="nao-fazer" class="section">
+                <h2 class="section-title">Não Fazer (Anti-patterns)</h2>
+
+                <div class="alert critical">
+                    <i class="ph-fill ph-x-circle alert-icon"></i>
+                    <div>
+                        <strong>Evite estas práticas que quebram padrões Fiori:</strong>
+                    </div>
+                </div>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">Não Faça Isso</th>
+                            <th style="width: 60%;">Faça Isso Ao Invés</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CSS custom com !important</td>
+                            <td>Use Theme Designer para customizar cores e espaçamentos</td>
+                        </tr>
+                        <tr>
+                            <td>Criar layouts do zero sem Fiori Floorplans</td>
+                            <td>Use List Report, Object Page ou Overview Page templates</td>
+                        </tr>
+                        <tr>
+                            <td>Usar cores fora da paleta GCB</td>
+                            <td>Siga as 6 cores principais + grayscale definidas</td>
+                        </tr>
+                        <tr>
+                            <td>Tabelas sem paginação server-side</td>
+                            <td>Sempre pagine no backend para mais de 100 registros</td>
+                        </tr>
+                        <tr>
+                            <td>Ignorar responsividade mobile</td>
+                            <td>Teste em Phone/Tablet/Desktop e ajuste layouts</td>
+                        </tr>
+                        <tr>
+                            <td>Remover estados de foco (keyboard navigation)</td>
+                            <td>Mantenha acessibilidade WCAG 2.1 AA</td>
+                        </tr>
+                        <tr>
+                            <td>Hardcode de textos (sem i18n)</td>
+                            <td>Use arquivos i18n para internacionalização</td>
+                        </tr>
+                        <tr>
+                            <td>Misturar versões de UI5 (1.84 + 1.108)</td>
+                            <td>Use uma única versão de UI5 por aplicação</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- ========================================
+                 CHECKLIST
+            ======================================== -->
+            <section id="checklist" class="section">
+                <h2 class="section-title">Checklist de Qualidade</h2>
+
+                <p style="margin-bottom: var(--spacing-06);">
+                    Use este checklist antes de cada deploy. Todos os itens devem estar validados para homologação.
+                </p>
+
+                <div style="background: white; padding: var(--spacing-06); border: 1px solid var(--border-subtle); border-radius: var(--radius-md);">
+                    <div style="display: flex; flex-direction: column; gap: var(--spacing-04);">
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Cores seguem paleta GCB (6 cores principais + grayscale)</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Tema customizado via Theme Designer (não CSS inline)</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Ícones primariamente SAP Icons (Phosphor apenas suplementar)</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Espaçamentos seguem escala Fiori (0.5rem, 1rem, 1.5rem, 2rem)</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Botões emphasized são laranjas (#00b2a9)</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Layout responsivo funciona em Phone (< 600px), Tablet (600-1024px) e Desktop (> 1024px)</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Navegação por teclado funciona (Tab, Enter, Esc)</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Tabelas com mais de 100 registros têm paginação server-side</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Forms têm validação clara com ValueState (Error/Success/Warning)</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Logo GCB presente no ShellBar</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Textos internacionalizados (i18n configurado)</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: var(--spacing-03); cursor: pointer;">
+                            <i class="ph ph-square" style="font-size: 20px; color: var(--text-secondary); margin-top: 2px;"></i>
+                            <span>Testado em dispositivos reais (não apenas emuladores)</span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 RECURSOS E REFERÊNCIAS
+            ======================================== -->
+            <section id="recursos" class="section">
+                <h2 class="section-title">Recursos e Referências</h2>
+
+                <h3 class="subsection-title">Documentação Oficial SAP</h3>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li><a href="https://experience.sap.com/fiori-design/" target="_blank" style="color: var(--color-interactive);">SAP Fiori Design Guidelines</a></li>
+                    <li><a href="https://ui5.sap.com/" target="_blank" style="color: var(--color-interactive);">SAPUI5 SDK Documentation</a></li>
+                    <li><a href="https://help.sap.com/docs/UI_THEME_DESIGNER" target="_blank" style="color: var(--color-interactive);">UI Theme Designer</a></li>
+                    <li><a href="https://ui5.sap.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html" target="_blank" style="color: var(--color-interactive);">SAP Icons Explorer</a></li>
+                    <li><a href="https://experience.sap.com/fiori-design-web/floorplans/" target="_blank" style="color: var(--color-interactive);">Fiori Floorplans</a></li>
+                </ul>
+
+                <h3 class="subsection-title">Design System GCB</h3>
+                <ul style="margin-left: var(--spacing-06); margin-bottom: var(--spacing-07); line-height: 1.8;">
+                    <li><a href='v-fundamentos.html' style='color: var(--color-interactive);'>Fundamentos (Cores, Tipografia, Espaçamentos)</a></li>
+                    <li><a href='v-componentes-web.html' style='color: var(--color-interactive);'>Componentes Web (Botões, Forms, Navigation)</a></li>
+                    <li><a href='v-componentes-powerbi.html' style='color: var(--color-interactive);'>Power BI (Dashboards, Gráficos)</a></li>
+                </ul>
+
+                <div class="alert info">
+                    <i class="ph-fill ph-lightbulb alert-icon"></i>
+                    <div>
+                        <strong>Dúvidas ou Sugestões?</strong><br>
+                        Entre em contato com a equipe Tecnova para esclarecer dúvidas sobre customização SAP BTP ou propor melhorias nestas diretrizes.
+                    </div>
+                </div>
+            </section>
+            
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="ph ph-check-circle"></i>
+        <span id="toast-message">Copiado!</span>
+    </div>
+
+    <script>
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.textContent = message;
+            toast.classList.add('show', 'success');
+            
+            setTimeout(() => {
+                toast.classList.remove('show', 'success');
+            }, 2000);
+        }
+
+        // Copy HEX color
+        function copyHex(hexCode, element) {
+            navigator.clipboard.writeText(hexCode).then(() => {
+                showToast(`${hexCode} copiado!`);
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+            });
+        }
+    </script>
+</body>
+</html>
