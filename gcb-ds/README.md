@@ -17,7 +17,7 @@ Cópia local do [Design System GCB](https://gcb-ds.netlify.app) servida em conta
 docker compose up --build -d
 
 # Acessar
-open http://localhost:8080
+open http://localhost:8081
 ```
 
 ## Comandos úteis
@@ -45,7 +45,7 @@ gcb-ds/
 ├── scripts/mirror.sh  # espelha gcb-ds.netlify.app
 ├── nginx.conf         # URLs limpas (/ds → ds.html)
 ├── Dockerfile
-└── docker-compose.yml # porta 8080
+└── docker-compose.yml # porta 8081 (8080 costuma estar em uso)
 ```
 
 ## Notas
