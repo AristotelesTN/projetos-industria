@@ -1,0 +1,131 @@
+#container main:has(.vx-hub) {
+  padding: 0 !important;
+  overflow: auto !important;
+}
+
+.vx-hub {
+  --vx-teal: #00b2a9;
+  --vx-dark: #005751;
+  --vx-text: #161616;
+  --vx-muted: #525252;
+  --vx-line: #e0e0e0;
+  --vx-soft: #f4f4f4;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--vx-text);
+  padding: 24px;
+}
+
+.vx-hub h1 { margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -0.02em; }
+.vx-hub .vx-lead { margin: 6px 0 20px; color: var(--vx-muted); font-size: 13.5px; max-width: 720px; }
+
+.vx-hub-kicker {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8d8d8d;
+  margin-bottom: 6px;
+}
+
+.vx-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.vx-filters button, .vx-pill-btn {
+  border: 1px solid var(--vx-line);
+  background: #fff;
+  border-radius: 99px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  color: var(--vx-muted);
+  cursor: pointer;
+}
+.vx-filters button.is-on, .vx-pill-btn.is-on {
+  background: color-mix(in srgb, #00b2a9 12%, #fff);
+  border-color: #9fe3df;
+  color: var(--vx-dark);
+  font-weight: 600;
+}
+
+.vx-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.vx-card {
+  border: 1px solid var(--vx-line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+.vx-card h3 { margin: 0; font-size: 15px; }
+.vx-card p { margin: 0; font-size: 12.5px; color: var(--vx-muted); }
+.vx-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.vx-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--vx-soft);
+  color: var(--vx-muted);
+}
+.vx-tag-ok { background: rgba(36,161,72,.12); color: #198038; }
+.vx-tag-warn { background: rgba(241,194,27,.2); color: #8a6a00; }
+.vx-tag-teal { background: rgba(0,178,169,.12); color: var(--vx-dark); }
+
+.vx-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 8px; }
+.vx-actions button, .vx-btn {
+  border: 1px solid var(--vx-line);
+  background: #fff;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--vx-text);
+}
+.vx-btn-primary { background: #00b2a9; border-color: #00b2a9; color: #fff; }
+
+.vx-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.vx-table th { text-align: left; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #8d8d8d; padding: 8px; border-bottom: 1px solid var(--vx-line); }
+.vx-table td { padding: 10px 8px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+.vx-table-wrap { overflow-x: auto; border: 1px solid var(--vx-line); border-radius: 8px; background: #fff; }
+
+.vx-kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.vx-kpi article { border: 1px solid var(--vx-line); border-radius: 8px; padding: 14px; background: #fff; }
+.vx-kpi span { display: block; font-size: 11px; color: #8d8d8d; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.vx-kpi strong { display: block; font-size: 22px; margin-top: 6px; }
+
+.vx-note {
+  padding: 12px 14px;
+  border-radius: 6px;
+  background: #f4fbfb;
+  border: 1px solid #cdeeee;
+  color: var(--vx-dark);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.vx-form { display: grid; gap: 12px; max-width: 560px; }
+.vx-form label { display: grid; gap: 6px; font-size: 12px; font-weight: 500; color: var(--vx-muted); }
+.vx-form input, .vx-form select, .vx-form textarea {
+  border: 1px solid var(--vx-line);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
+.vx-flow-ex {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid var(--vx-line);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 12.5px;
+}
+.vx-flow-ex b { background: rgba(0,178,169,.12); color: var(--vx-dark); padding: 4px 8px; border-radius: 4px; font-weight: 600; }
+.vx-flow-ex i { color: #8d8d8d; font-style: normal; }
+
+@media (max-width: 768px) {
+  .vx-hub { padding: 16px; }
+}

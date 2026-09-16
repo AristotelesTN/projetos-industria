@@ -1,0 +1,99 @@
+/* Sidebar IA — grupos do DS Mendix VIVIX */
+
+.vx-nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 0 8px;
+}
+
+.vx-nav::-webkit-scrollbar { width: 4px; }
+.vx-nav::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 2px; }
+
+.vx-nav-group + .vx-nav-group {
+  border-top: 1px solid #e0e0e0;
+  margin-top: 4px;
+  padding-top: 4px;
+}
+
+.vx-nav-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 16px 6px;
+  border: 0;
+  background: transparent;
+  color: #8d8d8d;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-align: left;
+}
+
+.vx-nav-label:hover { color: #525252; }
+
+.vx-nav-label svg {
+  width: 12px;
+  height: 12px;
+  transition: transform 160ms ease;
+}
+
+.vx-nav-group.is-closed .vx-nav-label svg { transform: rotate(-90deg); }
+.vx-nav-group.is-closed .vx-nav-items { display: none; }
+
+.vx-nav-items { padding: 0 0 6px; }
+
+.vx-nav a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 1px 8px;
+  padding: 7px 10px 7px 12px;
+  border-radius: 4px;
+  color: #525252 !important;
+  background: transparent !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  text-decoration: none;
+  min-height: 34px;
+}
+
+.vx-nav a:hover {
+  background: #f4f4f4 !important;
+  color: #161616 !important;
+}
+
+.vx-nav a.is-on,
+.vx-nav a[aria-current="page"] {
+  background: color-mix(in srgb, #00b2a9 12%, transparent) !important;
+  color: #00b2a9 !important;
+}
+
+.vx-nav a.is-on::before,
+.vx-nav a[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  background: #00b2a9;
+  border-radius: 0 2px 2px 0;
+}
+
+.vx-nav a svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.vx-nav a span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
